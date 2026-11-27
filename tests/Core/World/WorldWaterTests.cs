@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Murim.Core.World;
 using NUnit.Framework;
 
@@ -49,6 +50,7 @@ namespace Murim.Core.Tests.World
             }
 
             AssertStreamBankHeights(world);
+            AssertPlungePoolShoreHeights(world);
         }
 
         private static void AssertStreamBankHeights(ValleyWorld world)
@@ -77,36 +79,10 @@ namespace Murim.Core.Tests.World
                 for (int x = xStart; x <= xEnd; x++)
                 {
                     int px = x * 100;
-                    int bestE = int.MaxValue;
-                    int bestLevel = 0;
-                    for (int i = 0; i < world.Stream.Count - 1; i++)
+                    int streamE = NearestStreamEdgeCm(world.Stream, px, pz, out int bestLevel);
+                    if (streamE >= 300 && streamE <= 600)
                     {
-                        WaterNode a = world.Stream[i];
-                        WaterNode b = world.Stream[i + 1];
-                        int maxHw = a.HalfWidthCm > b.HalfWidthCm ? a.HalfWidthCm : b.HalfWidthCm;
-                        int segBound = (bestE < 600 ? bestE : 600) + maxHw;
-                        int minX = a.XCm < b.XCm ? a.XCm : b.XCm;
-                        int maxX = a.XCm > b.XCm ? a.XCm : b.XCm;
-                        int minZ = a.ZCm < b.ZCm ? a.ZCm : b.ZCm;
-                        int maxZ = a.ZCm > b.ZCm ? a.ZCm : b.ZCm;
-                        if (px < minX - segBound || px > maxX + segBound || pz < minZ - segBound || pz > maxZ + segBound)
-                        {
-                            continue;
-                        }
-
-                        int e = WorldTestHelpers.SegmentEdgeDistanceCm(px, pz, a, b, out int lvl);
-                        if (e < bestE)
-                        {
-                            bestE = e;
-                            bestLevel = lvl;
-                        }
-                    }
-
-                    if (bestE >= 300 && bestE <= 600)
-                    {
-                        long poolDx = px - world.PlungePool.XCm;
-                        long poolDz = pz - world.PlungePool.ZCm;
-                        int poolE = (int)Primitives.Isqrt(poolDx * poolDx + poolDz * poolDz) - world.PlungePool.RadiusCm;
+                        int poolE = PlungePoolEdgeCm(world.PlungePool, px, pz);
                         if (poolE >= 300)
                         {
                             Assert.That(world.HeightCm[row + x], Is.GreaterThanOrEqualTo(bestLevel + 15), $"seed={world.Seed} ({x},{z})");
@@ -114,6 +90,75 @@ namespace Murim.Core.Tests.World
                     }
                 }
             }
+        }
+
+        private static void AssertPlungePoolShoreHeights(ValleyWorld world)
+        {
+            WaterPool pool = world.PlungePool;
+            int reach = pool.RadiusCm + 600;
+            int xStart = Primitives.Clamp(Primitives.FloorDiv(pool.XCm - reach, 100), 0, ValleyWorld.SizeM);
+            int xEnd = Primitives.Clamp(Primitives.FloorDiv(pool.XCm + reach, 100), 0, ValleyWorld.SizeM);
+            int zStart = Primitives.Clamp(Primitives.FloorDiv(pool.ZCm - reach, 100), 0, ValleyWorld.SizeM);
+            int zEnd = Primitives.Clamp(Primitives.FloorDiv(pool.ZCm + reach, 100), 0, ValleyWorld.SizeM);
+
+            for (int z = zStart; z <= zEnd; z++)
+            {
+                int pz = z * 100;
+                int row = z * ValleyWorld.VertsPerSide;
+                for (int x = xStart; x <= xEnd; x++)
+                {
+                    int px = x * 100;
+                    int poolE = PlungePoolEdgeCm(pool, px, pz);
+                    if (poolE >= 300 && poolE <= 600)
+                    {
+                        int streamE = NearestStreamEdgeCm(world.Stream, px, pz, out _);
+                        if (streamE >= 300)
+                        {
+                            Assert.That(
+                                world.HeightCm[row + x],
+                                Is.GreaterThanOrEqualTo(pool.LevelCm + 15),
+                                $"seed={world.Seed} pool shore ({x},{z}) poolE={poolE}");
+                        }
+                    }
+                }
+            }
+        }
+
+        private static int PlungePoolEdgeCm(WaterPool pool, int px, int pz)
+        {
+            long dx = px - pool.XCm;
+            long dz = pz - pool.ZCm;
+            return (int)Primitives.Isqrt(dx * dx + dz * dz) - pool.RadiusCm;
+        }
+
+        private static int NearestStreamEdgeCm(IReadOnlyList<WaterNode> stream, int px, int pz, out int bestLevel)
+        {
+            int bestE = int.MaxValue;
+            bestLevel = 0;
+            for (int i = 0; i < stream.Count - 1; i++)
+            {
+                WaterNode a = stream[i];
+                WaterNode b = stream[i + 1];
+                int maxHw = a.HalfWidthCm > b.HalfWidthCm ? a.HalfWidthCm : b.HalfWidthCm;
+                int segBound = (bestE < 600 ? bestE : 600) + maxHw;
+                int minX = a.XCm < b.XCm ? a.XCm : b.XCm;
+                int maxX = a.XCm > b.XCm ? a.XCm : b.XCm;
+                int minZ = a.ZCm < b.ZCm ? a.ZCm : b.ZCm;
+                int maxZ = a.ZCm > b.ZCm ? a.ZCm : b.ZCm;
+                if (px < minX - segBound || px > maxX + segBound || pz < minZ - segBound || pz > maxZ + segBound)
+                {
+                    continue;
+                }
+
+                int e = WorldTestHelpers.SegmentEdgeDistanceCm(px, pz, a, b, out int lvl);
+                if (e < bestE)
+                {
+                    bestE = e;
+                    bestLevel = lvl;
+                }
+            }
+
+            return bestE;
         }
     }
 }
