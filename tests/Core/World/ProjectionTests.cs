@@ -71,7 +71,7 @@ namespace Murim.Core.Tests.World
             Assert.That(world.VistaVCm, Is.InRange(world.PlaneBottomCm + 2200, world.PlaneCrestCm - 2200), $"seed={world.Seed}");
 
             FallNode first = world.Waterfall[0];
-            FallNode last = world.Waterfall[world.Waterfall.Length - 1];
+            FallNode last = world.Waterfall[world.Waterfall.Count - 1];
             int firstV = Projection.PlaneVCm(first.ZCm, first.YCm);
             int lastV = Projection.PlaneVCm(last.ZCm, last.YCm);
             Assert.That(firstV, Is.InRange(world.VistaVCm - 2200, world.VistaVCm + 2200), $"seed={world.Seed}");

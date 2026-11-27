@@ -11,7 +11,7 @@ namespace Murim.Core.World
         public static void BuildAndCarve(ValleyGenerationState state)
         {
             ValleyLayout layout = state.Layout;
-            layout.FallZ = FindFirstZAtLeast(state.S1, layout.WfX, 512);
+            layout.FallZ = Primitives.FindFirstZAtLeast(state.S1, layout.WfX, 512);
             layout.ZPool = layout.FallZ - 11;
 
             int midCm = state.Config.MidTierHeightM * 100;
@@ -25,19 +25,6 @@ namespace Murim.Core.World
 
             CarveWaterways(state);
             state.Waterfall = BuildWaterfall(state);
-        }
-
-        public static int FindFirstZAtLeast(short[] field, int x, int threshold)
-        {
-            for (int z = 0; z < ValleyWorld.VertsPerSide; z++)
-            {
-                if (field[z * ValleyWorld.VertsPerSide + x] >= threshold)
-                {
-                    return z;
-                }
-            }
-
-            return ValleyWorld.SizeM;
         }
 
         private static int TiltAt(int zm, int headZ)
@@ -311,7 +298,7 @@ namespace Murim.Core.World
                 long bound = (long)cap + grp.MaxHw;
                 int dx = px < grp.MinX ? grp.MinX - px : (px > grp.MaxX ? px - grp.MaxX : 0);
                 int dz = pz < grp.MinZ ? grp.MinZ - pz : (pz > grp.MaxZ ? pz - grp.MaxZ : 0);
-                if (bound < 0 || (long)dx * dx + (long)dz * dz > bound * bound)
+                if (bound < 0 || (long)dx * dx + (long)dz * dz >= (bound + 1L) * (bound + 1L))
                 {
                     continue;
                 }
@@ -353,7 +340,7 @@ namespace Murim.Core.World
                 long bound = (long)cap + s.MaxHw;
                 int dx = px < s.MinX ? s.MinX - px : (px > s.MaxX ? px - s.MaxX : 0);
                 int dz = pz < s.MinZ ? s.MinZ - pz : (pz > s.MaxZ ? pz - s.MaxZ : 0);
-                if (bound < 0 || (long)dx * dx + (long)dz * dz > bound * bound)
+                if (bound < 0 || (long)dx * dx + (long)dz * dz >= (bound + 1L) * (bound + 1L))
                 {
                     continue;
                 }

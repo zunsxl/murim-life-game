@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Murim.Core.World
 {
     public sealed class PropVariantSpec
@@ -65,7 +68,7 @@ namespace Murim.Core.World
         public const int FloraFernCap = 800;
         public const int FloraTussockCap = 5000;
 
-        public static readonly PropVariantSpec[] Variants = BuildVariants();
+        public static readonly IReadOnlyList<PropVariantSpec> Variants = Array.AsReadOnly(BuildVariants());
 
         public static PropVariantSpec Get(byte variant)
         {

@@ -46,7 +46,7 @@ namespace Murim.Core.Tests.World
             for (int seed = 0; seed < 8; seed++)
             {
                 ValleyWorld world = sweep[seed];
-                PropInstance[] copy = (PropInstance[])world.Props.Clone();
+                var copy = new List<PropInstance>(world.Props);
                 int[] order1 = PropOrder.BackToFront(world.Props);
                 int[] order2 = PropOrder.BackToFront(world.Props);
 
@@ -94,7 +94,7 @@ namespace Murim.Core.Tests.World
             AssertAnchors(world);
             AssertPlacementOrder(world);
 
-            for (int i = 0; i < world.Props.Length; i++)
+            for (int i = 0; i < world.Props.Count; i++)
             {
                 PropInstance p = world.Props[i];
                 PropVariantSpec spec = PropCatalog.Get(p.Variant);
@@ -154,26 +154,66 @@ namespace Murim.Core.Tests.World
         private static void AssertAnchors(ValleyWorld world)
         {
             ValleyLayout l = world.Layout;
-            Assert.That(world.Props.Length, Is.GreaterThanOrEqualTo(9));
-            Assert.That(world.Props[0].Variant, Is.EqualTo(PropCatalog.PineAncient));
-            Assert.That(world.Props[0].XCm, Is.EqualTo((l.WfX - 18) * 100));
-            Assert.That(world.Props[0].ZCm, Is.EqualTo((l.FallZ + 9) * 100));
-            Assert.That(world.Props[1].Variant, Is.EqualTo(PropCatalog.PineAncient));
-            Assert.That(world.Props[1].XCm, Is.EqualTo((l.WfX + 18) * 100));
-            Assert.That(world.Props[1].ZCm, Is.EqualTo((l.FallZ + 9) * 100));
-            Assert.That(world.Props[2].Variant, Is.EqualTo(PropCatalog.PineAncient));
-            Assert.That(world.Props[2].XCm, Is.EqualTo(l.Slope2X * 100));
+            int zTop2 = ComputeZTop2(world);
 
-            for (int i = 0; i < 9; i++)
+            Assert.That(world.Props.Count, Is.GreaterThanOrEqualTo(9), $"seed={world.Seed}");
+            AssertAnchor(world, 0, PropCatalog.PineAncient, (l.WfX - 18) * 100, (l.FallZ + 9) * 100, 105);
+            AssertAnchor(world, 1, PropCatalog.PineAncient, (l.WfX + 18) * 100, (l.FallZ + 9) * 100, 105);
+            AssertAnchor(world, 2, PropCatalog.PineAncient, l.Slope2X * 100, (zTop2 + 10) * 100, 105);
+            AssertAnchor(world, 3, PropCatalog.PineLeaning, (l.WfX - 9) * 100, (l.FallZ + 4) * 100, 100);
+            AssertAnchor(world, 4, PropCatalog.PineLeaning, (l.WfX + 9) * 100, (l.FallZ + 4) * 100, 100);
+            AssertAnchor(world, 5, PropCatalog.RockOutcrop, (l.WfX - 7) * 100, (l.FallZ - 1) * 100, 100);
+            AssertAnchor(world, 6, PropCatalog.RockOutcrop, (l.WfX + 7) * 100, (l.FallZ - 1) * 100, 100);
+            AssertAnchor(world, 7, PropCatalog.BambooYoung, (l.WfX - 14) * 100, (l.ZPool - 2) * 100, 100);
+            AssertAnchor(world, 8, PropCatalog.BambooYoung, (l.WfX + 14) * 100, (l.ZPool - 2) * 100, 100);
+        }
+
+        private static void AssertAnchor(ValleyWorld world, int index, byte variant, int xCm, int zCm, ushort scalePct)
+        {
+            PropInstance p = world.Props[index];
+            Assert.That(p.Variant, Is.EqualTo(variant), $"seed={world.Seed} anchor={index} variant");
+            Assert.That(p.XCm, Is.EqualTo(xCm), $"seed={world.Seed} anchor={index} XCm");
+            Assert.That(p.ZCm, Is.EqualTo(zCm), $"seed={world.Seed} anchor={index} ZCm");
+            Assert.That(p.ScalePct, Is.EqualTo(scalePct), $"seed={world.Seed} anchor={index} ScalePct");
+            Assert.That(p.TonePct, Is.EqualTo((byte)100), $"seed={world.Seed} anchor={index} TonePct");
+        }
+
+        private static int ComputeZTop2(ValleyWorld world)
+        {
+            ValleyLayout l = world.Layout;
+            int x = l.Slope2X;
+            int dx = x - l.AxisX;
+            int absDx = dx < 0 ? -dx : dx;
+            int bowP = (int)Primitives.FloorDiv((long)l.BowK * 100L * dx * dx, 30976L);
+            long slopeQ = Primitives.FloorDiv(2L * l.BowK * absDx * 1024L, 30976L);
+            long g = Primitives.Isqrt(1048576L + slopeQ * slopeQ);
+            int mid = world.Config.MidTierHeightM * 100;
+            int upper = world.Config.UpperTierHeightM * 100;
+            int hw2 = Primitives.FloorDiv((upper - mid) * 5, 2);
+            int hwv2 = (int)((hw2 * g) >> 10);
+            int v2 = (l.HeadZ + l.MidDepth) * 100;
+            uint salt1 = Primitives.Salt(1, world.Seed);
+            uint salt2 = Primitives.Salt(2, world.Seed);
+
+            for (int z = 0; z < ValleyWorld.VertsPerSide; z++)
             {
-                Assert.That(world.Props[i].TonePct, Is.EqualTo(100), $"seed={world.Seed} anchor={i}");
+                int wob = ((Primitives.Noise(x, z, 64, salt1) * 1200) >> 10)
+                    + ((Primitives.Noise(x, z, 24, salt2) * 250) >> 10);
+                int v = 100 * z + bowP + wob;
+                int s2 = Primitives.S(Primitives.Clamp01((int)Primitives.FloorDiv((long)(v - v2 + hwv2) * 1024L, 2L * hwv2)));
+                if (s2 >= 1000)
+                {
+                    return z;
+                }
             }
+
+            return ValleyWorld.SizeM;
         }
 
         private static void AssertPlacementOrder(ValleyWorld world)
         {
             int ruleCursor = 0;
-            for (int i = 9; i < world.Props.Length; i++)
+            for (int i = 9; i < world.Props.Count; i++)
             {
                 byte variant = world.Props[i].Variant;
                 while (ruleCursor < RuleVariantByIndex.Length && RuleVariantByIndex[ruleCursor] != variant)
@@ -203,7 +243,7 @@ namespace Murim.Core.Tests.World
             }
         }
 
-        private static int ExpectedYCm(short[] heightCm, int xCm, int zCm, PropYRule rule)
+        private static int ExpectedYCm(IReadOnlyList<short> heightCm, int xCm, int zCm, PropYRule rule)
         {
             int cx = Primitives.Clamp(Primitives.FloorDiv(xCm, 100), 0, ValleyWorld.SizeM - 1);
             int cz = Primitives.Clamp(Primitives.FloorDiv(zCm, 100), 0, ValleyWorld.SizeM - 1);
@@ -225,14 +265,14 @@ namespace Murim.Core.Tests.World
             return h0 + Primitives.FloorDiv((h1 - h0) * fz, 100);
         }
 
-        private static void AssertOrderValid(PropInstance[] props, int[] order, string label)
+        private static void AssertOrderValid(IReadOnlyList<PropInstance> props, int[] order, string label)
         {
-            Assert.That(order.Length, Is.EqualTo(props.Length), label);
-            var seen = new bool[props.Length];
+            Assert.That(order.Length, Is.EqualTo(props.Count), label);
+            var seen = new bool[props.Count];
             for (int k = 0; k < order.Length; k++)
             {
                 int idx = order[k];
-                Assert.That(idx, Is.InRange(0, props.Length - 1), label);
+                Assert.That(idx, Is.InRange(0, props.Count - 1), label);
                 Assert.That(seen[idx], Is.False, $"{label} duplicate index {idx}");
                 seen[idx] = true;
 
