@@ -37,7 +37,7 @@ To waive a specific blocking deterministic gate finding, record an entry here co
 
 ## Version decisions
 
-### v0.1.0 *(Draft 3 — all open product questions resolved; explicit spec approval pending)*
+### v0.1.0
 
 - **Fixed hand-built areas, deterministic core simulation (`2A`, `3A`, `5B`):** World areas are fixed and hand-built
   one area at a time rather than procedurally generated from a seed; `v0.1.0` delivers the first self-contained
@@ -68,4 +68,5 @@ To waive a specific blocking deterministic gate finding, record an entry here co
 - **Approved deferrals:** Man-made structures/items, adjacent world areas, NPCs/disciples/AI, full flight gameplay
   mechanics, cultivation/sect/combat/economy systems, persistent HUD/minimap, audio, day/night/weather cycles,
   title screen, and saving/loading. See [v0.1.0 Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Product spec approval:** *Pending explicit owner approval of Draft 3.*
+- **Product spec approval (`v0.1.0`):** Approved by the owner on 2026-11-28 covering `Draft 3` of
+  [docs/specs/v0.1.0.md](specs/v0.1.0.md) (`Status: Approved`). Exact owner approval quote: `"Approved."`
