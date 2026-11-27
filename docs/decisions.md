@@ -63,11 +63,14 @@ To waive a specific blocking deterministic gate finding, record an entry here co
     vision pillar 3 requires clear feedback for every action. See [F-07](specs/v0.1.0.md#features).
   - Accepted defaults: the view follows a slope walk only when the placeholder would otherwise be hidden (`EC-13`);
     `F` over a slope lands on the slope (`EC-14`); a blocked walk stops at the reachable ground closest to the
-    clicked spot (`EC-5`); a few open-air layers, the highest clearly above the ridge (`F-03`). See
+    clicked spot (`EC-5`); a few open-air layers, the highest clearly above the ridge (`F-03`); ambient water and
+    foliage motion keeps playing while the window is unfocused (`EC-4`). See
     [Edge cases](specs/v0.1.0.md#edge-cases).
 - **Approved deferrals:** Man-made structures/items, adjacent world areas, NPCs/disciples/AI, full flight gameplay
   mechanics, cultivation/sect/combat/economy systems, persistent HUD/minimap, camera floor stepping into open-air
   layers, audio, day/night/weather cycles, title screen, settings screen, and saving/loading. See
   [Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Product spec approval (`v0.1.0`):** `Draft 3` approved by the owner on 2026-11-28 (quote: `"Approved."`).
-  `Draft 4` amends product content and awaits new owner approval.
+- **Product spec approval (`v0.1.0`):** Approved by the owner on 2026-11-28 covering `Draft 4` of
+  [docs/specs/v0.1.0.md](specs/v0.1.0.md) (`Status: Approved`), with the proposed default for the unfocused
+  ambient-motion question accepted. Exact owner approval quote: `"Approved, default OK"`. Supersedes the earlier
+  approval of `Draft 3` (quote: `"Approved."`).
