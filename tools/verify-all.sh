@@ -182,9 +182,85 @@ run_build_suite() {
     exit 1
   fi
 
-  if [[ ! -f "$REPO_ROOT/Assets/StreamingAssets/Data/world.json" || ! -f "$REPO_ROOT/Assets/StreamingAssets/Data/camera.json" ]]; then
-    echo "INFO: StreamingAssets/Data/world.json and/or camera.json absent (owned by ARCH-002/ARCH-003)."
+  local built_data_dir="$REPO_ROOT/Builds/Windows/MurimLifeGame_Data/StreamingAssets/Data"
+  if [[ ! -f "$built_data_dir/world.json" || ! -f "$built_data_dir/camera.json" ]]; then
+    echo "ERROR: Built StreamingAssets/Data missing world.json or camera.json: $built_data_dir" >&2
+    exit 1
   fi
+
+  run_player_smoke_test "$exe_path"
+}
+
+run_player_smoke_test() {
+  # T-BLD-02
+  local exe_path="$1"
+  local smoke_log="$ARTIFACTS_DIR/player-smoke.log"
+  local smoke_log_native
+  smoke_log_native="$(to_native_path "$smoke_log")"
+  rm -f "$smoke_log"
+
+  "$exe_path" -seed 1 -logFile "$smoke_log_native" &
+  local player_pid=$!
+
+  local found=0
+  local i
+  for ((i = 0; i < 120; i++)); do
+    if [[ -f "$smoke_log" ]] && grep -qE '\[Murim\] World ready ' "$smoke_log"; then
+      found=1
+      break
+    fi
+    if ! kill -0 "$player_pid" 2>/dev/null; then
+      break
+    fi
+    sleep 0.5
+  done
+
+  if kill -0 "$player_pid" 2>/dev/null; then
+    local kill_rc=0
+    kill "$player_pid" 2>/dev/null || kill_rc=$?
+    wait "$player_pid" 2>/dev/null || kill_rc=$?
+  fi
+
+  if [[ "$found" -ne 1 ]]; then
+    echo "ERROR: Timed out or exited before [Murim] World ready appeared in $smoke_log" >&2
+    exit 1
+  fi
+
+  local golden_file="$REPO_ROOT/Assets/Tests/Engine/Shared/GoldenHashes.cs"
+  local seed1_hex
+  seed1_hex="$(sed -nE 's/.*Seed1[[:space:]]*=[[:space:]]*0x([0-9A-Fa-f]{16})UL.*/\1/p' "$golden_file" | tr '[:lower:]' '[:upper:]')"
+  if [[ ${#seed1_hex} -ne 16 ]]; then
+    echo "ERROR: Failed to read 16-hex Seed1 from $golden_file" >&2
+    exit 1
+  fi
+
+  if ! grep -qE "\\[Murim\\] World ready seed=1 source=cli hash=${seed1_hex} props=[0-9]+ ms=[0-9]+" "$smoke_log"; then
+    echo "ERROR: player-smoke.log missing expected seed=1 source=cli hash=${seed1_hex} line." >&2
+    exit 1
+  fi
+
+  local cur_user cur_host cur_user_lc cur_host_lc
+  cur_user="${USERNAME:-${USER:-}}"
+  cur_host="${COMPUTERNAME:-${HOSTNAME:-}}"
+  cur_user_lc="$(printf '%s' "$cur_user" | tr '[:upper:]' '[:lower:]')"
+  cur_host_lc="$(printf '%s' "$cur_host" | tr '[:upper:]' '[:lower:]')"
+
+  local line line_lc
+  while IFS= read -r line; do
+    if [[ "$line" == *"/"* || "$line" == *"\\"* ]]; then
+      echo "ERROR: [Murim] log line contains path separator: $line" >&2
+      exit 1
+    fi
+    line_lc="$(printf '%s' "$line" | tr '[:upper:]' '[:lower:]')"
+    if [[ -n "$cur_user_lc" && "$line_lc" == *"$cur_user_lc"* ]]; then
+      echo "ERROR: [Murim] log line contains user name." >&2
+      exit 1
+    fi
+    if [[ -n "$cur_host_lc" && "$line_lc" == *"$cur_host_lc"* ]]; then
+      echo "ERROR: [Murim] log line contains machine name." >&2
+      exit 1
+    fi
+  done < <(grep -F '[Murim]' "$smoke_log")
 }
 
 assert_exit_code() {
