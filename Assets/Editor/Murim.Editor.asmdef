@@ -3,7 +3,11 @@
   "rootNamespace": "Murim.Editor",
   "references": [
     "Murim.Core",
-    "Murim.View"
+    "Murim.View",
+    "Unity.InputSystem",
+    "Unity.TextMeshPro",
+    "Unity.TextMeshPro.Editor",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [
     "Editor"

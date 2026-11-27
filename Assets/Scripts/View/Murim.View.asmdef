@@ -3,7 +3,9 @@
   "rootNamespace": "Murim.View",
   "references": [
     "Murim.Core",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

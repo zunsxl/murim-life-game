@@ -47,6 +47,7 @@ namespace Murim.View
         public IReadOnlyList<MeshRenderer> TerrainRenderers { get; private set; }
         public WaterSceneObjects WaterObjects { get; private set; }
         public PropView PropView { get; private set; }
+        public SystemOverlay SystemOverlay { get; private set; }
 
         private void Awake()
         {
@@ -63,6 +64,7 @@ namespace Murim.View
             SetupCameraAndBackdrop(World);
             CameraConfig = LoadCameraConfig();
             SetupCameraDriver(World, CameraConfig);
+            SetupSystemOverlay();
 
             stopwatch.Stop();
             LogWorldReady(World, seedSource, (int)stopwatch.ElapsedMilliseconds);
@@ -144,6 +146,23 @@ namespace Murim.View
             var rig = new CameraRig(frame, cameraConfig, initialAspect, initialScreenHeight);
             Transform backdropTransform = backdropRenderer != null ? backdropRenderer.transform : null;
             cameraRigDriver.Initialize(targetCamera, backdropTransform, rig, PropView);
+        }
+
+        private void SetupSystemOverlay()
+        {
+            GameObject prefab = Resources.Load<GameObject>("Prefabs/SystemOverlay");
+            if (prefab == null)
+            {
+                return;
+            }
+
+            GameObject instance = Instantiate(prefab);
+            instance.name = "SystemOverlay";
+            SystemOverlay = instance.GetComponent<SystemOverlay>();
+            if (SystemOverlay != null)
+            {
+                SystemOverlay.Initialize(cameraRigDriver);
+            }
         }
 
         private static void ApplyAtmosphereGlobals(ValleyWorld world)
