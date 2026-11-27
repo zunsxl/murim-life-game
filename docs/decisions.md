@@ -37,30 +37,35 @@ To waive a specific blocking deterministic gate finding, record an entry here co
 
 ## Version decisions
 
-### v0.1.0 *(Draft 2 — product spec approval pending)*
+### v0.1.0 *(Draft 3 — all open product questions resolved; explicit spec approval pending)*
 
 - **Fixed hand-built areas, deterministic core simulation (`2A`, `3A`, `5B`):** World areas are fixed and hand-built
   one area at a time rather than procedurally generated from a seed; `v0.1.0` delivers the first self-contained
   spacious mountain valley (roughly 3–5× default screen width) enclosed by natural perimeter features, while core
   world and movement rules remain deterministic. Replaces seed-based map generation in **Standing rules**
   (2026-11-28). See [v0.1.0 Features](specs/v0.1.0.md#features).
-- **Pure natural environment (`4A`):** `v0.1.0` focuses purely on natural landscape features (tiered grassy
-  clearings, rocky cliffs, gentle natural slopes, upper bamboo grove, scattered mountain trees, boulders, shrubs,
-  wildflowers, cascading waterfall, and flowing rocky river) with zero man-made structures or items. See
+- **Pure natural environment (`4A`, Open question 5A):** `v0.1.0` focuses purely on natural landscape features
+  (tiered grassy clearings, rocky cliffs, gentle natural slopes, upper dense bamboo grove, scattered mountain
+  trees, boulders, shrubs, wildflowers, cascading waterfall, and flowing rocky river) with zero man-made structures
+  or items; the entire river channel and upper dense bamboo grove are impassable on foot. See
   [v0.1.0 Features](specs/v0.1.0.md#features) and [Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Multi-level verticality for future character flight (`6A`, `8A`, `13A`, `17A`):** Approved project direction:
-  the world uses stacked multi-level ground tiers plus open-air altitude layers to support future character flight.
-  In `v0.1.0`, ground tiers connect via a mix of gentle walkable slopes and sheer cliffs, viewed from a fixed
-  angled overhead camera (`10A`) with manual floor-level stepping/slicing; full flight gameplay mechanics are
-  deferred to future versions. See [v0.1.0 Features](specs/v0.1.0.md#features) and
-  [Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Exploration, placeholder, presentation, and atmosphere (`9A + 9C`, `11C`, `12A`, `14A`, `15A`, `16A`, `D1–D4`):**
-  Direct launch into the valley with zero persistent HUD, a brief auto-fading floor label on floor changes, an
-  `Esc` system menu (`Resume`, `Reset View`, `Quit`), steady daytime / golden-hour lighting with subtle ambient
-  water/foliage motion (no audio), free camera controls anytime, and a controllable test placeholder supporting
-  ground walking on slopes plus vertical open-air ascent/descent. See [v0.1.0 Controls](specs/v0.1.0.md#controls)
-  and [Edge cases](specs/v0.1.0.md#edge-cases).
+- **Multi-level verticality for future character flight (`6A`, `8A`, `13A`, `17A`, Open questions 3A, 4A):**
+  Approved project direction: the world uses stacked multi-level ground tiers plus open-air altitude layers to
+  support future character flight. In `v0.1.0`, ground tiers connect via a mix of gentle walkable slopes and sheer
+  cliffs, viewed from a fixed angled overhead camera (`10A`) opening in unobstructed Full View with manual
+  floor-level stepping/slicing; full flight gameplay mechanics are deferred to future versions. See
+  [v0.1.0 Features](specs/v0.1.0.md#features) and [Out of scope](specs/v0.1.0.md#out-of-scope).
+- **Exploration, placeholder, controls, presentation, and atmosphere (`9A + 9C`, `11C`, `12A`, `14A`, `15A`, `16A`, `D1–D4`, Open questions 1–6 defaults accepted):**
+  Direct launch into the valley with zero persistent HUD, brief auto-fading floor label on manual floor-step and
+  placeholder ascend/descend inputs (including clamped limits, not on walking slopes), `Esc` system menu
+  (`Resume` leaving interrupted walks cancelled, `Reset View` restoring camera/Full View without moving the
+  placeholder, `Quit`), steady daytime / golden-hour lighting with subtle ambient water/foliage motion (no audio),
+  free camera (`WASD`/Arrows, right/middle-mouse drag, scroll zoom, `PageUp`/`]`/`PageDown`/`[`, `Space`, `Home`),
+  and a controllable test placeholder (`Left-click` projected onto the placeholder's current floor with slope routing
+  around cliffs when reachable, `R`/`F` ascend/descend adjusting the viewed floor only when needed to keep the
+  placeholder visible). See [v0.1.0 Controls](specs/v0.1.0.md#controls) and
+  [Edge cases](specs/v0.1.0.md#edge-cases).
 - **Approved deferrals:** Man-made structures/items, adjacent world areas, NPCs/disciples/AI, full flight gameplay
   mechanics, cultivation/sect/combat/economy systems, persistent HUD/minimap, audio, day/night/weather cycles,
   title screen, and saving/loading. See [v0.1.0 Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Product spec approval:** *Pending explicit owner approval of Draft 2 (and resolution of Open questions 1–6).*
+- **Product spec approval:** *Pending explicit owner approval of Draft 3.*
