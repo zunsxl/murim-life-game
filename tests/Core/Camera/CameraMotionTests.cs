@@ -416,10 +416,30 @@ namespace Murim.Core.Tests.Camera
             midPanRig.Tick(in repress, Dt60Hz);
             Assert.That(midPanRig.Vu, Is.GreaterThan(0f));
 
-            // Interrupting reset with: (a) new pan key, (b) new drag, (c) scroll.
-            AssertResetInterruptedBy(i => { i.PanWest = true; return i; }, checkDeltaH: true);
-            AssertResetInterruptedBy(i => { i.DragHeld = true; i.PointerNdcX = 0.1f; i.PointerNdcY = 0.1f; return i; }, checkDeltaH: true);
-            AssertResetInterruptedBy(i => { i.ScrollNotches = 1f; i.PointerNdcX = 0f; i.PointerNdcY = 0f; return i; }, checkDeltaH: false);
+            // Interrupting reset with: (a) new pan key, (b) new drag, (c) scroll at the three T-CORE-23 pointers.
+            AssertResetInterruptedBy(i => { i.PanWest = true; return i; }, 0.01f);
+            AssertResetInterruptedBy(i => { i.DragHeld = true; i.PointerNdcX = 0.1f; i.PointerNdcY = 0.1f; return i; }, 0.01f);
+
+            (float sx, float sy)[] scrollPointers = { (0f, 0f), (0.6f, -0.4f), (-0.9f, 0.9f) };
+            float[] scrollNotches = { 1f, -1f };
+            foreach ((float sx, float sy) in scrollPointers)
+            {
+                foreach (float notch in scrollNotches)
+                {
+                    float px = sx;
+                    float py = sy;
+                    float n = notch;
+                    AssertResetInterruptedBy(
+                        i =>
+                        {
+                            i.ScrollNotches = n;
+                            i.PointerNdcX = px;
+                            i.PointerNdcY = py;
+                            return i;
+                        },
+                        0.02f);
+                }
+            }
         }
 
         // T-CORE-27
@@ -566,7 +586,7 @@ namespace Murim.Core.Tests.Camera
 
         private static void AssertResetInterruptedBy(
             Func<CameraInput, CameraInput> buildInterrupt,
-            bool checkDeltaH)
+            float maxDeltaFraction)
         {
             CameraRig rig = CreatePannedAndZoomedRig();
             CameraInput reset = BaseInput();
@@ -589,12 +609,9 @@ namespace Murim.Core.Tests.Camera
             Assert.That(rig.Mode, Is.EqualTo(CameraMode.Free));
             float deltaC = MathF.Sqrt(
                 (rig.Cu - beforeCu) * (rig.Cu - beforeCu) + (rig.Cv - beforeCv) * (rig.Cv - beforeCv));
-            Assert.That(deltaC, Is.LessThan(0.01f * beforeH));
-            if (checkDeltaH)
-            {
-                float deltaH = MathF.Abs(rig.H - beforeH);
-                Assert.That(deltaH, Is.LessThan(0.01f * beforeH));
-            }
+            float deltaH = MathF.Abs(rig.H - beforeH);
+            Assert.That(deltaC, Is.LessThan(maxDeltaFraction * beforeH));
+            Assert.That(deltaH, Is.LessThan(maxDeltaFraction * beforeH));
         }
 
         private static void AssertDragWithScrollLeavesNoAnchor(bool scrollOnDragStart)
