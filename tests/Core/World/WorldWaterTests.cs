@@ -18,9 +18,9 @@ namespace Murim.Core.Tests.World
 
         internal static void AssertWaterInvariants(ValleyWorld world)
         {
-            Assert.That(world.Stream.Length, Is.GreaterThanOrEqualTo(80), $"seed={world.Seed}");
-            Assert.That(world.Brook.Length, Is.EqualTo(16), $"seed={world.Seed}");
-            Assert.That(world.Waterfall.Length, Is.EqualTo(13), $"seed={world.Seed}");
+            Assert.That(world.Stream.Count, Is.GreaterThanOrEqualTo(80), $"seed={world.Seed}");
+            Assert.That(world.Brook.Count, Is.EqualTo(16), $"seed={world.Seed}");
+            Assert.That(world.Waterfall.Count, Is.EqualTo(13), $"seed={world.Seed}");
             Assert.That(ValleyWorld.WaterfallWidthCm, Is.EqualTo(300));
 
             int brookLevel = world.Brook[0].LevelCm;
@@ -28,9 +28,9 @@ namespace Murim.Core.Tests.World
             int midCm = world.Config.MidTierHeightM * 100;
             Assert.That(brookLevel - plungeLevel, Is.InRange(midCm - 100, midCm - 30), $"seed={world.Seed}");
 
-            Assert.That(world.Stream[world.Stream.Length - 1].ZCm, Is.LessThanOrEqualTo(0), $"seed={world.Seed}");
+            Assert.That(world.Stream[world.Stream.Count - 1].ZCm, Is.LessThanOrEqualTo(0), $"seed={world.Seed}");
 
-            for (int i = 0; i < world.Stream.Length; i++)
+            for (int i = 0; i < world.Stream.Count; i++)
             {
                 WaterNode n = world.Stream[i];
                 if (i > 0)
@@ -79,7 +79,7 @@ namespace Murim.Core.Tests.World
                     int px = x * 100;
                     int bestE = int.MaxValue;
                     int bestLevel = 0;
-                    for (int i = 0; i < world.Stream.Length - 1; i++)
+                    for (int i = 0; i < world.Stream.Count - 1; i++)
                     {
                         WaterNode a = world.Stream[i];
                         WaterNode b = world.Stream[i + 1];

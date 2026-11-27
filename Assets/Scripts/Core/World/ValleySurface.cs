@@ -1,13 +1,32 @@
 using System;
+using System.Collections.Generic;
 
 namespace Murim.Core.World
 {
     /// <summary>
     /// Surface layer weights (§3.1.6) and screen-plane view frame (§3.1.7).
     /// </summary>
-    internal static class ValleySurface
+    public static class ValleySurface
     {
-        public static void ComputeSurfaceWeights(ValleyGenerationState state)
+        public static void ComputeGradient(IReadOnlyList<short> heightCm, int x, int z, out int gx, out int gz)
+        {
+            if (heightCm == null)
+            {
+                throw new ArgumentNullException(nameof(heightCm));
+            }
+
+            var n = new NeighborIndices(x, z);
+            gx = heightCm[n.Right] - heightCm[n.Left];
+            gz = heightCm[n.Up] - heightCm[n.Down];
+        }
+
+        public static int ComputeGradePct(IReadOnlyList<short> heightCm, int x, int z)
+        {
+            ComputeGradient(heightCm, x, z, out int gx, out int gz);
+            return ComputeGradeFromGradient(gx, gz);
+        }
+
+        internal static void ComputeSurfaceWeights(ValleyGenerationState state)
         {
             int[] w = new int[ValleyWorld.SurfaceLayerCount];
             for (int z = 0; z < ValleyWorld.VertsPerSide; z++)
@@ -20,7 +39,7 @@ namespace Murim.Core.World
             }
         }
 
-        public static void ComputeViewFrame(ValleyGenerationState state)
+        internal static void ComputeViewFrame(ValleyGenerationState state)
         {
             int bottom = int.MinValue;
             int crest = int.MaxValue;
@@ -79,16 +98,38 @@ namespace Murim.Core.World
             WriteNormalizedBytes(w, state.SurfaceWeights, idx * ValleyWorld.SurfaceLayerCount);
         }
 
+        private readonly struct NeighborIndices
+        {
+            public NeighborIndices(int x, int z)
+            {
+                int xm = x > 0 ? x - 1 : 0;
+                int xp = x < ValleyWorld.SizeM ? x + 1 : ValleyWorld.SizeM;
+                int zm = z > 0 ? z - 1 : 0;
+                int zp = z < ValleyWorld.SizeM ? z + 1 : ValleyWorld.SizeM;
+                int rowZ = z * ValleyWorld.VertsPerSide;
+
+                Left = rowZ + xm;
+                Right = rowZ + xp;
+                Down = zm * ValleyWorld.VertsPerSide + x;
+                Up = zp * ValleyWorld.VertsPerSide + x;
+            }
+
+            public int Left { get; }
+            public int Right { get; }
+            public int Down { get; }
+            public int Up { get; }
+        }
+
         private static int ComputeGradePct(int[] height, int x, int z)
         {
-            int xm = x > 0 ? x - 1 : 0;
-            int xp = x < ValleyWorld.SizeM ? x + 1 : ValleyWorld.SizeM;
-            int zm = z > 0 ? z - 1 : 0;
-            int zp = z < ValleyWorld.SizeM ? z + 1 : ValleyWorld.SizeM;
+            var n = new NeighborIndices(x, z);
+            int gx = height[n.Right] - height[n.Left];
+            int gz = height[n.Up] - height[n.Down];
+            return ComputeGradeFromGradient(gx, gz);
+        }
 
-            int rowZ = z * ValleyWorld.VertsPerSide;
-            int gx = height[rowZ + xp] - height[rowZ + xm];
-            int gz = height[zp * ValleyWorld.VertsPerSide + x] - height[zm * ValleyWorld.VertsPerSide + x];
+        private static int ComputeGradeFromGradient(int gx, int gz)
+        {
             return (int)Primitives.FloorDiv(Primitives.Isqrt((long)gx * gx + (long)gz * gz), 2L);
         }
 

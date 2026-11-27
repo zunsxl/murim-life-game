@@ -1,3 +1,4 @@
+using System;
 using Murim.Core.World;
 using NUnit.Framework;
 
@@ -14,6 +15,42 @@ namespace Murim.Core.Tests.World
             {
                 AssertSurfaceInvariants(world);
             }
+        }
+
+        // T-CORE-10
+        [Test]
+        public void ComputeGradientAndGradePct_MatchFormulaAndBoundaryClamping()
+        {
+            var heights = new short[ValleyWorld.VertexCount];
+            heights[20 * ValleyWorld.VertsPerSide + 9] = 100;
+            heights[20 * ValleyWorld.VertsPerSide + 11] = 220;
+            heights[19 * ValleyWorld.VertsPerSide + 10] = 50;
+            heights[21 * ValleyWorld.VertsPerSide + 10] = 210;
+
+            ValleySurface.ComputeGradient(heights, 10, 20, out int gx, out int gz);
+            Assert.That(gx, Is.EqualTo(120));
+            Assert.That(gz, Is.EqualTo(160));
+            Assert.That(ValleySurface.ComputeGradePct(heights, 10, 20), Is.EqualTo(100));
+
+            heights[0] = 10;
+            heights[1] = 70;
+            heights[ValleyWorld.VertsPerSide] = 90;
+            ValleySurface.ComputeGradient(heights, 0, 0, out int edgeGx, out int edgeGz);
+            Assert.That(edgeGx, Is.EqualTo(60));
+            Assert.That(edgeGz, Is.EqualTo(80));
+            Assert.That(ValleySurface.ComputeGradePct(heights, 0, 0), Is.EqualTo(50));
+
+            int maxRow = ValleyWorld.SizeM * ValleyWorld.VertsPerSide;
+            heights[maxRow + ValleyWorld.SizeM - 1] = 100;
+            heights[maxRow + ValleyWorld.SizeM] = 400;
+            heights[(ValleyWorld.SizeM - 1) * ValleyWorld.VertsPerSide + ValleyWorld.SizeM] = 100;
+            ValleySurface.ComputeGradient(heights, ValleyWorld.SizeM, ValleyWorld.SizeM, out int topGx, out int topGz);
+            Assert.That(topGx, Is.EqualTo(300));
+            Assert.That(topGz, Is.EqualTo(300));
+            Assert.That(ValleySurface.ComputeGradePct(heights, ValleyWorld.SizeM, ValleyWorld.SizeM), Is.EqualTo(212));
+
+            Assert.Throws<ArgumentNullException>(() => ValleySurface.ComputeGradient(null, 0, 0, out _, out _));
+            Assert.Throws<ArgumentNullException>(() => ValleySurface.ComputeGradePct(null, 0, 0));
         }
 
         private static void AssertSurfaceInvariants(ValleyWorld world)
