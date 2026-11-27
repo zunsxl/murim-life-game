@@ -13,8 +13,7 @@ and explicit quality-gate waivers. Update an existing entry rather than recordin
   committed as runtime assets.
 - **Deterministic simulation:** World areas are fixed and hand-built (retiring seed-based map layout generation),
   while core simulation rules and state in `Assets/Scripts/Core/` remain pure C# and deterministic. *(Amended
-  2026-11-28 in `v0.1.0` per owner decision `2A`; replaced the earlier standing rule requiring seed-deterministic
-  map generation.)*
+  2026-11-28 in `v0.1.0`; replaced the earlier standing rule requiring seed-deterministic map generation.)*
 - **Branch naming:** Use `vX.Y.Z-spec`, `vX.Y.Z-impl`, `vX.Y.Z-impl-ARCH-NNN`, and `vX.Y.Z-docs`. Never name a
   branch `vX.Y.Z` (reserved for release tags).
 
@@ -39,34 +38,36 @@ To waive a specific blocking deterministic gate finding, record an entry here co
 
 ### v0.1.0
 
-- **Fixed hand-built areas, deterministic core simulation (`2A`, `3A`, `5B`):** World areas are fixed and hand-built
-  one area at a time rather than procedurally generated from a seed; `v0.1.0` delivers the first self-contained
-  spacious mountain valley (roughly 3–5× default screen width) enclosed by natural perimeter features, while core
-  world and movement rules remain deterministic. Replaces seed-based map generation in **Standing rules**
-  (2026-11-28). See [v0.1.0 Features](specs/v0.1.0.md#features).
-- **Pure natural environment (`4A`, Open question 5A):** `v0.1.0` focuses purely on natural landscape features
-  (tiered grassy clearings, rocky cliffs, gentle natural slopes, upper dense bamboo grove, scattered mountain
-  trees, boulders, shrubs, wildflowers, cascading waterfall, and flowing rocky river) with zero man-made structures
-  or items; the entire river channel and upper dense bamboo grove are impassable on foot. See
-  [v0.1.0 Features](specs/v0.1.0.md#features) and [Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Multi-level verticality for future character flight (`6A`, `8A`, `13A`, `17A`, Open questions 3A, 4A):**
-  Approved project direction: the world uses stacked multi-level ground tiers plus open-air altitude layers to
-  support future character flight. In `v0.1.0`, ground tiers connect via a mix of gentle walkable slopes and sheer
-  cliffs, viewed from a fixed angled overhead camera (`10A`) opening in unobstructed Full View with manual
-  floor-level stepping/slicing; full flight gameplay mechanics are deferred to future versions. See
-  [v0.1.0 Features](specs/v0.1.0.md#features) and [Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Exploration, placeholder, controls, presentation, and atmosphere (`9A + 9C`, `11C`, `12A`, `14A`, `15A`, `16A`, `D1–D4`, Open questions 1–6 defaults accepted):**
-  Direct launch into the valley with zero persistent HUD, brief auto-fading floor label on manual floor-step and
-  placeholder ascend/descend inputs (including clamped limits, not on walking slopes), `Esc` system menu
-  (`Resume` leaving interrupted walks cancelled, `Reset View` restoring camera/Full View without moving the
-  placeholder, `Quit`), steady daytime / golden-hour lighting with subtle ambient water/foliage motion (no audio),
-  free camera (`WASD`/Arrows, right/middle-mouse drag, scroll zoom, `PageUp`/`]`/`PageDown`/`[`, `Space`, `Home`),
-  and a controllable test placeholder (`Left-click` projected onto the placeholder's current floor with slope routing
-  around cliffs when reachable, `R`/`F` ascend/descend adjusting the viewed floor only when needed to keep the
-  placeholder visible). See [v0.1.0 Controls](specs/v0.1.0.md#controls) and
-  [Edge cases](specs/v0.1.0.md#edge-cases).
+- **Fixed hand-built areas:** World areas are fixed and hand-built one at a time instead of generated from a seed;
+  `v0.1.0` delivers one self-contained valley (roughly 3–5× default screen width) enclosed by natural perimeter
+  features. Reason: places should be intentionally composed rather than procedurally randomized, while behavior
+  stays repeatable. Replaces seed-based map generation in **Standing rules** (2026-11-28). See
+  [Features](specs/v0.1.0.md#features).
+- **Pure natural environment:** No man-made structures or items; the river channel and upper bamboo grove are
+  impassable on foot. Reason: the valley is an untamed corner of the world before any sect builds on it. See
+  [Design principles](specs/v0.1.0.md#design-principles).
+- **Multi-level verticality:** The world uses stacked ground floors plus open-air altitude layers, joined by gentle
+  slopes and sheer cliffs, under a fixed-angle overhead camera. Reason: to support future character flight. See
+  [Features](specs/v0.1.0.md#features).
+- **Exploration controls and presentation:** Free camera with floor stepping, a click-to-move test placeholder with
+  `R`/`F` ascend/descend, no persistent HUD, and an `Esc` menu. Reason: the player can inspect and verify the whole
+  valley without switching modes. See [Controls](specs/v0.1.0.md#controls).
+- **Draft 4 amendments (2026-11-28, owner answers to the spec review):**
+  - Left-click targets the ground under the cursor when it is reachable on foot, otherwise the placeholder's own
+    floor. Reason: clicking a terrace must send the placeholder to that terrace. See
+    [CE-8](specs/v0.1.0.md#controls).
+  - Camera floor stepping covers only ground floors and Full View, the same both ways; open-air layers are
+    placeholder altitudes only. Reason: an air-layer view looked identical to Full View. See
+    [CE-4/CE-5](specs/v0.1.0.md#controls).
+  - Each left-click shows a brief auto-fading destination marker that reads differently when unreachable. Reason:
+    vision pillar 3 requires clear feedback for every action. See [F-07](specs/v0.1.0.md#features).
+  - Accepted defaults: the view follows a slope walk only when the placeholder would otherwise be hidden (`EC-13`);
+    `F` over a slope lands on the slope (`EC-14`); a blocked walk stops at the reachable ground closest to the
+    clicked spot (`EC-5`); a few open-air layers, the highest clearly above the ridge (`F-03`). See
+    [Edge cases](specs/v0.1.0.md#edge-cases).
 - **Approved deferrals:** Man-made structures/items, adjacent world areas, NPCs/disciples/AI, full flight gameplay
-  mechanics, cultivation/sect/combat/economy systems, persistent HUD/minimap, audio, day/night/weather cycles,
-  title screen, and saving/loading. See [v0.1.0 Out of scope](specs/v0.1.0.md#out-of-scope).
-- **Product spec approval (`v0.1.0`):** Approved by the owner on 2026-11-28 covering `Draft 3` of
-  [docs/specs/v0.1.0.md](specs/v0.1.0.md) (`Status: Approved`). Exact owner approval quote: `"Approved."`
+  mechanics, cultivation/sect/combat/economy systems, persistent HUD/minimap, camera floor stepping into open-air
+  layers, audio, day/night/weather cycles, title screen, settings screen, and saving/loading. See
+  [Out of scope](specs/v0.1.0.md#out-of-scope).
+- **Product spec approval (`v0.1.0`):** `Draft 3` approved by the owner on 2026-11-28 (quote: `"Approved."`).
+  `Draft 4` amends product content and awaits new owner approval.
