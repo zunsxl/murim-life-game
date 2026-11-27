@@ -74,3 +74,6 @@ To waive a specific blocking deterministic gate finding, record an entry here co
   [docs/specs/v0.1.0.md](specs/v0.1.0.md) (`Status: Approved`), with the proposed default for the unfocused
   ambient-motion question accepted. Exact owner approval quote: `"Approved, default OK"`. Supersedes the earlier
   approval of `Draft 3` (quote: `"Approved."`).
+
+- **Art option selections (v0.1.0):** The owner chose 1A, 2B, 3A, 4A, 5B, 6A, 7A, 8A, 9A and 10C in chat. The initial selection was followed by the clarification `"8A, 10C."`. Reason: these selections establish the natural valley treatment, readable test feedback and restrained interface for v0.1.0. See [Art requirements](specs/v0.1.0.md#art-requirements) and [Art direction](art-direction.md#v010-visual-direction).
+- **Art inventory approval and publication (v0.1.0):** The owner approved Art Draft 1, covering ART-001 through ART-021, the exact variant counts, defaults and version-scoped art direction, and authorized publication to the existing PR #6. Exact approval quote: `"Approved. Push it to the PR."` No additional art deferrals. Reason: complete the approved valley specification with the selected visual direction and a complete art inventory. See [Art requirements](specs/v0.1.0.md#art-requirements) and [Art direction](art-direction.md#v010-visual-direction).

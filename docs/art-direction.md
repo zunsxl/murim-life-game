@@ -12,6 +12,19 @@ Authoritative visual direction and art rules for the project. When this document
 - **State legibility:** Interactive states (hover, preview, selected, disabled, active, damaged) must be
   distinguishable at a glance against all expected backgrounds.
 
+## v0.1.0 visual direction
+
+- Use detailed painted naturalism with readable large forms and restrained surface detail (1A).
+- Use stable neutral daylight, fresh natural greens, cool gray granite and clear green water (2B); individual warm comparison panels do not override this palette.
+- Use irregular broken granite cliffs and boulders, broad natural slopes, mountain pines, dense ridge bamboo, low shrubs, grass and restrained white/yellow flowers (3A, 4A).
+- Water uses clear green rocky flow, submerged stones and narrow cascades (5B).
+- The test subject is a matte ivory capsule with a dark base (6A). Its airborne projection uses a thin vertical guide and surface ring (7A), distinct from a cast shadow or destination marker.
+- Upper obstructions briefly fade to complete removal (8A). Cut surfaces remain visually consistent with natural terrain.
+- Reachable destinations use a pale ring; unreachable destinations use an amber broken ring with an X (9A). Shape, not color alone, conveys the difference.
+- The menu and brief floor label use restrained slate-and-bronze framing with legible light text (10C).
+- Preserve a purely natural, unbuilt Murim/Wuxia valley. No sect insignia, invented lore, supernatural scenery or man-made landscape elements are introduced.
+- Exact families, counts, states and acceptance criteria belong in the version's Art requirements inventory. The choices above do not establish technical delivery contracts or implementation architecture.
+
 ## Art Inventory & Delivery Conventions
 
 - Every in-scope art asset or asset family is assigned a stable `ART-NNN` identifier in the version's product spec
