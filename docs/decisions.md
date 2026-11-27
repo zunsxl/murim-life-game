@@ -21,7 +21,7 @@ and explicit quality-gate waivers. Update an existing entry rather than recordin
 | Rule | Policy |
 |---|---|
 | Production art sourcing | Owner obtains and commits production art; sourcing and licensing are the owner's decision. |
-| Illustrative mockups | Allowed before spec approval using existing project art, composites, or manual edits. Image generation is disallowed unless explicitly permitted by the owner for a specific version. |
+| Illustrative mockups | Allowed before approval using any method, including AI image generation, existing project art, composites, or manual edits. Mockups are illustrative only and are not committed as runtime assets. |
 | Shipping exclusions | Never ship watermarked previews, unverified third-party extracts, or reference images from `docs/references/`. |
 
 ## Quality-gate waivers
