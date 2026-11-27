@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Reflection;
+using System.Security;
 using System.Text;
 using Murim.Core.Common;
 using UnityEngine;
@@ -36,12 +38,6 @@ namespace Murim.View
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
 
         internal static ConfigFileAccess FileAccess { get; set; } = ReadFromStreamingAssets;
-
-        [Serializable]
-        private sealed class SchemaProbe
-        {
-            public int schemaVersion;
-        }
 
         public static bool TryLoad<TDto>(string fileName, out TDto dto) where TDto : class
         {
@@ -91,24 +87,8 @@ namespace Murim.View
         private static bool TryReadText(string fileName, out string text)
         {
             text = null;
-            ConfigFileAccess reader = FileAccess ?? ReadFromStreamingAssets;
-            ConfigFileProbe probe = reader(fileName);
-            if (!probe.Exists)
+            if (!TryReadRawBytes(fileName, out byte[] raw))
             {
-                WarnIgnored(fileName, "missing");
-                return false;
-            }
-
-            if (probe.LengthBytes > MaxFileBytes)
-            {
-                WarnIgnored(fileName, "oversized");
-                return false;
-            }
-
-            byte[] raw = probe.ReadBytes != null ? probe.ReadBytes() : null;
-            if (raw == null)
-            {
-                WarnIgnored(fileName, "missing");
                 return false;
             }
 
@@ -119,6 +99,51 @@ namespace Murim.View
             }
 
             return TryDecodeUtf8(fileName, raw, out text);
+        }
+
+        private static bool TryReadRawBytes(string fileName, out byte[] raw)
+        {
+            raw = null;
+            ConfigFileAccess reader = FileAccess ?? ReadFromStreamingAssets;
+            try
+            {
+                ConfigFileProbe probe = reader(fileName);
+                if (!probe.Exists)
+                {
+                    WarnIgnored(fileName, "missing");
+                    return false;
+                }
+
+                if (probe.LengthBytes > MaxFileBytes)
+                {
+                    WarnIgnored(fileName, "oversized");
+                    return false;
+                }
+
+                raw = probe.ReadBytes != null ? probe.ReadBytes() : null;
+                if (raw == null)
+                {
+                    WarnIgnored(fileName, "missing");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (IOException)
+            {
+                WarnIgnored(fileName, "unreadable");
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                WarnIgnored(fileName, "unreadable");
+                return false;
+            }
+            catch (SecurityException)
+            {
+                WarnIgnored(fileName, "unreadable");
+                return false;
+            }
         }
 
         private static bool TryDecodeUtf8(string fileName, byte[] raw, out string text)
@@ -142,7 +167,6 @@ namespace Murim.View
             dto = null;
             try
             {
-                SchemaProbe probe = JsonUtility.FromJson<SchemaProbe>(text);
                 dto = JsonUtility.FromJson<TDto>(text);
                 if (dto == null)
                 {
@@ -150,7 +174,12 @@ namespace Murim.View
                     return false;
                 }
 
-                if (probe == null || probe.schemaVersion != ExpectedSchemaVersion)
+                FieldInfo schemaField = typeof(TDto).GetField(
+                    "schemaVersion",
+                    BindingFlags.Public | BindingFlags.Instance);
+                if (schemaField == null
+                    || schemaField.FieldType != typeof(int)
+                    || (int)schemaField.GetValue(dto) != ExpectedSchemaVersion)
                 {
                     dto = null;
                     WarnIgnored(fileName, "schema");
