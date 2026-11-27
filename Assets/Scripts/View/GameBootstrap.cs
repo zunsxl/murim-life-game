@@ -5,6 +5,7 @@ using Murim.Core.Camera;
 using Murim.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.U2D;
 
 namespace Murim.View
 {
@@ -45,6 +46,7 @@ namespace Murim.View
         public CameraRigDriver CameraDriver => cameraRigDriver;
         public IReadOnlyList<MeshRenderer> TerrainRenderers { get; private set; }
         public WaterSceneObjects WaterObjects { get; private set; }
+        public PropView PropView { get; private set; }
 
         private void Awake()
         {
@@ -141,7 +143,7 @@ namespace Murim.View
 
             var rig = new CameraRig(frame, cameraConfig, initialAspect, initialScreenHeight);
             Transform backdropTransform = backdropRenderer != null ? backdropRenderer.transform : null;
-            cameraRigDriver.Initialize(targetCamera, backdropTransform, rig);
+            cameraRigDriver.Initialize(targetCamera, backdropTransform, rig, PropView);
         }
 
         private static void ApplyAtmosphereGlobals(ValleyWorld world)
@@ -176,6 +178,14 @@ namespace Murim.View
                 Foam = Resources.Load<Material>("Materials/WaterFoam"),
             };
             WaterObjects = WaterMeshBuilder.Build(world, waterMaterials, waterRoot.transform);
+
+            var propsRoot = new GameObject("Props");
+            propsRoot.layer = DrawOrder.WorldLayer;
+            propsRoot.transform.SetParent(worldRoot.transform, false);
+            var worldPropsAtlas = Resources.Load<SpriteAtlas>("Art/Props/WorldProps");
+            Material worldSpriteMat = Resources.Load<Material>("Materials/WorldSprite");
+            Material worldFloraMat = Resources.Load<Material>("Materials/WorldFlora");
+            PropView = PropView.Build(world, worldPropsAtlas, worldSpriteMat, worldFloraMat, propsRoot.transform);
         }
 
         private void SetupCameraAndBackdrop(ValleyWorld world)

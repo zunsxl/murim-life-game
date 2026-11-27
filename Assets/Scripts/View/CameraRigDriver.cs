@@ -15,6 +15,7 @@ namespace Murim.View
         private Camera _camera;
         private Transform _cameraTransform;
         private Transform _backdropTransform;
+        private PropView _propView;
         private float _lastAppliedH = -1f;
         private float _lastBackdropH = -1f;
         private float _lastBackdropAspect = -1f;
@@ -22,11 +23,16 @@ namespace Murim.View
         public CameraRig Rig { get; private set; }
         public bool Blocked { get; set; }
 
-        public void Initialize(Camera targetCamera, Transform backdropTransform, CameraRig rig)
+        public void Initialize(
+            Camera targetCamera,
+            Transform backdropTransform,
+            CameraRig rig,
+            PropView propView = null)
         {
             _camera = targetCamera;
             _cameraTransform = targetCamera != null ? targetCamera.transform : null;
             _backdropTransform = backdropTransform;
+            _propView = propView;
             Rig = rig;
             _lastAppliedH = -1f;
             _lastBackdropH = -1f;
@@ -166,6 +172,11 @@ namespace Murim.View
             {
                 float coarseBlend = Mathf.Clamp01((pose.H - 30f) / 40f) * 0.5f;
                 Shader.SetGlobalFloat(CoarseBlendId, coarseBlend);
+                if (_propView != null)
+                {
+                    _propView.ApplyViewHeight(pose.H);
+                }
+
                 _lastAppliedH = pose.H;
             }
         }
