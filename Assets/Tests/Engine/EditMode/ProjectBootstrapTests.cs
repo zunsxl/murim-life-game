@@ -69,7 +69,21 @@ namespace Murim.Tests.EditMode
                 ucObj.FindProperty("CrashReportingSettings.m_EnableCloudDiagnosticsReporting").boolValue,
                 Is.False);
 
+            Assert.That(
+                EditorBuildSettings.TryGetConfigObject("com.unity.input.settings", out InputSettings configuredInputSettings),
+                Is.True,
+                "Expected Input System settings registered under 'com.unity.input.settings'.");
+            Assert.That(configuredInputSettings, Is.Not.Null);
+            Assert.That(
+                AssetDatabase.GetAssetPath(configuredInputSettings),
+                Is.EqualTo("Assets/Settings/InputSystem.inputsettings.asset"));
+            Assert.That(
+                configuredInputSettings.scrollDeltaBehavior,
+                Is.EqualTo(InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms));
             Assert.That(InputSystem.settings, Is.Not.Null);
+            Assert.That(
+                InputSystem.settings.scrollDeltaBehavior,
+                Is.EqualTo(InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms));
 
             string versionText = File.ReadAllText("ProjectSettings/ProjectVersion.txt");
             Assert.That(versionText, Does.StartWith("m_EditorVersion: 6000.3."));
@@ -102,8 +116,10 @@ namespace Murim.Tests.EditMode
                 string pkg = m.Groups[1].Value;
                 string ver = m.Groups[2].Value;
                 Assert.That(ver, Is.Not.Empty, $"Package {pkg} has empty version");
-                Assert.That(ver.StartsWith("^") || ver.StartsWith("~") || ver == "*" || ver == "latest", Is.False,
-                    $"Package {pkg} must be pinned to an exact version, found {ver}");
+                Assert.That(
+                    Regex.IsMatch(ver, @"^\d+\.\d+\.\d+$"),
+                    Is.True,
+                    $"Package {pkg} must be pinned to an exact x.y.z version, found '{ver}'");
 
                 if (pkg.StartsWith("com.unity.modules."))
                 {
@@ -148,6 +164,21 @@ namespace Murim.Tests.EditMode
             {
                 string content = File.ReadAllText(file);
                 Assert.That(content, Does.Not.Contain("wantsToQuit"), $"Found wantsToQuit in {file}");
+            }
+        }
+
+        // T-ENG-02
+        [Test]
+        public void ScriptsFolder_DoesNotAssignInputSystemSettings()
+        {
+            string[] scriptFiles = Directory.GetFiles("Assets/Scripts", "*.cs", SearchOption.AllDirectories);
+            foreach (string file in scriptFiles)
+            {
+                string content = File.ReadAllText(file);
+                bool assignsSettings = Regex.IsMatch(
+                    content,
+                    @"InputSystem\s*\.\s*settings(?:\s*\.\s*[A-Za-z0-9_]+)?\s*=(?!=)");
+                Assert.That(assignsSettings, Is.False, $"Found InputSystem.settings assignment in {file}");
             }
         }
 

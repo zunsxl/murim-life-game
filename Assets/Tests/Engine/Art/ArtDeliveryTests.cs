@@ -37,18 +37,12 @@ namespace Murim.Tests.Art
                 }
 
                 bool needPixels = entry.RequiresAlpha || !string.IsNullOrEmpty(entry.ExactBottomRowHex);
-                PngReadResult png = PngReader.ReadFile(entry.AssetPath, needPixels);
+                PngReadResult png = ArtRules.ValidatePngFile(entry, needPixels, issues);
                 if (!png.Valid)
                 {
-                    issues.Add(new ArtValidationIssue(
-                        entry.ArtId,
-                        "ValidPng",
-                        Path.GetFileName(entry.AssetPath),
-                        png.Error));
                     continue;
                 }
 
-                ArtRules.ValidateImage(entry, png.Image, issues);
                 CheckImporterForEntry(entry, issues);
             }
 
@@ -78,18 +72,12 @@ namespace Murim.Tests.Art
                     continue;
                 }
 
-                PngReadResult png = PngReader.ReadFile(entry.AssetPath, true);
+                PngReadResult png = ArtRules.ValidatePngFile(entry, true, issues);
                 if (!png.Valid)
                 {
-                    issues.Add(new ArtValidationIssue(
-                        entry.ArtId,
-                        "ValidPng",
-                        Path.GetFileName(entry.AssetPath),
-                        png.Error));
                     continue;
                 }
 
-                ArtRules.ValidateImage(entry, png.Image, issues);
                 CheckImporterForEntry(entry, issues);
             }
 
@@ -136,19 +124,13 @@ namespace Murim.Tests.Art
                     continue;
                 }
 
-                PngReadResult png = PngReader.ReadFile(entry.AssetPath, true);
+                PngReadResult png = ArtRules.ValidatePngFile(entry, true, issues);
                 if (!png.Valid)
                 {
-                    issues.Add(new ArtValidationIssue(
-                        entry.ArtId,
-                        "ValidPng",
-                        Path.GetFileName(entry.AssetPath),
-                        png.Error));
                     continue;
                 }
 
                 buffers[Path.GetFileName(entry.AssetPath)] = png.Image;
-                ArtRules.ValidateImage(entry, png.Image, issues);
                 CheckImporterForEntry(entry, issues);
             }
 
