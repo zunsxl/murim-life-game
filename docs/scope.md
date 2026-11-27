@@ -17,4 +17,4 @@ require an owner decision recorded in [docs/decisions.md](decisions.md).
 
 | Version | Spec | Status | Notes |
 |---|---|---|---|
-| `v0.1.0` | `docs/specs/v0.1.0.md` *(not yet created)* | Planned | Initial milestone |
+| `v0.1.0` | [docs/specs/v0.1.0.md](specs/v0.1.0.md) | Released (2026-11-27) | *Mountain Valley World & Camera Exploration* — Windows (x64) release `v0.1.0`; owner playtest checklist in [tests/playtest/v0.1.0.md](../tests/playtest/v0.1.0.md). |
