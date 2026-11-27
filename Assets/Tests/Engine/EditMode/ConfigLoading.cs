@@ -245,7 +245,7 @@ namespace Murim.Tests.EditMode
         [Test]
         public void TryLoad_ProbeThrowsIOException_WarnsUnreadableAndReturnsFalse()
         {
-            string secretMessage = $"I/O error at C:\\Users\\{Environment.UserName}\\{Environment.MachineName}/world.json";
+            string secretMessage = $"I/O error at {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\world.json /sub";
             JsonConfigLoader.FileAccess = _ => throw new IOException(secretMessage);
 
             bool ok = false;
@@ -263,7 +263,7 @@ namespace Murim.Tests.EditMode
         [Test]
         public void TryLoad_ReadBytesThrowsIOException_WarnsUnreadableAndReturnsFalse()
         {
-            string secretMessage = $"Locked C:\\Users\\{Environment.UserName}\\{Environment.MachineName}/camera.json";
+            string secretMessage = $"Locked {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\camera.json /sub";
             JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
                 true,
                 128,
@@ -284,7 +284,7 @@ namespace Murim.Tests.EditMode
         [Test]
         public void TryLoad_ReadBytesThrowsUnauthorizedAccessException_WarnsUnreadableAndReturnsFalse()
         {
-            string secretMessage = $"Denied C:\\Users\\{Environment.UserName}\\{Environment.MachineName}/world.json";
+            string secretMessage = $"Denied {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\world.json /sub";
             JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
                 true,
                 128,
@@ -305,7 +305,7 @@ namespace Murim.Tests.EditMode
         [Test]
         public void TryLoad_ReadBytesThrowsSecurityException_WarnsUnreadableAndReturnsFalse()
         {
-            string secretMessage = $"Security C:\\Users\\{Environment.UserName}\\{Environment.MachineName}/camera.json";
+            string secretMessage = $"Security {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\camera.json /sub";
             JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
                 true,
                 128,
