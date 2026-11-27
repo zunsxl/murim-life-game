@@ -1,0 +1,30 @@
+{
+  "name": "Murim.Tests.EditMode",
+  "rootNamespace": "Murim.Tests.EditMode",
+  "references": [
+    "Murim.Core",
+    "Murim.View",
+    "Murim.Editor",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.RenderPipelines.Universal.2D.Runtime",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
