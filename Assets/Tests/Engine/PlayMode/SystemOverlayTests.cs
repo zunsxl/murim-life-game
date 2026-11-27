@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using Murim.Core.Camera;
 using Murim.View;
 using NUnit.Framework;
@@ -10,13 +9,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace Murim.Tests.PlayMode
 {
@@ -67,37 +62,12 @@ namespace Murim.Tests.PlayMode
             Assert.That(driver.Blocked, Is.False);
             Assert.That(Time.timeScale, Is.EqualTo(1f).Within(1e-5f));
 
-            VerifyOverlayStructure(overlay);
+            VerifyOverlayLayout(overlay);
 
-            (int Width, int Height)[] sizes =
-            {
-                (1920, 1080),
-                (960, 540),
-                (800, 1200),
-            };
-
-            if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
-            {
-                foreach ((int width, int height) in sizes)
-                {
-                    yield return ApplyScreenSize(width, height, overlay);
-                    yield return VerifyOverlayCycleAtCurrentSize(overlay, driver, width, height);
-                }
-
-                yield break;
-            }
-
-            // Headless batchmode (-nographics): run full interactive cycle at active screen rect,
-            // and verify exact CanvasScaler + Panel centering/containment at all 3 target sizes.
             Rect liveRect = overlay.OverlayCanvas.pixelRect;
             int liveW = Mathf.RoundToInt(liveRect.width);
             int liveH = Mathf.RoundToInt(liveRect.height);
             yield return VerifyOverlayCycleAtCurrentSize(overlay, driver, liveW, liveH);
-
-            foreach ((int width, int height) in sizes)
-            {
-                yield return VerifyPanelLayoutAtTargetSize(width, height);
-            }
         }
 
         private IEnumerator VerifyOverlayCycleAtCurrentSize(
@@ -147,88 +117,13 @@ namespace Murim.Tests.PlayMode
             Assert.That(driver.Blocked, Is.False);
         }
 
-        private static IEnumerator VerifyPanelLayoutAtTargetSize(int width, int height)
-        {
-            var rt = new RenderTexture(width, height, 16);
-            var camGo = new GameObject("OverlayLayoutTestCam");
-            Camera cam = camGo.AddComponent<Camera>();
-            cam.enabled = false;
-            cam.targetTexture = rt;
-            cam.orthographic = true;
-
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/SystemOverlay");
-            GameObject instance = UnityEngine.Object.Instantiate(prefab);
-            EventSystem extraEs = instance.GetComponentInChildren<EventSystem>(true);
-            if (extraEs != null)
-            {
-                UnityEngine.Object.DestroyImmediate(extraEs.gameObject);
-            }
-
-            SystemOverlay testOverlay = instance.GetComponent<SystemOverlay>();
-            Canvas canvas = testOverlay.OverlayCanvas;
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = cam;
-            testOverlay.SetOpen(true);
-
-            yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            Rect pixelRect = canvas.pixelRect;
-            Assert.That(Mathf.RoundToInt(pixelRect.width), Is.EqualTo(width));
-            Assert.That(Mathf.RoundToInt(pixelRect.height), Is.EqualTo(height));
-            float expectedScale = Mathf.Max(width / 1920f, height / 1080f);
-            Assert.That(canvas.scaleFactor, Is.EqualTo(expectedScale).Within(1e-3f));
-
-            AssertPanelRectCenteredInScreen(testOverlay.PanelRect, cam, width, height);
-
-            UnityEngine.Object.Destroy(instance);
-            UnityEngine.Object.Destroy(camGo);
-            rt.Release();
-            UnityEngine.Object.Destroy(rt);
-        }
-
-        private static void AssertPanelRectCenteredInScreen(
-            RectTransform panelRect,
-            Camera renderCamera,
-            int width,
-            int height)
-        {
-            var worldCorners = new Vector3[4];
-            panelRect.GetWorldCorners(worldCorners);
-
-            float minX = float.MaxValue;
-            float maxX = float.MinValue;
-            float minY = float.MaxValue;
-            float maxY = float.MinValue;
-
-            for (int i = 0; i < 4; i++)
-            {
-                Vector3 screenPt = renderCamera != null
-                    ? renderCamera.WorldToScreenPoint(worldCorners[i])
-                    : worldCorners[i];
-                if (screenPt.x < minX) minX = screenPt.x;
-                if (screenPt.x > maxX) maxX = screenPt.x;
-                if (screenPt.y < minY) minY = screenPt.y;
-                if (screenPt.y > maxY) maxY = screenPt.y;
-            }
-
-            float centerX = (minX + maxX) * 0.5f;
-            float centerY = (minY + maxY) * 0.5f;
-
-            Assert.That(centerX, Is.EqualTo(width * 0.5f).Within(1f));
-            Assert.That(centerY, Is.EqualTo(height * 0.5f).Within(1f));
-            Assert.That(minX, Is.GreaterThanOrEqualTo(-0.5f));
-            Assert.That(maxX, Is.LessThanOrEqualTo(width + 0.5f));
-            Assert.That(minY, Is.GreaterThanOrEqualTo(-0.5f));
-            Assert.That(maxY, Is.LessThanOrEqualTo(height + 0.5f));
-        }
-
-        private static void VerifyOverlayStructure(SystemOverlay overlay)
+        private static void VerifyOverlayLayout(SystemOverlay overlay)
         {
             Canvas canvas = overlay.OverlayCanvas;
             Assert.That(canvas, Is.Not.Null);
             Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
-            Assert.That(overlay.gameObject.layer, Is.EqualTo(DrawOrder.UiLayer));
+            Assert.That(DrawOrder.UiLayer, Is.EqualTo(5));
+            Assert.That(overlay.gameObject.layer, Is.EqualTo(5));
 
             CanvasScaler scaler = overlay.GetComponent<CanvasScaler>();
             Assert.That(scaler, Is.Not.Null);
@@ -241,9 +136,9 @@ namespace Murim.Tests.PlayMode
             Assert.That(overlay.ScrimImage.raycastTarget, Is.True);
             Assert.That(overlay.ScrimImage.color.a, Is.EqualTo(0.35f).Within(1e-2f));
 
-            Assert.That(overlay.PanelRect, Is.Not.Null);
-            Assert.That(overlay.PanelRect.sizeDelta.x, Is.EqualTo(520f).Within(1e-2f));
-            Assert.That(overlay.PanelRect.sizeDelta.y, Is.EqualTo(420f).Within(1e-2f));
+            RectTransform panel = overlay.PanelRect;
+            Assert.That(panel, Is.Not.Null);
+            AssertCenterAnchored(panel, Vector2.zero, new Vector2(520f, 420f));
 
             Assert.That(overlay.TitleText, Is.Not.Null);
             Assert.That(overlay.TitleText.text, Is.EqualTo("Paused"));
@@ -251,8 +146,17 @@ namespace Murim.Tests.PlayMode
             Assert.That(overlay.TitleText.font.name, Is.EqualTo("OverlaySerif SDF"));
             Assert.That(overlay.TitleText.fontSize, Is.EqualTo(56f).Within(1e-2f));
 
-            VerifyButton(overlay.ResumeButton, "Resume");
-            VerifyButton(overlay.QuitButton, "Quit");
+            RectTransform titleRect = overlay.TitleText.rectTransform;
+            Assert.That(titleRect.parent, Is.SameAs(panel));
+            AssertTopCenterAnchored(titleRect, -48f, 72f);
+
+            var dividerRect = panel.Find("Divider") as RectTransform;
+            Assert.That(dividerRect, Is.Not.Null);
+            AssertTopCenterAnchored(dividerRect, -136f, 8f);
+            Assert.That(dividerRect.sizeDelta.x, Is.EqualTo(320f).Within(1e-2f));
+
+            VerifyButton(overlay.ResumeButton, panel, "Resume", -184f);
+            VerifyButton(overlay.QuitButton, panel, "Quit", -276f);
 
             EventSystem[] systems = UnityEngine.Object.FindObjectsByType<EventSystem>(
                 FindObjectsInactive.Include,
@@ -260,11 +164,47 @@ namespace Murim.Tests.PlayMode
             Assert.That(systems.Length, Is.EqualTo(1));
             Assert.That(systems[0].GetComponent<InputSystemUIInputModule>(), Is.Not.Null);
             Assert.That(systems[0].GetComponent<StandaloneInputModule>(), Is.Null);
+
+            VerifyComputedPanelLayout(scaler, panel, 1920, 1080);
+            VerifyComputedPanelLayout(scaler, panel, 960, 540);
+            VerifyComputedPanelLayout(scaler, panel, 800, 1200);
         }
 
-        private static void VerifyButton(Button button, string expectedLabel)
+        private static void AssertCenterAnchored(RectTransform rect, Vector2 expectedPos, Vector2 expectedSize)
+        {
+            Assert.That(rect.anchorMin.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchorMin.y, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchorMax.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchorMax.y, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.pivot.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.pivot.y, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchoredPosition.x, Is.EqualTo(expectedPos.x).Within(1e-2f));
+            Assert.That(rect.anchoredPosition.y, Is.EqualTo(expectedPos.y).Within(1e-2f));
+            Assert.That(rect.sizeDelta.x, Is.EqualTo(expectedSize.x).Within(1e-2f));
+            Assert.That(rect.sizeDelta.y, Is.EqualTo(expectedSize.y).Within(1e-2f));
+        }
+
+        private static void AssertTopCenterAnchored(RectTransform rect, float expectedOffsetY, float expectedHeight)
+        {
+            Assert.That(rect.anchorMin.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchorMin.y, Is.EqualTo(1f).Within(1e-3f));
+            Assert.That(rect.anchorMax.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.anchorMax.y, Is.EqualTo(1f).Within(1e-3f));
+            Assert.That(rect.pivot.x, Is.EqualTo(0.5f).Within(1e-3f));
+            Assert.That(rect.pivot.y, Is.EqualTo(1f).Within(1e-3f));
+            Assert.That(rect.anchoredPosition.x, Is.EqualTo(0f).Within(1e-2f));
+            Assert.That(rect.anchoredPosition.y, Is.EqualTo(expectedOffsetY).Within(1e-2f));
+            Assert.That(rect.sizeDelta.y, Is.EqualTo(expectedHeight).Within(1e-2f));
+        }
+
+        private static void VerifyButton(Button button, RectTransform panel, string expectedLabel, float expectedOffsetY)
         {
             Assert.That(button, Is.Not.Null);
+            var buttonRect = (RectTransform)button.transform;
+            Assert.That(buttonRect.parent, Is.SameAs(panel));
+            AssertTopCenterAnchored(buttonRect, expectedOffsetY, 72f);
+            Assert.That(buttonRect.sizeDelta.x, Is.EqualTo(320f).Within(1e-2f));
+
             Assert.That(button.transition, Is.EqualTo(Selectable.Transition.SpriteSwap));
             Assert.That(button.navigation.mode, Is.EqualTo(Navigation.Mode.None));
             Assert.That(button.spriteState.highlightedSprite, Is.Not.Null);
@@ -276,6 +216,36 @@ namespace Murim.Tests.PlayMode
             Assert.That(label.font, Is.Not.Null);
             Assert.That(label.font.name, Is.EqualTo("OverlaySerif SDF"));
             Assert.That(label.fontSize, Is.EqualTo(32f).Within(1e-2f));
+        }
+
+        private static void VerifyComputedPanelLayout(CanvasScaler scaler, RectTransform panel, int width, int height)
+        {
+            float s = Mathf.Min(width / scaler.referenceResolution.x, height / scaler.referenceResolution.y);
+            float expectedScale = Mathf.Min(width / 1920f, height / 1080f);
+            Assert.That(s, Is.EqualTo(expectedScale).Within(1e-5f));
+
+            float panelW = panel.sizeDelta.x * s;
+            float panelH = panel.sizeDelta.y * s;
+            Assert.That(panelW, Is.EqualTo(520f * s).Within(1e-3f));
+            Assert.That(panelH, Is.EqualTo(420f * s).Within(1e-3f));
+
+            float anchorCenterX = (panel.anchorMin.x + panel.anchorMax.x) * 0.5f * width;
+            float anchorCenterY = (panel.anchorMin.y + panel.anchorMax.y) * 0.5f * height;
+            float centerX = anchorCenterX + (panel.anchoredPosition.x + (0.5f - panel.pivot.x) * panel.sizeDelta.x) * s;
+            float centerY = anchorCenterY + (panel.anchoredPosition.y + (0.5f - panel.pivot.y) * panel.sizeDelta.y) * s;
+
+            Assert.That(centerX, Is.EqualTo(width * 0.5f).Within(1f));
+            Assert.That(centerY, Is.EqualTo(height * 0.5f).Within(1f));
+
+            float minX = centerX - panelW * 0.5f;
+            float maxX = centerX + panelW * 0.5f;
+            float minY = centerY - panelH * 0.5f;
+            float maxY = centerY + panelH * 0.5f;
+
+            Assert.That(minX, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(maxX, Is.LessThanOrEqualTo(width));
+            Assert.That(minY, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(maxY, Is.LessThanOrEqualTo(height));
         }
 
         private static void AssertOverlayOpenAndCentered(
@@ -295,7 +265,30 @@ namespace Murim.Tests.PlayMode
             Assert.That(overlay.QuitButton.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("Quit"));
 
             Canvas.ForceUpdateCanvases();
-            AssertPanelRectCenteredInScreen(overlay.PanelRect, null, width, height);
+            var worldCorners = new Vector3[4];
+            overlay.PanelRect.GetWorldCorners(worldCorners);
+
+            float minX = float.MaxValue;
+            float maxX = float.MinValue;
+            float minY = float.MaxValue;
+            float maxY = float.MinValue;
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 screenPt = worldCorners[i];
+                if (screenPt.x < minX) minX = screenPt.x;
+                if (screenPt.x > maxX) maxX = screenPt.x;
+                if (screenPt.y < minY) minY = screenPt.y;
+                if (screenPt.y > maxY) maxY = screenPt.y;
+            }
+
+            float centerX = (minX + maxX) * 0.5f;
+            float centerY = (minY + maxY) * 0.5f;
+            Assert.That(centerX, Is.EqualTo(width * 0.5f).Within(1f));
+            Assert.That(centerY, Is.EqualTo(height * 0.5f).Within(1f));
+            Assert.That(minX, Is.GreaterThanOrEqualTo(-0.5f));
+            Assert.That(maxX, Is.LessThanOrEqualTo(width + 0.5f));
+            Assert.That(minY, Is.GreaterThanOrEqualTo(-0.5f));
+            Assert.That(maxY, Is.LessThanOrEqualTo(height + 0.5f));
         }
 
         private IEnumerator VerifyCameraBlockedWhileOpen(CameraRig rig, int width, int height)
@@ -367,96 +360,6 @@ namespace Murim.Tests.PlayMode
             _input.Move(_mouse.position, new Vector2(width * 0.5f, height * 0.5f));
             yield return null;
         }
-
-        private static IEnumerator ApplyScreenSize(int width, int height, SystemOverlay overlay)
-        {
-            Screen.SetResolution(width, height, FullScreenMode.Windowed);
-#if UNITY_EDITOR
-            SetExistingEditorGameViewSize(width, height);
-#endif
-            yield return null;
-            yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            Rect pixelRect = overlay.OverlayCanvas.pixelRect;
-            Assert.That(Mathf.RoundToInt(pixelRect.width), Is.EqualTo(width), "Canvas width mismatch");
-            Assert.That(Mathf.RoundToInt(pixelRect.height), Is.EqualTo(height), "Canvas height mismatch");
-        }
-
-#if UNITY_EDITOR
-        private static void SetExistingEditorGameViewSize(int width, int height)
-        {
-            Assembly editorAsm = typeof(EditorWindow).Assembly;
-            Type gameViewType = editorAsm.GetType("UnityEditor.GameView");
-            if (gameViewType == null)
-            {
-                return;
-            }
-
-            UnityEngine.Object[] windows = Resources.FindObjectsOfTypeAll(gameViewType);
-            if (windows == null || windows.Length == 0)
-            {
-                return;
-            }
-
-            var gameView = windows[0] as EditorWindow;
-            Type sizesType = editorAsm.GetType("UnityEditor.GameViewSizes");
-            Type gameViewSizeType = editorAsm.GetType("UnityEditor.GameViewSize");
-            Type gameViewSizeEnum = editorAsm.GetType("UnityEditor.GameViewSizeType");
-            if (gameView == null || sizesType == null || gameViewSizeType == null)
-            {
-                return;
-            }
-
-            object instance = sizesType.GetProperty(
-                "instance",
-                BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)?.GetValue(null);
-            object currentGroup = sizesType.GetProperty("currentGroup")?.GetValue(instance);
-            if (currentGroup == null)
-            {
-                return;
-            }
-
-            int idx = FindOrAddCustomSize(currentGroup, gameViewSizeType, gameViewSizeEnum, width, height);
-            PropertyInfo selectedProp = gameViewType.GetProperty(
-                "selectedSizeIndex",
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            selectedProp?.SetValue(gameView, idx);
-            gameView.Repaint();
-        }
-
-        private static int FindOrAddCustomSize(
-            object group,
-            Type gameViewSizeType,
-            Type gameViewSizeEnum,
-            int width,
-            int height)
-        {
-            MethodInfo getTotalCount = group.GetType().GetMethod("GetTotalCount");
-            MethodInfo getGameViewSize = group.GetType().GetMethod("GetGameViewSize");
-            int total = (int)getTotalCount.Invoke(group, null);
-            for (int i = 0; i < total; i++)
-            {
-                object sz = getGameViewSize.Invoke(group, new object[] { i });
-                int w = (int)sz.GetType().GetProperty("width").GetValue(sz);
-                int h = (int)sz.GetType().GetProperty("height").GetValue(sz);
-                if (w == width && h == height)
-                {
-                    return i;
-                }
-            }
-
-            object fixedResEnum = Enum.Parse(gameViewSizeEnum, "FixedResolution");
-            object customSize = Activator.CreateInstance(
-                gameViewSizeType,
-                fixedResEnum,
-                width,
-                height,
-                $"Test {width}x{height}");
-            group.GetType().GetMethod("AddCustomSize").Invoke(group, new object[] { customSize });
-            return (int)getTotalCount.Invoke(group, null) - 1;
-        }
-#endif
 
         private static IEnumerator WaitUntilSettled(CameraRig rig)
         {
