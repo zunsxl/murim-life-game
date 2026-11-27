@@ -97,7 +97,7 @@ namespace Murim.View
             int heightCm = world.HeightCm[worldIdx];
             scratch.Positions[dstIdx] = new Vector3(gx, Projection.PlaneVCm(gz * 100, heightCm) / 100f, 0f);
 
-            byte[] weights = world.SurfaceWeights;
+            IReadOnlyList<byte> weights = world.SurfaceWeights;
             int wBase = worldIdx * ValleyWorld.SurfaceLayerCount;
             scratch.Uv0[dstIdx] = new Vector4(
                 weights[wBase] / 255f,
@@ -110,21 +110,9 @@ namespace Murim.View
                 weights[wBase + 6] / 255f,
                 weights[wBase + 7] / 255f);
 
-            float relief = ComputeReliefFactor(world.HeightCm, gx, gz);
+            ValleySurface.ComputeGradient(world.HeightCm, gx, gz, out int gradX, out int gradZ);
+            float relief = Projection.ReliefQ(gradX, gradZ) / 1024f;
             scratch.Uv2[dstIdx] = new Vector2(relief, 0f);
-        }
-
-        private static float ComputeReliefFactor(short[] heights, int x, int z)
-        {
-            int xm = x > 0 ? x - 1 : 0;
-            int xp = x < ValleyWorld.SizeM ? x + 1 : ValleyWorld.SizeM;
-            int zm = z > 0 ? z - 1 : 0;
-            int zp = z < ValleyWorld.SizeM ? z + 1 : ValleyWorld.SizeM;
-
-            int rowZ = z * ValleyWorld.VertsPerSide;
-            int gx = heights[rowZ + xp] - heights[rowZ + xm];
-            int gz = heights[zp * ValleyWorld.VertsPerSide + x] - heights[zm * ValleyWorld.VertsPerSide + x];
-            return Projection.ReliefQ(gx, gz) / 1024f;
         }
 
         private static int[] BuildChunkIndices()

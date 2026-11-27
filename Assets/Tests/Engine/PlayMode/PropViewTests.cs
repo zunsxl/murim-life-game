@@ -77,7 +77,7 @@ namespace Murim.Tests.PlayMode
             Assert.That(propView.FloraMaterial, Is.Not.SameAs(worldFloraAsset));
 
             ValleyWorld world = boot.World;
-            Assert.That(propView.PropRenderers.Count, Is.EqualTo(world.Props.Length));
+            Assert.That(propView.PropRenderers.Count, Is.EqualTo(world.Props.Count));
 
             int expectedShadowCount = VerifyPropsAndShadows(world, propView, atlasPageTexture, worldFloraAsset);
             Assert.That(propView.ShadowRenderers.Count, Is.EqualTo(expectedShadowCount));
@@ -85,7 +85,7 @@ namespace Murim.Tests.PlayMode
             SpriteRenderer[] allSprites = UnityEngine.Object.FindObjectsByType<SpriteRenderer>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
-            Assert.That(allSprites.Length, Is.EqualTo(world.Props.Length + expectedShadowCount));
+            Assert.That(allSprites.Length, Is.EqualTo(world.Props.Count + expectedShadowCount));
 
             VerifyBackToFrontSortOrders(world, propView);
             VerifyFloraViewHeightFade(propView, worldFloraAsset);
@@ -198,7 +198,7 @@ namespace Murim.Tests.PlayMode
             Material worldFloraAsset)
         {
             int expectedShadowCount = 0;
-            for (int i = 0; i < world.Props.Length; i++)
+            for (int i = 0; i < world.Props.Count; i++)
             {
                 PropInstance prop = world.Props[i];
                 PropVariantSpec spec = PropCatalog.Get(prop.Variant);

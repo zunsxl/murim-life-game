@@ -111,7 +111,7 @@ namespace Murim.Tests.PlayMode
                     Assert.That(verts[localIdx].y, Is.EqualTo(expectedV).Within(1e-4f));
 
                     int wBase = worldIdx * ValleyWorld.SurfaceLayerCount;
-                    byte[] w = world.SurfaceWeights;
+                    IReadOnlyList<byte> w = world.SurfaceWeights;
                     Assert.That(uv0[localIdx].x, Is.EqualTo(w[wBase] / 255f).Within(1e-5f));
                     Assert.That(uv0[localIdx].y, Is.EqualTo(w[wBase + 1] / 255f).Within(1e-5f));
                     Assert.That(uv0[localIdx].z, Is.EqualTo(w[wBase + 2] / 255f).Within(1e-5f));
@@ -127,7 +127,7 @@ namespace Murim.Tests.PlayMode
             }
         }
 
-        private static float ExpectedRelief(short[] heights, int x, int z)
+        private static float ExpectedRelief(IReadOnlyList<short> heights, int x, int z)
         {
             int xm = x > 0 ? x - 1 : 0;
             int xp = x < ValleyWorld.SizeM ? x + 1 : ValleyWorld.SizeM;
