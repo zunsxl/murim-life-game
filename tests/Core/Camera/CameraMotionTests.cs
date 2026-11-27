@@ -164,6 +164,104 @@ namespace Murim.Core.Tests.Camera
             }
         }
 
+        // T-CORE-22
+        [Test]
+        public void T_CORE_22_MidDragScrollAndDragStartScrollHaveNoAnchorAndReleaseContinuously()
+        {
+            AssertDragWithScrollLeavesNoAnchor(scrollOnDragStart: false);
+            AssertDragWithScrollLeavesNoAnchor(scrollOnDragStart: true);
+        }
+
+        // T-CORE-22
+        [Test]
+        public void T_CORE_22_ScrollOnReleaseTickCapturesAnchorAndClearsOnKeyOrNewDrag()
+        {
+            // 1. Let zoom settle and verify glide starts from the anchored pose.
+            CameraRig rig = DragToReleasePointAt44(out _);
+            (float expectedAnchorU, float expectedAnchorV) = rig.Pose.ScreenToPlane(Aspect16x9, -0.5f, 0.4f);
+
+            CameraInput releaseScroll = BaseInput();
+            releaseScroll.DragHeld = false;
+            releaseScroll.PointerNdcX = -0.5f;
+            releaseScroll.PointerNdcY = 0.4f;
+            releaseScroll.ScrollNotches = 1f;
+            rig.Tick(in releaseScroll, Dt60Hz);
+
+            Assert.That(rig.IsDragging, Is.False);
+            Assert.That(rig.HasZoomAnchor, Is.True);
+            Assert.That(rig.TargetViewHeight, Is.EqualTo(44f / 1.15f).Within(1e-4f));
+            (float underU, float underV) = rig.Pose.ScreenToPlane(Aspect16x9, -0.5f, 0.4f);
+            Assert.That(underU, Is.EqualTo(expectedAnchorU).Within(1e-3f));
+            Assert.That(underV, Is.EqualTo(expectedAnchorV).Within(1e-3f));
+            Assert.That(rig.Vu * rig.Vu + rig.Vv * rig.Vv, Is.GreaterThan(1f));
+
+            float anchoredCu = rig.Cu;
+            float anchoredCv = rig.Cv;
+            bool sawAnchorClear = false;
+            for (int i = 0; i < 90; i++)
+            {
+                CameraInput idle = BaseInput();
+                idle.PointerNdcX = 0.7f;
+                idle.PointerNdcY = -0.7f;
+                float prevCu = rig.Cu;
+                float prevCv = rig.Cv;
+                rig.Tick(in idle, Dt60Hz);
+
+                if (rig.HasZoomAnchor)
+                {
+                    (float u, float v) = rig.Pose.ScreenToPlane(Aspect16x9, -0.5f, 0.4f);
+                    Assert.That(u, Is.EqualTo(expectedAnchorU).Within(1e-3f));
+                    Assert.That(v, Is.EqualTo(expectedAnchorV).Within(1e-3f));
+                }
+                else if (!sawAnchorClear)
+                {
+                    sawAnchorClear = true;
+                    anchoredCu = prevCu;
+                    anchoredCv = prevCv;
+                }
+            }
+
+            Assert.That(sawAnchorClear, Is.True);
+            Assert.That(rig.H, Is.EqualTo(rig.TargetViewHeight).Within(1e-4f));
+            Assert.That(
+                MathF.Sqrt((rig.Cu - anchoredCu) * (rig.Cu - anchoredCu) + (rig.Cv - anchoredCv) * (rig.Cv - anchoredCv)),
+                Is.GreaterThan(0.01f));
+
+            // 2. A key axis clears the release-tick zoom anchor immediately.
+            CameraRig keyRig = DragToReleasePointAt44(out _);
+            keyRig.Tick(in releaseScroll, Dt60Hz);
+            Assert.That(keyRig.HasZoomAnchor, Is.True);
+
+            CameraInput keyAxis = BaseInput();
+            keyAxis.PanEast = true;
+            keyRig.Tick(in keyAxis, Dt60Hz);
+            Assert.That(keyRig.HasZoomAnchor, Is.False);
+
+            // 3. A new drag clears the release-tick zoom anchor immediately.
+            CameraRig newDragRig = DragToReleasePointAt44(out _);
+            newDragRig.Tick(in releaseScroll, Dt60Hz);
+            Assert.That(newDragRig.HasZoomAnchor, Is.True);
+
+            CameraInput newDrag = BaseInput();
+            newDrag.DragHeld = true;
+            newDrag.PointerNdcX = 0f;
+            newDrag.PointerNdcY = 0f;
+            (float newGrabU, float newGrabV) = newDragRig.Pose.ScreenToPlane(Aspect16x9, 0f, 0f);
+            newDragRig.Tick(in newDrag, Dt60Hz);
+            Assert.That(newDragRig.HasZoomAnchor, Is.False);
+            Assert.That(newDragRig.IsDragging, Is.True);
+
+            CameraInput dragStep = BaseInput();
+            dragStep.DragHeld = true;
+            dragStep.PointerNdcX = 0.25f;
+            dragStep.PointerNdcY = -0.15f;
+            newDragRig.Tick(in dragStep, Dt60Hz);
+            Assert.That(newDragRig.HasZoomAnchor, Is.False);
+            (float newUnderU, float newUnderV) = newDragRig.Pose.ScreenToPlane(Aspect16x9, 0.25f, -0.15f);
+            Assert.That(newUnderU, Is.EqualTo(newGrabU).Within(1e-3f));
+            Assert.That(newUnderV, Is.EqualTo(newGrabV).Within(1e-3f));
+        }
+
         // T-CORE-23
         [Test]
         public void T_CORE_23_ScrollZoomAnchorOutsideWindowLimitsAndPoseContract()
@@ -175,48 +273,21 @@ namespace Murim.Core.Tests.Camera
             Assert.That(typeof(CameraPose).GetProperty("Cv"), Is.Not.Null);
             Assert.That(typeof(CameraPose).GetProperty("H"), Is.Not.Null);
 
-            // Scroll +1 and -1 with pointer inside window, anchored even if pointer shifts afterwards.
-            var rig = new CameraRig(SyntheticFrame, CameraConfig.Default);
-            const float sx = -0.4f;
-            const float sy = 0.35f;
-            (float expectedAnchorU, float expectedAnchorV) = rig.Pose.ScreenToPlane(Aspect16x9, sx, sy);
+            // Scroll +1 and -1 at (0,0), (0.6,-0.4), (-0.9,0.9) at H = 20 and H = 60 (unclamped).
+            (float sx, float sy)[] pointers = { (0f, 0f), (0.6f, -0.4f), (-0.9f, 0.9f) };
+            float[] heights = { 20f, 60f };
+            float[] notches = { 1f, -1f };
 
-            CameraInput scrollIn = BaseInput();
-            scrollIn.ScrollNotches = 1f;
-            scrollIn.PointerNdcX = sx;
-            scrollIn.PointerNdcY = sy;
-            float prevH = rig.H;
-            rig.Tick(in scrollIn, Dt60Hz);
-
-            Assert.That(rig.TargetViewHeight, Is.EqualTo(44f / 1.15f).Within(1e-5f));
-
-            for (int i = 0; i < 90; i++)
+            foreach (float startH in heights)
             {
-                CameraInput settle = BaseInput();
-                // Move pointer elsewhere; captured anchor position must remain under (sx, sy).
-                settle.PointerNdcX = 0.7f;
-                settle.PointerNdcY = -0.6f;
-                rig.Tick(in settle, Dt60Hz);
-
-                Assert.That(rig.H, Is.LessThanOrEqualTo(prevH + 1e-6f));
-                Assert.That(rig.H, Is.GreaterThanOrEqualTo(rig.TargetViewHeight - 1e-6f));
-                prevH = rig.H;
-
-                (float curU, float curV) = rig.Pose.ScreenToPlane(Aspect16x9, sx, sy);
-                Assert.That(curU, Is.EqualTo(expectedAnchorU).Within(1e-3f));
-                Assert.That(curV, Is.EqualTo(expectedAnchorV).Within(1e-3f));
+                foreach ((float sx, float sy) in pointers)
+                {
+                    foreach (float notch in notches)
+                    {
+                        AssertAnchoredScroll(startH, sx, sy, notch);
+                    }
+                }
             }
-
-            Assert.That(rig.H, Is.EqualTo(rig.TargetViewHeight).Within(1e-5f));
-
-            // Scroll -1 out.
-            CameraInput scrollOut = BaseInput();
-            scrollOut.ScrollNotches = -1f;
-            scrollOut.PointerNdcX = 0.25f;
-            scrollOut.PointerNdcY = -0.25f;
-            float targetBeforeOut = rig.TargetViewHeight;
-            rig.Tick(in scrollOut, Dt60Hz);
-            Assert.That(rig.TargetViewHeight, Is.EqualTo(targetBeforeOut * 1.15f).Within(1e-4f));
 
             // Scroll with pointer outside window does not move C.
             var outsideRig = new CameraRig(SyntheticFrame, CameraConfig.Default);
@@ -232,6 +303,7 @@ namespace Murim.Core.Tests.Camera
                 outsideRig.Tick(in outScroll, Dt60Hz);
                 Assert.That(outsideRig.Cu, Is.EqualTo(startCu).Within(1e-6f));
                 Assert.That(outsideRig.Cv, Is.EqualTo(startCv).Within(1e-6f));
+                Assert.That(outsideRig.HasZoomAnchor, Is.False);
             }
 
             // 40 consecutive +1 ticks, then 40 consecutive -1 ticks stop exactly at 12 and 88.
@@ -345,9 +417,9 @@ namespace Murim.Core.Tests.Camera
             Assert.That(midPanRig.Vu, Is.GreaterThan(0f));
 
             // Interrupting reset with: (a) new pan key, (b) new drag, (c) scroll.
-            AssertResetInterruptedBy(i => { i.PanWest = true; return i; });
-            AssertResetInterruptedBy(i => { i.DragHeld = true; i.PointerNdcX = 0.1f; i.PointerNdcY = 0.1f; return i; });
-            AssertResetInterruptedBy(i => { i.ScrollNotches = 1f; i.PointerNdcX = 0f; i.PointerNdcY = 0f; return i; });
+            AssertResetInterruptedBy(i => { i.PanWest = true; return i; }, checkDeltaH: true);
+            AssertResetInterruptedBy(i => { i.DragHeld = true; i.PointerNdcX = 0.1f; i.PointerNdcY = 0.1f; return i; }, checkDeltaH: true);
+            AssertResetInterruptedBy(i => { i.ScrollNotches = 1f; i.PointerNdcX = 0f; i.PointerNdcY = 0f; return i; }, checkDeltaH: false);
         }
 
         // T-CORE-27
@@ -492,7 +564,9 @@ namespace Murim.Core.Tests.Camera
             }
         }
 
-        private static void AssertResetInterruptedBy(Func<CameraInput, CameraInput> buildInterrupt)
+        private static void AssertResetInterruptedBy(
+            Func<CameraInput, CameraInput> buildInterrupt,
+            bool checkDeltaH)
         {
             CameraRig rig = CreatePannedAndZoomedRig();
             CameraInput reset = BaseInput();
@@ -516,6 +590,176 @@ namespace Murim.Core.Tests.Camera
             float deltaC = MathF.Sqrt(
                 (rig.Cu - beforeCu) * (rig.Cu - beforeCu) + (rig.Cv - beforeCv) * (rig.Cv - beforeCv));
             Assert.That(deltaC, Is.LessThan(0.01f * beforeH));
+            if (checkDeltaH)
+            {
+                float deltaH = MathF.Abs(rig.H - beforeH);
+                Assert.That(deltaH, Is.LessThan(0.01f * beforeH));
+            }
+        }
+
+        private static void AssertDragWithScrollLeavesNoAnchor(bool scrollOnDragStart)
+        {
+            CameraRig rig = CreateRigAtHeight(44f);
+            (float grabU, float grabV) = rig.Pose.ScreenToPlane(Aspect16x9, 0.2f, -0.3f);
+
+            CameraInput start = BaseInput();
+            start.DragHeld = true;
+            start.PointerNdcX = 0.2f;
+            start.PointerNdcY = -0.3f;
+            start.ScrollNotches = scrollOnDragStart ? 1f : 0f;
+            rig.Tick(in start, Dt60Hz);
+
+            Assert.That(rig.IsDragging, Is.True);
+            Assert.That(rig.HasZoomAnchor, Is.False);
+            (float startUnderU, float startUnderV) = rig.Pose.ScreenToPlane(Aspect16x9, 0.2f, -0.3f);
+            Assert.That(startUnderU, Is.EqualTo(grabU).Within(1e-3f));
+            Assert.That(startUnderV, Is.EqualTo(grabV).Within(1e-3f));
+
+            if (!scrollOnDragStart)
+            {
+                CameraInput midScroll = start;
+                midScroll.ScrollNotches = 1f;
+                rig.Tick(in midScroll, Dt60Hz);
+                Assert.That(rig.HasZoomAnchor, Is.False);
+                (float midU, float midV) = rig.Pose.ScreenToPlane(Aspect16x9, 0.2f, -0.3f);
+                Assert.That(midU, Is.EqualTo(grabU).Within(1e-3f));
+                Assert.That(midV, Is.EqualTo(grabV).Within(1e-3f));
+            }
+
+            Assert.That(rig.TargetViewHeight, Is.EqualTo(44f / 1.15f).Within(1e-4f));
+
+            for (int i = 1; i <= 30; i++)
+            {
+                float t = i / 30f;
+                float nx = 0.2f + (-0.5f - 0.2f) * t;
+                float ny = -0.3f + (0.4f - (-0.3f)) * t;
+                CameraInput step = BaseInput();
+                step.DragHeld = true;
+                step.PointerNdcX = nx;
+                step.PointerNdcY = ny;
+                rig.Tick(in step, Dt60Hz);
+
+                Assert.That(rig.HasZoomAnchor, Is.False);
+                (float underU, float underV) = rig.Pose.ScreenToPlane(Aspect16x9, nx, ny);
+                Assert.That(underU, Is.EqualTo(grabU).Within(1e-3f));
+                Assert.That(underV, Is.EqualTo(grabV).Within(1e-3f));
+            }
+
+            float beforeReleaseCu = rig.Cu;
+            float beforeReleaseCv = rig.Cv;
+            float beforeReleaseH = rig.H;
+            CameraInput release = BaseInput();
+            release.DragHeld = false;
+            release.PointerNdcX = -0.5f;
+            release.PointerNdcY = 0.4f;
+            rig.Tick(in release, Dt60Hz);
+
+            Assert.That(rig.IsDragging, Is.False);
+            Assert.That(rig.HasZoomAnchor, Is.False);
+            float releaseSpeed = MathF.Sqrt(rig.Vu * rig.Vu + rig.Vv * rig.Vv);
+            Assert.That(releaseSpeed, Is.LessThanOrEqualTo(2f * 0.9f * beforeReleaseH + 1e-4f));
+            float releaseDeltaC = MathF.Sqrt(
+                (rig.Cu - beforeReleaseCu) * (rig.Cu - beforeReleaseCu)
+                + (rig.Cv - beforeReleaseCv) * (rig.Cv - beforeReleaseCv));
+            Assert.That(releaseDeltaC, Is.LessThanOrEqualTo(releaseSpeed * Dt60Hz + 1e-3f));
+
+            for (int i = 0; i < 90; i++)
+            {
+                float prevCu = rig.Cu;
+                float prevCv = rig.Cv;
+                CameraInput idle = BaseInput();
+                idle.PointerNdcX = 0.8f;
+                idle.PointerNdcY = -0.8f;
+                rig.Tick(in idle, Dt60Hz);
+
+                Assert.That(rig.HasZoomAnchor, Is.False);
+                float tickDeltaU = rig.Cu - prevCu;
+                float tickDeltaV = rig.Cv - prevCv;
+                if (rig.Vu == 0f && rig.Vv == 0f)
+                {
+                    float tol = 0.001f * rig.H * Dt60Hz + 1e-5f;
+                    Assert.That(MathF.Abs(tickDeltaU), Is.LessThanOrEqualTo(tol));
+                    Assert.That(MathF.Abs(tickDeltaV), Is.LessThanOrEqualTo(tol));
+                }
+                else
+                {
+                    Assert.That(tickDeltaU, Is.EqualTo(rig.Vu * Dt60Hz).Within(1e-4f));
+                    Assert.That(tickDeltaV, Is.EqualTo(rig.Vv * Dt60Hz).Within(1e-4f));
+                }
+            }
+
+            Assert.That(rig.H, Is.EqualTo(rig.TargetViewHeight).Within(1e-4f));
+        }
+
+        private static CameraRig DragToReleasePointAt44(out (float GrabU, float GrabV) grab)
+        {
+            CameraRig rig = CreateRigAtHeight(44f);
+            grab = rig.Pose.ScreenToPlane(Aspect16x9, 0.2f, -0.3f);
+
+            CameraInput start = BaseInput();
+            start.DragHeld = true;
+            start.PointerNdcX = 0.2f;
+            start.PointerNdcY = -0.3f;
+            rig.Tick(in start, Dt60Hz);
+
+            for (int i = 1; i <= 30; i++)
+            {
+                float t = i / 30f;
+                CameraInput step = BaseInput();
+                step.DragHeld = true;
+                step.PointerNdcX = 0.2f + (-0.5f - 0.2f) * t;
+                step.PointerNdcY = -0.3f + (0.4f - (-0.3f)) * t;
+                rig.Tick(in step, Dt60Hz);
+            }
+
+            return rig;
+        }
+
+        private static void AssertAnchoredScroll(float startH, float sx, float sy, float notch)
+        {
+            CameraRig rig = CreateRigAtHeight(startH);
+            (float expectedAnchorU, float expectedAnchorV) = rig.Pose.ScreenToPlane(Aspect16x9, sx, sy);
+
+            CameraInput scroll = BaseInput();
+            scroll.ScrollNotches = notch;
+            scroll.PointerNdcX = sx;
+            scroll.PointerNdcY = sy;
+            float prevH = rig.H;
+            rig.Tick(in scroll, Dt60Hz);
+
+            float expectedTarget = notch > 0f ? startH / 1.15f : startH * 1.15f;
+            Assert.That(rig.TargetViewHeight, Is.EqualTo(expectedTarget).Within(1e-4f));
+            Assert.That(rig.HasZoomAnchor, Is.True);
+
+            (float firstU, float firstV) = rig.Pose.ScreenToPlane(Aspect16x9, sx, sy);
+            Assert.That(firstU, Is.EqualTo(expectedAnchorU).Within(1e-3f));
+            Assert.That(firstV, Is.EqualTo(expectedAnchorV).Within(1e-3f));
+
+            for (int i = 0; i < 90; i++)
+            {
+                CameraInput settle = BaseInput();
+                settle.PointerNdcX = 0.5f;
+                settle.PointerNdcY = 0.5f;
+                rig.Tick(in settle, Dt60Hz);
+
+                if (notch > 0f)
+                {
+                    Assert.That(rig.H, Is.LessThanOrEqualTo(prevH + 1e-6f));
+                    Assert.That(rig.H, Is.GreaterThanOrEqualTo(rig.TargetViewHeight - 1e-6f));
+                }
+                else
+                {
+                    Assert.That(rig.H, Is.GreaterThanOrEqualTo(prevH - 1e-6f));
+                    Assert.That(rig.H, Is.LessThanOrEqualTo(rig.TargetViewHeight + 1e-6f));
+                }
+
+                prevH = rig.H;
+                (float curU, float curV) = rig.Pose.ScreenToPlane(Aspect16x9, sx, sy);
+                Assert.That(curU, Is.EqualTo(expectedAnchorU).Within(1e-3f));
+                Assert.That(curV, Is.EqualTo(expectedAnchorV).Within(1e-3f));
+            }
+
+            Assert.That(rig.H, Is.EqualTo(rig.TargetViewHeight).Within(1e-4f));
         }
 
         private static CameraRig CreatePannedAndZoomedRig()

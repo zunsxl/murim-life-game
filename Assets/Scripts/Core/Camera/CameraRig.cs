@@ -115,19 +115,17 @@ namespace Murim.Core.Camera
 
         public void OnFocusLost()
         {
-            CancelAll();
+            Cancel(_lastHeld);
         }
 
         public void OnApplicationPaused()
         {
-            CancelAll();
+            Cancel(_lastHeld);
         }
 
         public void CancelAll()
         {
-            ResetMotionState();
-            _suppressed |= _lastHeld;
-            _prevEffective = HeldInputMask.None;
+            Cancel(_lastHeld);
         }
 
         public void Tick(in CameraInput input, float dt)
@@ -153,8 +151,9 @@ namespace Murim.Core.Camera
 
             float scrollNotches = SanitizeScroll(input.ScrollNotches);
             HandleResetLifecycle(in input, currentHeld, scrollNotches, ref effective, ref newInputs);
-            ApplyScroll(scrollNotches, in input, aspect, hMinEff, hMaxEff);
+            ApplyScroll(scrollNotches, hMinEff, hMaxEff);
             UpdateDragTransitions(effective, newInputs, in input, aspect);
+            ResolveZoomAnchor(scrollNotches, in input, aspect);
             StepMotion(effective, clampedDt, hMinEff, hMaxEff);
             ApplyPointerConstraints(in input, aspect, clampedDt);
             ApplyBounds(aspect, hMinEff, hMaxEff);
@@ -170,7 +169,7 @@ namespace Murim.Core.Camera
         {
             if (!_prevBlocked)
             {
-                CancelFromTick(currentHeld);
+                Cancel(currentHeld);
                 _prevBlocked = true;
             }
 
@@ -188,7 +187,7 @@ namespace Murim.Core.Camera
             bool hasActiveMotionInput = ((effective & HeldInputMask.PanMask) != 0) || _dragActive;
             if (pointerLeft && hasActiveMotionInput)
             {
-                CancelFromTick(currentHeld);
+                Cancel(currentHeld);
                 effective = HeldInputMask.None;
                 newInputs = HeldInputMask.None;
             }
@@ -226,8 +225,6 @@ namespace Murim.Core.Camera
 
         private void ApplyScroll(
             float scrollNotches,
-            in CameraInput input,
-            float aspect,
             float hMinEff,
             float hMaxEff)
         {
@@ -241,22 +238,6 @@ namespace Murim.Core.Camera
                 ? 1f / (1f + step * scrollNotches)
                 : 1f + step * (-scrollNotches);
             _ht = Clamp(_ht * factor, hMinEff, hMaxEff);
-
-            if (input.PointerInWindow)
-            {
-                float sx = SanitizeFinite(input.PointerNdcX);
-                float sy = SanitizeFinite(input.PointerNdcY);
-                (float u, float v) = new CameraPose(_cu, _cv, _h).ScreenToPlane(aspect, sx, sy);
-                _anchorSet = true;
-                _anchorU = u;
-                _anchorV = v;
-                _anchorSx = sx;
-                _anchorSy = sy;
-            }
-            else
-            {
-                _anchorSet = false;
-            }
         }
 
         private void UpdateDragTransitions(
@@ -284,9 +265,33 @@ namespace Murim.Core.Camera
             if (_dragActive && !effectiveDrag)
             {
                 _dragActive = false;
+                _anchorSet = false;
                 float maxSpeed = DragReleaseSpeedMultiplier * _config.PanSpeedPerViewHeight * _h;
                 LimitVelocity(_dragVu, _dragVv, maxSpeed, out _vu, out _vv);
             }
+        }
+
+        private void ResolveZoomAnchor(float scrollNotches, in CameraInput input, float aspect)
+        {
+            if (scrollNotches == 0f)
+            {
+                return;
+            }
+
+            if (_dragActive || !input.PointerInWindow)
+            {
+                _anchorSet = false;
+                return;
+            }
+
+            float sx = SanitizeFinite(input.PointerNdcX);
+            float sy = SanitizeFinite(input.PointerNdcY);
+            (float u, float v) = new CameraPose(_cu, _cv, _h).ScreenToPlane(aspect, sx, sy);
+            _anchorSet = true;
+            _anchorU = u;
+            _anchorV = v;
+            _anchorSx = sx;
+            _anchorSy = sy;
         }
 
         private void StepMotion(HeldInputMask effective, float dt, float hMinEff, float hMaxEff)
@@ -373,6 +378,7 @@ namespace Murim.Core.Camera
 
             if (_dragActive)
             {
+                // Invariant: the anchor is never set while a drag is active.
                 float sx = SanitizeFinite(input.PointerNdcX);
                 float sy = SanitizeFinite(input.PointerNdcY);
                 (float pu, float pv) = new CameraPose(_cu, _cv, _h).ScreenToPlane(aspect, sx, sy);
@@ -415,10 +421,10 @@ namespace Murim.Core.Camera
             ClampAxis(ref _cv, ref _vv, vMin, vMax);
         }
 
-        private void CancelFromTick(HeldInputMask currentHeld)
+        private void Cancel(HeldInputMask heldMask)
         {
             ResetMotionState();
-            _suppressed |= currentHeld;
+            _suppressed |= heldMask;
             _prevEffective = HeldInputMask.None;
         }
 
