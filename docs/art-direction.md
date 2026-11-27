@@ -7,8 +7,9 @@ Authoritative visual direction and art rules for the project. When this document
 
 - **Readability at camera distance:** Terrain, structures, characters, UI, and effects must read cleanly at the
   game's working camera angle and zoom range.
-- **Grounded Murim / Wuxia aesthetic:** Prefer cohesive, natural materials, clear silhouettes, and restrained
-  visual accents over noisy generic fantasy tropes.
+- **Grounded Chinese Wuxia / Jianghu aesthetic:** Prefer cohesive, natural materials, clear silhouettes, and restrained
+  visual accents following classical Chinese wuxia / Jianghu traditions (never Korean Murim or noisy generic fantasy
+  tropes), presented in strictly 2D painterly oblique art (`v0.1.0` onwards per [docs/decisions.md](decisions.md)).
 - **State legibility:** Interactive states (hover, preview, selected, disabled, active, damaged) must be
   distinguishable at a glance against all expected backgrounds.
 
