@@ -18,4 +18,8 @@
   <ItemGroup>
     <ProjectReference Include="../../tools/dotnet/Murim.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../Assets/Tests/Engine/Shared/GoldenHashes.cs" Link="Shared/GoldenHashes.cs" />
+  </ItemGroup>
 </Project>
