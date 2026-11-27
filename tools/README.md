@@ -18,6 +18,10 @@ python quality-gates/run_gates.py requirements-architecture security-privacy \
   --spec docs/specs/vX.Y.Z-technical.md \
   --product-spec docs/specs/vX.Y.Z.md
 
+# Art quality gate (compare supplied art against art delivery contracts)
+python quality-gates/run_gates.py art-quality \
+  --spec docs/specs/vX.Y.Z-technical.md
+
 # Implementation code quality + correctness gates
 python quality-gates/run_gates.py code-quality correctness-maintainability \
   --base <base-sha> --head <head-sha> \

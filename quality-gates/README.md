@@ -17,6 +17,7 @@ inputs always produce the exact same checks, findings, decision, and exit code.
 |---|---|---|
 | `product-spec` | `python quality-gates/run_gates.py product-spec --spec <path>` | Required structure/Status/Goal, no unresolved placeholders, unique IDs, no untestable vague quantifiers, no code/implementation leakage, valid local links/anchors, art inventory cross-references, and decision-log presence |
 | `art-inventory` | `python quality-gates/run_gates.py art-inventory --spec <path>` | Inventory table presence, unique `ART-NNN` IDs, exact numeric counts (no `etc.`/`as needed`), valid `New`/`Reuse`/`Modify` dispositions + existing asset paths, resolved directions, valid `F-XX` linkage + acceptance criteria, no-art justifications, and no reference/watermarked shipping sources |
+| `art-quality` | `python quality-gates/run_gates.py art-quality --spec <tech-spec>` | Compares supplied PNG textures/sprites, binary FBX 3D models, TTF/OTF fonts, and Unity `.meta` import settings against the spec's Art delivery contracts (dimensions, bit depth, RGB/RGBA, alpha/pixel rules, seamless edge continuity, FBX topology/UV0/bounds/no-rig, font static & ASCII coverage + license, sourcing hygiene, and `ART_README.md` credits) |
 | `requirements-architecture` | `python quality-gates/run_gates.py requirements-architecture --spec <tech-spec> --product-spec <product-spec>` | Required header & sections, baseline git commit existence, full product AC-to-section/ticket/check traceability, acyclic `ARCH-NNN` ticket DAG, dependency-ordered execution plan with disjoint parallel ownership, test-plan check ID integrity, `ART-NNN` delivery contract coverage, `bundleVersion` match, and link/placeholder hygiene |
 | `security-privacy` | `python quality-gates/run_gates.py security-privacy --spec <tech-spec>` or `--base <sha> --head <sha>` | Secret scanning (redacted output), hardcoded local user paths/PII, unsafe deserialization and shell injection sinks, release-build debug flag gating, JSON config size/schema bounds, exact dependency version pinning, and tooling script `set -euo pipefail` / failure propagation |
 | `code-quality` | `python quality-gates/run_gates.py code-quality --base <sha> --head <sha>` (or `--paths ...`) | `Murim.Core` pure-C# layer boundary & `.asmdef`, no LINQ/allocations/scene lookups in `Update` loops, method length/nesting/parameter/complexity thresholds, normalized duplicate-block detection, Core debug leftovers, `<TreatWarningsAsErrors>`, and optional `dotnet format --verify-no-changes` (`--run-tools`) |
@@ -35,6 +36,11 @@ python quality-gates/run_gates.py product-spec art-inventory --spec docs/specs/v
 python quality-gates/run_gates.py requirements-architecture security-privacy \
   --spec docs/specs/v0.1.0-technical.md \
   --product-spec docs/specs/v0.1.0.md
+
+# Validate supplied art assets against Art delivery contracts
+python quality-gates/run_gates.py art-quality \
+  --spec docs/specs/v0.1.0-technical.md \
+  --require-meta
 
 # Validate an implementation diff (and emit JSON for CI)
 python quality-gates/run_gates.py code-quality correctness-maintainability \
