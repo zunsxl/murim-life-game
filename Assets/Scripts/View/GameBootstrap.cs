@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using Murim.Core.Camera;
 using Murim.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -32,16 +33,16 @@ namespace Murim.View
 
         [SerializeField] private Camera targetCamera;
         [SerializeField] private MeshRenderer backdropRenderer;
-
-        private float _lastBackdropAspect = -1f;
-        private float _lastBackdropOrtho = -1f;
+        [SerializeField] private CameraRigDriver cameraRigDriver;
 
         public ValleyWorld World { get; private set; }
         public WorldConfig Config { get; private set; }
+        public CameraConfig CameraConfig { get; private set; }
         public uint Seed { get; private set; }
         public string SeedSourceName { get; private set; }
         public Camera WorldCamera => targetCamera;
         public MeshRenderer BackdropRenderer => backdropRenderer;
+        public CameraRigDriver CameraDriver => cameraRigDriver;
         public IReadOnlyList<MeshRenderer> TerrainRenderers { get; private set; }
         public WaterSceneObjects WaterObjects { get; private set; }
 
@@ -58,39 +59,11 @@ namespace Murim.View
             ApplyAtmosphereGlobals(World);
             BuildWorldVisuals(World);
             SetupCameraAndBackdrop(World);
+            CameraConfig = LoadCameraConfig();
+            SetupCameraDriver(World, CameraConfig);
 
             stopwatch.Stop();
             LogWorldReady(World, seedSource, (int)stopwatch.ElapsedMilliseconds);
-        }
-
-        private void LateUpdate()
-        {
-            if (targetCamera == null || backdropRenderer == null)
-            {
-                return;
-            }
-
-            if (!Mathf.Approximately(_lastBackdropAspect, targetCamera.aspect)
-                || !Mathf.Approximately(_lastBackdropOrtho, targetCamera.orthographicSize))
-            {
-                SyncBackdropScale();
-            }
-        }
-
-        public void SyncBackdropScale()
-        {
-            if (targetCamera == null || backdropRenderer == null)
-            {
-                return;
-            }
-
-            float ortho = targetCamera.orthographicSize;
-            float aspect = targetCamera.aspect;
-            float viewHeight = ortho * 2f;
-            float viewWidth = viewHeight * aspect;
-            backdropRenderer.transform.localScale = new Vector3(viewWidth, viewHeight, 1f);
-            _lastBackdropAspect = aspect;
-            _lastBackdropOrtho = ortho;
         }
 
         private static void EnsureWindowedMode()
@@ -119,6 +92,56 @@ namespace Murim.View
                 });
 
             return ok && validated != null ? validated : WorldConfig.Default;
+        }
+
+        private static CameraConfig LoadCameraConfig()
+        {
+            CameraConfig validated = null;
+            bool ok = JsonConfigLoader.TryLoad<CameraConfigDto>(
+                JsonConfigLoader.CameraConfigFileName,
+                out CameraConfigDto _,
+                parsed =>
+                {
+                    if (Murim.Core.Camera.CameraConfig.TryCreate(
+                        parsed.ToData(),
+                        out CameraConfig created,
+                        out string failedField))
+                    {
+                        validated = created;
+                        return null;
+                    }
+
+                    return failedField;
+                });
+
+            return ok && validated != null ? validated : Murim.Core.Camera.CameraConfig.Default;
+        }
+
+        private void SetupCameraDriver(ValleyWorld world, CameraConfig cameraConfig)
+        {
+            if (targetCamera == null)
+            {
+                return;
+            }
+
+            if (cameraRigDriver == null)
+            {
+                cameraRigDriver = targetCamera.GetComponent<CameraRigDriver>();
+                if (cameraRigDriver == null)
+                {
+                    cameraRigDriver = targetCamera.gameObject.AddComponent<CameraRigDriver>();
+                }
+            }
+
+            var frame = new ViewFrame(world.PlaneBottomCm, world.PlaneCrestCm, world.VistaUCm, world.VistaVCm);
+            float initialAspect = float.IsFinite(targetCamera.aspect) && targetCamera.aspect > 0f
+                ? targetCamera.aspect
+                : (Screen.height > 0 ? Screen.width / (float)Screen.height : 16f / 9f);
+            int initialScreenHeight = Screen.height > 0 ? Screen.height : 1080;
+
+            var rig = new CameraRig(frame, cameraConfig, initialAspect, initialScreenHeight);
+            Transform backdropTransform = backdropRenderer != null ? backdropRenderer.transform : null;
+            cameraRigDriver.Initialize(targetCamera, backdropTransform, rig);
         }
 
         private static void ApplyAtmosphereGlobals(ValleyWorld world)
@@ -177,7 +200,6 @@ namespace Murim.View
                     CameraZ);
                 targetCamera.transform.rotation = Quaternion.identity;
                 EnsureBackdropQuad(targetCamera.transform);
-                SyncBackdropScale();
             }
         }
 

@@ -2,7 +2,8 @@
   "name": "Murim.View",
   "rootNamespace": "Murim.View",
   "references": [
-    "Murim.Core"
+    "Murim.Core",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
