@@ -1,0 +1,204 @@
+{
+  "contract": "docs/specs/v0.1.0-technical.md sections 4.1, 4.2, 4.8",
+  "count": 8,
+  "status": "Eight exported files pass size, RGB, bit-depth and exact opposite-edge equality checks. Contact sheet and all eight 2x2 repeats visually inspected. Unity/import/in-game tests not run.",
+  "limitations": [
+    "Tile edge equality is validated but gameplay zoom/repetition acceptance requires Unity scene integration.",
+    "Sources generated at 1254px were resampled to the contracted 2048px; upsampling does not add native painted detail."
+  ],
+  "assets": [
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_moss_turf.png",
+      "art_id": "ART-001",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-93006cd7-39d5-49bd-98ea-29a9b474c75a.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Deep rich emerald and olive moss meadow turf, fine natural grass tufts and damp muted dark soil between broad moss patches; calm fine distributed detail, no flowers. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Unless explicitly FRONT-ON, ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm late-afternoon upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "529d131d9c51dcca0e42711aee78efe7fd4b6562007a4e6d7e304cffe6bf6412"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_slate_soil.png",
+      "art_id": "ART-001",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-3be8c96d-faef-440a-a879-f0422c5d7235.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Damp dark slate-brown mountain soil with tiny gray slate grains and scattered muted moss flecks, earthy charcoal low contrast surface. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Unless explicitly FRONT-ON, ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm late-afternoon upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "2ac26853e46e1a3d58f7884dd56533874ea9c105c4d379d2d4e58433643be38d"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_mossy_stone.png",
+      "art_id": "ART-001",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-e48f5edb-8777-4669-8ce3-24be56c0b4fc.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Natural mountain stone floor, small irregular rounded weathered gray-brown slate shapes embedded in deep verdant moss; absolutely no paving, cobblestones or regular blocks. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "2075e21b91854c781feed9d81a4492a94c5356a6ec9d3bdf3f86b734afa193db"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_pebble_bank.png",
+      "art_id": "ART-001",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-a28b9f90-18a5-47ce-b94e-1a4eb992384b.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Damp streamside gravel and small flattened rounded gray-brown pebbles in dark moist earth, subtle pale warm highlights, occasional fine olive moss. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "8bacb9d2cb6c5f56140c5a129a2eda180170b27c8bf345e47ebd0822cd34d20d"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_bank_grassy.png",
+      "art_id": "ART-002",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-407ff532-f22a-4077-8836-d3822769735c.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless terrain texture tile, square 2048x2048 RGB filled edge to edge. FRONT-ON vertical rounded grassy earth bank face. Image up is up the bank. Dense clinging olive and emerald moss with small exposed warm brown soil areas, subtle modelling, no bank top edge or foot line. Strictly 2D painterly Chinese wuxia earth-and-ink brushwork, 16 metres of screen-plane material. Warm upper-left highlights on tiny material relief, cool lower-right shade but no large-scale gradient or object shadows. Even low contrast organic distribution, seamless four edges. No horizon or terrain silhouette, no boundary top or bottom, no separate scene, no distinct large feature, no paving or architectural structure, no text or watermark. Rich verdant olive moss, damp slate brown earth.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "62e48b9b920e1d608d3a7c79f60c002cd4bfd3df52a0b67d0db713257ad10eed"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_bank_earth_stone.png",
+      "art_id": "ART-002",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-fdf9056c-13ea-485a-8394-eab6888a5316.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless terrain texture tile, square 2048x2048 RGB filled edge to edge. FRONT-ON vertical packed earth bank face with small embedded irregular gray-brown stones, muted olive moss between stones, softly rounded terrain texture; NO masonry or large boulders, no bank top or foot line. Strictly 2D painterly Chinese wuxia earth-and-ink brushwork, 16 metres of screen-plane material. Warm upper-left highlights on tiny material relief, cool lower-right shade but no large-scale gradient or object shadows. Even low contrast organic distribution, seamless four edges. No horizon or terrain silhouette, no boundary top or bottom, no separate scene, no distinct large feature, no paving or architectural structure, no text or watermark. Rich verdant olive moss, damp slate brown earth.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "1c1895024394c0fa0a20296021bdf79927fb968acc9b57cb0f1b89d89e48cdb7"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_hillside_slope.png",
+      "art_id": "ART-002",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-2bab78f8-9716-4a96-b348-ec3193982301.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Gentle natural grassy rocky hillside slope ground surface, deep rich verdant moss and small exposed dark slate-brown soil areas with fine embedded natural stones, no large rocks or horizon. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "5f9b738420dddcdde2b3e72769b90986484792ec1a594dde1d86f9f312f18c27"
+    },
+    {
+      "file": "Assets/Resources/Art/Terrain/terrain_ridge_ground.png",
+      "art_id": "ART-008",
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "srgb_chunk": true,
+      "opposite_edge_max_delta": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source": "exec-05555544-d431-4d78-be95-0ed75ca34483.png",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Production game seamless texture tile, one square 2048x2048 RGB image filled edge to edge. Chinese mountain forest floor: subdued olive leaf litter, fine exposed twisting roots and small warm slate natural stones embedded in rich dark moss, no trees or upright props. Strictly 2D hand-painted classical Chinese wuxia earth-and-ink style, fine natural brushwork. Ground surface viewed orthographically at 36.87 degrees above horizon with depth detail foreshortened to 60%, 16 metres of screen-plane surface. Warm upper-left highlights softly painted into material, cool lower-right shading but NO object shadows or broad directional lighting gradient. Seamlessly tileable on all four edges. Even low-contrast distribution with no dominant unique feature, no border, no vignette, no horizon, no paths, no paving, no buildings, no flowers, no text or watermark. Rich verdant moss and wet slate earth palette.",
+      "processing": "Lanczos resize to 2048 RGB; raised-cosine seam correction over 96px edge bands, no mirroring or reference pixels; explicit sRGB chunk.",
+      "sha256": "62ea080db64afc78b2be78f5ebc29ca95fa6703335a2068b9a813b8391fed6db"
+    }
+  ],
+  "visual_review": "Cohesive olive moss / wet slate palette, natural materials and no paths or structures. No hard pixel seam. Repeated motifs remain discernible when whole tiles are shown in an undressed 2x2 grid; terrain blending and prop dressing must be assessed at game zoom before release acceptance."
+}

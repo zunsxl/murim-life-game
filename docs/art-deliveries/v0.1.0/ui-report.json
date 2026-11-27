@@ -1,0 +1,83 @@
+{
+  "art_ids": [
+    "ART-009",
+    "ART-011"
+  ],
+  "status": "Standalone asset checks PASS; Unity integration and owner playtest pending",
+  "method": "Original deterministic raster rendering with Pillow, based on approved text direction and inspected Option A plates; no reference pixels copied. Scripted processing explicitly authorized by owner. No image-generation prompts used for UI.",
+  "images": [
+    {
+      "file": "Assets/Resources/Art/UI/overlay_button_hover.png",
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA",
+      "sha256": "8d5a3f49377b25d2b2b385f0a586aa2f23046457ba7448c6842e950548205d1d"
+    },
+    {
+      "file": "Assets/Resources/Art/UI/overlay_button_normal.png",
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA",
+      "sha256": "b83b1c8ab11975cb211e9566437166f6ef479692596e8e11edddc6012990d825"
+    },
+    {
+      "file": "Assets/Resources/Art/UI/overlay_button_pressed.png",
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA",
+      "sha256": "5dca50bb7b9d6257042bdda7c0233196d8d91ffbca8967301d2c01de1e3f4293"
+    },
+    {
+      "file": "Assets/Resources/Art/UI/overlay_divider.png",
+      "size": [
+        512,
+        8
+      ],
+      "mode": "RGBA",
+      "sha256": "2f8555634854c7bd6b4f883057bb01e619cf8aac09f8b8712dece5044f48c182"
+    },
+    {
+      "file": "Assets/Resources/Art/UI/overlay_panel.png",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "77492ead99296f0fb6d5fd7135a921e9c30f906882389c1b46d68ed8779a0615"
+    }
+  ],
+  "checks": {
+    "five_exact_RGBA_canvas_sizes": true,
+    "panel_flat_center_alpha": 0.8941176470588236,
+    "corner_trim_within_96px_band": true,
+    "button_alpha_50pct_silhouettes_identical": true,
+    "divider_end_alpha_zero": true,
+    "static_font_no_fvar": true,
+    "font_ascii_32_126_complete": true
+  },
+  "font": {
+    "name": "Libre Baskerville Regular",
+    "filename": "LibreBaskerville-Regular.ttf",
+    "source": "https://github.com/impallari/Libre-Baskerville",
+    "commit": "9852edf75ece3af500a5ec61245f94788c3d4633",
+    "source_path": "fonts/ttf/LibreBaskerville-Regular.ttf",
+    "license": "SIL Open Font License 1.1",
+    "license_file": "LibreBaskerville-Regular-LICENSE.txt",
+    "license_copied_verbatim": true,
+    "sha256": "df9fddf43dbd7de435c316b86a52b3d6b3ad2f6fb2ed3f6fd8bdc1835f30eec1"
+  },
+  "integration": {
+    "all_UI_imports": "Sprite, Single, 100 PPU, Full Rect, no mipmaps, Clamp, Bilinear, compression None, alpha transparency",
+    "nine_slice": "panel 96 px all sides; all buttons 32 px all sides; divider none",
+    "TMP": "ARCH-008 creates OverlaySerif SDF.asset: SDFAA, 2048x2048, padding 9, auto sampling >=90, ASCII. Not created in art-only delivery.",
+    "credit_row": "ART-011 | Libre Baskerville Regular | Assets/Resources/Art/UI/Fonts/LibreBaskerville-Regular.ttf | Pablo Impallari and Rodrigo Fuenzalida; SIL OFL 1.1 | v0.1.0",
+    "title": "No title image. Runtime Paused title and Resume/Quit labels use \u00a73.5.3 layout, #F2EBDD, 56px title and 32px labels.",
+    "credits": "Integrator adds ART-009 and ART-011 credit rows to Assets/Art/ART_README.md. Repo docs unchanged."
+  }
+}

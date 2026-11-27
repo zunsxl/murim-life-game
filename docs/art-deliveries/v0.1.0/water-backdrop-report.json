@@ -1,0 +1,141 @@
+{
+  "contract": "docs/specs/v0.1.0-technical.md sections 4.3 and 4.10",
+  "method": "Built-in image_gen followed by user-authorized Pillow/numpy export normalization. Sky generated directly as contractual gradient.",
+  "provenance": [
+    {
+      "name": "water_stream",
+      "prompt": "Square 1024x1024 seamless game texture of still deep charcoal-blue mirror-dark mountain stream water seen at an elevated oblique 36.87 degree view. Strictly 2D painterly ink-and-earth brushwork, subtle broad reflections and tiny calm surface variation, low contrast. Tile uniformly fills entire frame; no shore, no rocks, no horizon, no identifiable reflected trees, no foam, no white streaks or motion, no text. Seamless all four edges; no cast shadows. Warm golden afternoon subtle tint with cool charcoal blue body.",
+      "hint": "Built-in image_gen output: exec-78064626-eee9-496c-ba8b-825ecb47003d.png",
+      "source": "exec-78064626-eee9-496c-ba8b-825ecb47003d.png"
+    },
+    {
+      "name": "water_shore",
+      "prompt": "Square seamless 1024x1024 2D painted game shallow-water-edge texture. Sparse small pale rounded submerged mountain stones, obliquely seen at 36.87 degrees, ground depth foreshortened to 60%. Pale warm-gray pebbles with subtle olive and sandy tint, fine restrained painterly brushwork, golden upper-left lighting. Transparent gaps and gently translucent water coverage between little stones; entire tile uniform repeat texture, no coastline outline, no large feature or central focal point, no text. Genuine alpha background. Repeat seamlessly on all four edges.",
+      "hint": "Built-in image_gen output: exec-07cda757-0a9e-458b-9414-3d7c63a27e32.png",
+      "source": "exec-07cda757-0a9e-458b-9414-3d7c63a27e32.png"
+    },
+    {
+      "name": "water_fall",
+      "prompt": "One isolated static waterfall cascade painting for a 2D classical Chinese wuxia game. Tall narrow portrait 1:4 aspect ratio, front-on white waterfall curtain with crisp multi-tier vertical streaks and restrained soft foam at bottom; 3 metres wide, 12 metres tall. Flat painted ink-and-earth style, fine brushwork, soft ivory upper-left golden highlights, cool white shaded streaks. Genuine transparent background, no glow or fog halo, no rocks, no landscape, no pool, no text, no watermark. Water fills central 80% width, fades toward transparent side edges, starts at top and cascades to bottom. Clean separate game texture asset only.",
+      "hint": "Built-in image_gen output: exec-0ee3b238-aa23-4538-a7a4-d3b8ba611bef.png",
+      "source": "exec-0ee3b238-aa23-4538-a7a4-d3b8ba611bef.png"
+    },
+    {
+      "name": "water_foam",
+      "prompt": "A single isolated oblique elliptical plunge-pool foam collar, 2D painterly game asset. Fine irregular white and ivory lace of natural waterfall foam, a hollow horizontal ring with a completely empty transparent centre and transparent outside. Ellipse width to height 1:0.6, centred on canvas, foam band between radii 0.35 and 0.48 of canvas width; no foam within inner hole. Light touch broken brushwork, no pool water, no rocks, no fall, no ground, no glow, no text or watermark. Warm upper-left afternoon light, cool white shaded accents. True alpha transparency. Canvas 1280x768.",
+      "hint": "Built-in image_gen output: exec-1d37c2b9-d20c-461e-9288-b34b8c8dfe00.png",
+      "source": "exec-1d37c2b9-d20c-461e-9288-b34b8c8dfe00.png"
+    },
+    {
+      "name": "backdrop_peaks_far",
+      "prompt": "Wide horizontal single distant Chinese mountain horizon layer for a 2D painted wuxia game. Very pale misty olive-gray natural mountain peak silhouettes, quiet refined ink-wash and earth painterly brushwork, harmonious golden afternoon light. Isolated mountains on genuine transparent background, no sky painted, no ground foreground, no trees, no buildings, no text. Panorama 4:1 aspect ratio, peaks span edge to edge with several varied gentle sharp summits, tallest summit at 15% from top, low valleys at 45% from top, top 10% completely empty; mountain bases softly fade into transparency at bottom 15%. Horizontal repeat seamlessly, same height and color of ridge at left and right edges. Far atmospheric low contrast distant layer; no dramatic crags.",
+      "hint": "Built-in image_gen output: exec-a1cf605f-ce0d-442b-be6c-63366aa2ab7a.png",
+      "source": "exec-a1cf605f-ce0d-442b-be6c-63366aa2ab7a.png"
+    },
+    {
+      "name": "backdrop_peaks_near",
+      "prompt": "Single wide panoramic near mountain horizon layer for strictly 2D classical Chinese wuxia painted game. Muted misty olive-gray natural mountain peak silhouettes, hand-painted ink-and-earth brushwork, quiet golden afternoon illumination from upper left. Slightly darker nearer mountain layer, still low contrast atmospheric. Transparent background: NO painted sky. Mountains across full width, a chain of 5 to 7 irregular graceful summits at heights 55 to 85 percent from bottom. Wide 4:1 panorama. Top 10 percent completely empty alpha; mountain base fades into golden haze and full transparency at bottom 15%. Seamlessly repeating left-right with matching ridge height at both edges. No buildings, no characters, no distinct foreground trees, no text, no watermark. No harsh black outlines.",
+      "hint": "Built-in image_gen output: exec-5bf1d924-5feb-46ce-ab08-ae497f9ab742.png",
+      "source": "exec-5bf1d924-5feb-46ce-ab08-ae497f9ab742.png"
+    }
+  ],
+  "checks": [
+    {
+      "file": "Assets/Resources/Art/Backdrop/backdrop_peaks_far.png",
+      "size": [
+        4096,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "4e95a29f04e8b151e1d0087e5682262297ac6ec5e1db83b24f2fc03aae612f4a",
+      "sRGB_profile": true,
+      "horizontal_seam_max_channel_delta": 0,
+      "top_10_percent_fully_transparent": true,
+      "bottom_row_fully_transparent": true,
+      "highest_alpha_pixel_y": 154
+    },
+    {
+      "file": "Assets/Resources/Art/Backdrop/backdrop_peaks_near.png",
+      "size": [
+        4096,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "cf76549a4040ed96d6b1cec5ed8427e2a1e0275609cb1b640a9962ccde249cf5",
+      "sRGB_profile": true,
+      "horizontal_seam_max_channel_delta": 0,
+      "top_10_percent_fully_transparent": true,
+      "bottom_row_fully_transparent": true,
+      "highest_alpha_pixel_y": 154
+    },
+    {
+      "file": "Assets/Resources/Art/Backdrop/backdrop_sky.png",
+      "size": [
+        16,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "3fb34247b92e0426af81bbe69694a7d6cc55db566291386f9ea54e0bb084e920",
+      "sRGB_profile": true,
+      "bottom_row_EFD3A0": true
+    },
+    {
+      "file": "Assets/Resources/Art/Water/water_fall.png",
+      "size": [
+        512,
+        2048
+      ],
+      "mode": "RGBA",
+      "sha256": "d81b27f802e896999bd32e163d795e845d7419f24b455b010ef9d41ff5bb2c46",
+      "sRGB_profile": true,
+      "side_edges_fully_transparent": true
+    },
+    {
+      "file": "Assets/Resources/Art/Water/water_foam.png",
+      "size": [
+        1280,
+        768
+      ],
+      "mode": "RGBA",
+      "sha256": "67ac1d2806631738da8193958cd6bdc366229aefd54d1c1f1949c687f077bb5b",
+      "sRGB_profile": true,
+      "alpha_zero_inside_35_percent": true,
+      "alpha_zero_outside_48_percent": true
+    },
+    {
+      "file": "Assets/Resources/Art/Water/water_shore.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "e25da26e4336a42b073b11222e1740349a083a83061f343f09c912d78e18c363",
+      "sRGB_profile": true,
+      "horizontal_seam_max_channel_delta": 0,
+      "vertical_seam_max_channel_delta": 0
+    },
+    {
+      "file": "Assets/Resources/Art/Water/water_stream.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "f1b4996e2212022e545f213ce6ceb30d0d42c5159916ac673588f21f05adea46",
+      "sRGB_profile": true,
+      "horizontal_seam_max_channel_delta": 0,
+      "vertical_seam_max_channel_delta": 0
+    }
+  ],
+  "limitations": [
+    "Unity importer, shader composition, mipmapped edge behavior, and in-game camera acceptance require engine integration.",
+    "Peak source images are 2172x724 and resampled to required 4096x1024 delivery canvases."
+  ],
+  "processing": [
+    "Lanczos export sizing; sRGB embedded.",
+    "Water stream and shore opposite edge bands blended to periodic boundaries, preserving painted interior.",
+    "Shore opacity derived from generated painted luminance multiplied by original alpha.",
+    "Waterfall 10 percent side fades; foam elliptical alpha mask with soft inner and outer fades.",
+    "Peak skyline reframed at y154, premultiplied-alpha horizontal seam blend, bottom 15 percent alpha fade. Far source prematurely empty base cropped to last median-alpha128 row before reframing."
+  ]
+}
