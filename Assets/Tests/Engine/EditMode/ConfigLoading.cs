@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security;
 using System.Text;
 using Murim.View;
 using NUnit.Framework;
@@ -17,6 +18,12 @@ namespace Murim.Tests.EditMode
             public int schemaVersion;
             public int testValue;
             public float testRatio;
+        }
+
+        [Serializable]
+        private sealed class MissingSchemaDto
+        {
+            public int testValue;
         }
 
         private string _tempDir;
@@ -215,6 +222,103 @@ namespace Murim.Tests.EditMode
             Assert.That(d3, Is.Null);
 
             Assert.That(_warnings.Count, Is.EqualTo(3));
+            AssertNoPathOrIdentityLeak();
+        }
+
+        // T-ENG-01
+        [Test]
+        public void TryLoad_DtoLackingSchemaVersion_RejectedWithSchemaReason()
+        {
+            string path = Path.Combine(_tempDir, "world.json");
+            File.WriteAllText(path, "{\"schemaVersion\":1,\"testValue\":42}", Encoding.UTF8);
+            RouteToTempDir(path, out _);
+
+            bool ok = JsonConfigLoader.TryLoad(JsonConfigLoader.WorldConfigFileName, out MissingSchemaDto dto);
+
+            Assert.That(ok, Is.False);
+            Assert.That(dto, Is.Null);
+            AssertSingleWarningWithReason("world.json", "schema");
+            AssertNoPathOrIdentityLeak();
+        }
+
+        // T-ENG-01
+        [Test]
+        public void TryLoad_ProbeThrowsIOException_WarnsUnreadableAndReturnsFalse()
+        {
+            string secretMessage = $"I/O error at {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\world.json /sub";
+            JsonConfigLoader.FileAccess = _ => throw new IOException(secretMessage);
+
+            bool ok = false;
+            TestConfigDto dto = null;
+            Assert.DoesNotThrow(() =>
+                ok = JsonConfigLoader.TryLoad(JsonConfigLoader.WorldConfigFileName, out dto));
+
+            Assert.That(ok, Is.False);
+            Assert.That(dto, Is.Null);
+            AssertSingleWarningWithReason("world.json", "unreadable");
+            AssertNoPathOrIdentityLeak();
+        }
+
+        // T-ENG-01
+        [Test]
+        public void TryLoad_ReadBytesThrowsIOException_WarnsUnreadableAndReturnsFalse()
+        {
+            string secretMessage = $"Locked {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\camera.json /sub";
+            JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
+                true,
+                128,
+                () => throw new IOException(secretMessage));
+
+            bool ok = false;
+            TestConfigDto dto = null;
+            Assert.DoesNotThrow(() =>
+                ok = JsonConfigLoader.TryLoad(JsonConfigLoader.CameraConfigFileName, out dto));
+
+            Assert.That(ok, Is.False);
+            Assert.That(dto, Is.Null);
+            AssertSingleWarningWithReason("camera.json", "unreadable");
+            AssertNoPathOrIdentityLeak();
+        }
+
+        // T-ENG-01
+        [Test]
+        public void TryLoad_ReadBytesThrowsUnauthorizedAccessException_WarnsUnreadableAndReturnsFalse()
+        {
+            string secretMessage = $"Denied {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\world.json /sub";
+            JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
+                true,
+                128,
+                () => throw new UnauthorizedAccessException(secretMessage));
+
+            bool ok = false;
+            TestConfigDto dto = null;
+            Assert.DoesNotThrow(() =>
+                ok = JsonConfigLoader.TryLoad(JsonConfigLoader.WorldConfigFileName, out dto));
+
+            Assert.That(ok, Is.False);
+            Assert.That(dto, Is.Null);
+            AssertSingleWarningWithReason("world.json", "unreadable");
+            AssertNoPathOrIdentityLeak();
+        }
+
+        // T-ENG-01
+        [Test]
+        public void TryLoad_ReadBytesThrowsSecurityException_WarnsUnreadableAndReturnsFalse()
+        {
+            string secretMessage = $"Security {Path.Combine("mock-drive", "private-dir", Environment.UserName, Environment.MachineName)}\\camera.json /sub";
+            JsonConfigLoader.FileAccess = _ => new ConfigFileProbe(
+                true,
+                128,
+                () => throw new SecurityException(secretMessage));
+
+            bool ok = false;
+            TestConfigDto dto = null;
+            Assert.DoesNotThrow(() =>
+                ok = JsonConfigLoader.TryLoad(JsonConfigLoader.CameraConfigFileName, out dto));
+
+            Assert.That(ok, Is.False);
+            Assert.That(dto, Is.Null);
+            AssertSingleWarningWithReason("camera.json", "unreadable");
             AssertNoPathOrIdentityLeak();
         }
 

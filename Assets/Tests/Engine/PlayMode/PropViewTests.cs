@@ -68,27 +68,27 @@ namespace Murim.Tests.PlayMode
 
             SpriteAtlas atlas = Resources.Load<SpriteAtlas>("Art/Props/WorldProps");
             Assert.That(atlas, Is.Not.Null);
-            for (int v = 0; v < PropCatalog.VariantCount; v++)
-            {
-                Sprite variantSprite = atlas.GetSprite(PropCatalog.Variants[v].Name);
-                Assert.That(variantSprite, Is.Not.Null, "Missing atlas sprite: " + PropCatalog.Variants[v].Name);
-            }
+            Texture2D atlasPageTexture = ResolveSingleAtlasPageTexture(atlas);
 
-            Assert.That(atlas.GetSprite("shadow_soft"), Is.Not.Null);
+            Material worldFloraAsset = Resources.Load<Material>("Materials/WorldFlora");
+            Assert.That(worldFloraAsset, Is.Not.Null);
+            Assert.That(worldFloraAsset.GetFloat("_Fade"), Is.EqualTo(1f).Within(1e-5f));
+            Assert.That(propView.FloraMaterial, Is.Not.Null);
+            Assert.That(propView.FloraMaterial, Is.Not.SameAs(worldFloraAsset));
 
             ValleyWorld world = boot.World;
-            Assert.That(propView.PropRenderers.Count, Is.EqualTo(world.Props.Length));
+            Assert.That(propView.PropRenderers.Count, Is.EqualTo(world.Props.Count));
 
-            int expectedShadowCount = VerifyPropsAndShadows(world, propView);
+            int expectedShadowCount = VerifyPropsAndShadows(world, propView, atlasPageTexture, worldFloraAsset);
             Assert.That(propView.ShadowRenderers.Count, Is.EqualTo(expectedShadowCount));
 
             SpriteRenderer[] allSprites = UnityEngine.Object.FindObjectsByType<SpriteRenderer>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
-            Assert.That(allSprites.Length, Is.EqualTo(world.Props.Length + expectedShadowCount));
+            Assert.That(allSprites.Length, Is.EqualTo(world.Props.Count + expectedShadowCount));
 
             VerifyBackToFrontSortOrders(world, propView);
-            VerifyFloraViewHeightFade(propView);
+            VerifyFloraViewHeightFade(propView, worldFloraAsset);
         }
 
         // T-ENG-11
@@ -151,10 +151,54 @@ namespace Murim.Tests.PlayMode
             VerifyAssetsHaveNoModels();
         }
 
-        private static int VerifyPropsAndShadows(ValleyWorld world, PropView propView)
+        private static Texture2D ResolveSingleAtlasPageTexture(SpriteAtlas atlas)
+        {
+            Texture2D pageTexture = null;
+            for (int v = 0; v < PropCatalog.VariantCount; v++)
+            {
+                string name = PropCatalog.Variants[v].Name;
+                Sprite sprite = atlas.GetSprite(name);
+                Assert.That(sprite, Is.Not.Null, "Missing atlas sprite: " + name);
+                Assert.That(sprite.texture, Is.Not.Null);
+                if (pageTexture == null)
+                {
+                    pageTexture = sprite.texture;
+                }
+                else
+                {
+                    Assert.That(sprite.texture, Is.SameAs(pageTexture), "Sprite not packed on single atlas page: " + name);
+                }
+            }
+
+            Sprite shadow = atlas.GetSprite("shadow_soft");
+            Assert.That(shadow, Is.Not.Null, "Missing atlas sprite: shadow_soft");
+            Assert.That(shadow.texture, Is.SameAs(pageTexture));
+
+            Texture2D unpackedSource = Resources.Load<Texture2D>("Art/Props/Pines/pine_ancient");
+            Assert.That(unpackedSource, Is.Not.Null);
+            Assert.That(pageTexture, Is.Not.SameAs(unpackedSource), "Atlas texture must be the packed page, not raw PNG");
+            return pageTexture;
+        }
+
+        private static string StripCloneSuffix(string spriteName)
+        {
+            const string cloneSuffix = "(Clone)";
+            if (!string.IsNullOrEmpty(spriteName) && spriteName.EndsWith(cloneSuffix, StringComparison.Ordinal))
+            {
+                return spriteName.Substring(0, spriteName.Length - cloneSuffix.Length);
+            }
+
+            return spriteName;
+        }
+
+        private static int VerifyPropsAndShadows(
+            ValleyWorld world,
+            PropView propView,
+            Texture2D atlasPageTexture,
+            Material worldFloraAsset)
         {
             int expectedShadowCount = 0;
-            for (int i = 0; i < world.Props.Length; i++)
+            for (int i = 0; i < world.Props.Count; i++)
             {
                 PropInstance prop = world.Props[i];
                 PropVariantSpec spec = PropCatalog.Get(prop.Variant);
@@ -163,7 +207,8 @@ namespace Murim.Tests.PlayMode
                 Assert.That(sr, Is.Not.Null);
                 Assert.That(sr.gameObject.layer, Is.EqualTo(DrawOrder.WorldLayer));
                 Assert.That(sr.sprite, Is.Not.Null);
-                Assert.That(sr.sprite, Is.SameAs(propView.GetVariantSprite(prop.Variant)));
+                Assert.That(StripCloneSuffix(sr.sprite.name), Is.EqualTo(spec.Name));
+                Assert.That(sr.sprite.texture, Is.SameAs(atlasPageTexture));
 
                 float expectedX = prop.XCm / 100f;
                 float expectedY = Projection.PlaneVCm(prop.ZCm, prop.YCm) / 100f;
@@ -188,6 +233,7 @@ namespace Murim.Tests.PlayMode
                 if (spec.Family == PropFamily.Flora)
                 {
                     Assert.That(sr.sharedMaterial, Is.SameAs(propView.FloraMaterial));
+                    Assert.That(sr.sharedMaterial, Is.Not.SameAs(worldFloraAsset));
                     Assert.That(sr.transform.parent, Is.SameAs(propView.FloraRoot.transform));
                 }
                 else
@@ -203,7 +249,13 @@ namespace Murim.Tests.PlayMode
                 if (expectsShadow)
                 {
                     expectedShadowCount++;
-                    AssertShadowRenderer(shadow, sr.transform.position, spec.ShadowWidthCm, prop.ScalePct, propView);
+                    float expectedShadowScale = (spec.ShadowWidthCm * (float)prop.ScalePct) / 40000f;
+                    AssertShadowRenderer(
+                        shadow,
+                        sr.transform.position,
+                        expectedShadowScale,
+                        propView.SpriteMaterial,
+                        atlasPageTexture);
                 }
                 else
                 {
@@ -217,19 +269,19 @@ namespace Murim.Tests.PlayMode
         private static void AssertShadowRenderer(
             SpriteRenderer shadow,
             Vector3 propPos,
-            int shadowWidthCm,
-            ushort scalePct,
-            PropView propView)
+            float expectedScale,
+            Material expectedMaterial,
+            Texture2D atlasPageTexture)
         {
             Assert.That(shadow, Is.Not.Null);
             Assert.That(shadow.gameObject.layer, Is.EqualTo(DrawOrder.WorldLayer));
             Assert.That(shadow.sprite, Is.Not.Null);
-            Assert.That(shadow.sprite, Is.SameAs(propView.ShadowSprite));
+            Assert.That(StripCloneSuffix(shadow.sprite.name), Is.EqualTo("shadow_soft"));
+            Assert.That(shadow.sprite.texture, Is.SameAs(atlasPageTexture));
             Assert.That(shadow.transform.position.x, Is.EqualTo(propPos.x).Within(1e-4f));
             Assert.That(shadow.transform.position.y, Is.EqualTo(propPos.y).Within(1e-4f));
             Assert.That(shadow.transform.position.z, Is.EqualTo(0f).Within(1e-5f));
 
-            float expectedScale = (shadowWidthCm * (float)scalePct) / 40000f;
             Assert.That(shadow.transform.localScale.x, Is.EqualTo(expectedScale).Within(1e-5f));
             Assert.That(shadow.transform.localScale.y, Is.EqualTo(expectedScale).Within(1e-5f));
             Assert.That(shadow.transform.localScale.z, Is.EqualTo(expectedScale).Within(1e-5f));
@@ -237,7 +289,7 @@ namespace Murim.Tests.PlayMode
             Assert.That(shadow.flipX, Is.False);
             Assert.That(shadow.flipY, Is.False);
             Assert.That(shadow.color, Is.EqualTo(Color.white));
-            Assert.That(shadow.sharedMaterial, Is.SameAs(propView.SpriteMaterial));
+            Assert.That(shadow.sharedMaterial, Is.SameAs(expectedMaterial));
             Assert.That(shadow.sortingOrder, Is.EqualTo(DrawOrder.Shadows));
         }
 
@@ -281,7 +333,7 @@ namespace Murim.Tests.PlayMode
             }
         }
 
-        private static void VerifyFloraViewHeightFade(PropView propView)
+        private static void VerifyFloraViewHeightFade(PropView propView, Material worldFloraAsset)
         {
             SpriteRenderer sampleFlora = null;
             for (int i = 0; i < propView.PropRenderers.Count; i++)
@@ -304,6 +356,7 @@ namespace Murim.Tests.PlayMode
             {
                 propView.ApplyViewHeight(heights[i]);
                 Assert.That(sampleFlora.sharedMaterial.GetFloat("_Fade"), Is.EqualTo(expectedFades[i]).Within(1e-5f));
+                Assert.That(worldFloraAsset.GetFloat("_Fade"), Is.EqualTo(1f).Within(1e-5f));
                 Assert.That(propView.FloraRoot.activeSelf, Is.EqualTo(expectedActive[i]));
             }
 

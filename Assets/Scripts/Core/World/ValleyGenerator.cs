@@ -209,10 +209,10 @@ namespace Murim.Core.World
         private static void ComputeSlopeSites(ValleyGenerationState state)
         {
             ValleyLayout l = state.Layout;
-            int zBot1 = ValleyWater.FindFirstZAtLeast(state.S1, l.Slope1X, 16);
-            int zTop1 = ValleyWater.FindFirstZAtLeast(state.S1, l.Slope1X, 1008);
-            int zBot2 = ValleyWater.FindFirstZAtLeast(state.S2, l.Slope2X, 16);
-            int zTop2 = ValleyWater.FindFirstZAtLeast(state.S2, l.Slope2X, 1008);
+            int zBot1 = Primitives.FindFirstZAtLeast(state.S1, l.Slope1X, 16);
+            int zTop1 = Primitives.FindFirstZAtLeast(state.S1, l.Slope1X, 1008);
+            int zBot2 = Primitives.FindFirstZAtLeast(state.S2, l.Slope2X, 16);
+            int zTop2 = Primitives.FindFirstZAtLeast(state.S2, l.Slope2X, 1008);
 
             state.Slopes = new[]
             {
@@ -233,18 +233,18 @@ namespace Murim.Core.World
             {
                 Seed = state.Seed,
                 Config = state.Config,
-                HeightCm = heightCm,
-                TierLevelPct = state.TierLevelPct,
-                RidgePct = state.RidgePct,
-                SurfaceWeights = state.SurfaceWeights,
-                Stream = state.Stream,
-                Brook = state.Brook,
+                HeightCm = Array.AsReadOnly(heightCm),
+                TierLevelPct = Array.AsReadOnly(state.TierLevelPct),
+                RidgePct = Array.AsReadOnly(state.RidgePct),
+                SurfaceWeights = Array.AsReadOnly(state.SurfaceWeights),
+                Stream = Array.AsReadOnly(state.Stream),
+                Brook = Array.AsReadOnly(state.Brook),
                 PlungePool = state.PlungePool,
                 SpringPool = state.SpringPool,
-                Waterfall = state.Waterfall,
-                Slopes = state.Slopes,
+                Waterfall = Array.AsReadOnly(state.Waterfall),
+                Slopes = Array.AsReadOnly(state.Slopes),
                 Layout = state.Layout,
-                Props = state.Props,
+                Props = Array.AsReadOnly(state.Props),
                 PlaneBottomCm = state.PlaneBottomCm,
                 PlaneCrestCm = state.PlaneCrestCm,
                 VistaUCm = state.VistaUCm,

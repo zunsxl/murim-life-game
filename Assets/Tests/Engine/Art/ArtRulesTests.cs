@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using Murim.Editor.Art;
 using NUnit.Framework;
 using UnityEditor;
@@ -309,6 +311,64 @@ namespace Murim.Tests.Art
             AssertHasViolation(badTmpIssues, "TmpFontAssetSettings", "ART-011");
         }
 
+        // T-ART-05
+        [Test]
+        public void T_ART_05_PngHeaderAndIdatValidation_RejectsInvalidInputsWithSingleValidPngIssue()
+        {
+            ArtAssetEntry rgbTile = RequireEntry("Assets/Resources/Art/Terrain/terrain_moss_turf.png");
+            ArtAssetEntry tussock = RequireEntry("Assets/Resources/Art/Props/Flora/flora_tussock.png");
+
+            byte[] validTileStubIdat = new byte[] { 0x78, 0x9C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01 };
+            byte[] png16Bit = BuildSyntheticPng(2048, 2048, 16, 2, 0, validTileStubIdat);
+            AssertSingleValidPngIssue(rgbTile, png16Bit, false);
+
+            byte[] pngPalette = BuildSyntheticPng(2048, 2048, 8, 3, 0, validTileStubIdat);
+            AssertSingleValidPngIssue(rgbTile, pngPalette, false);
+
+            byte[] pngInterlaced = BuildSyntheticPng(2048, 2048, 8, 2, 1, validTileStubIdat);
+            AssertSingleValidPngIssue(rgbTile, pngInterlaced, false);
+
+            byte[] oversizedIhdr = BuildSyntheticPng(4096, 4096, 8, 6, 0, new byte[] { 0xFF });
+            AssertSingleValidPngIssue(tussock, oversizedIhdr, true);
+
+            long expectedRaw = 112L * (128L * 4L + 1L);
+            byte[] truncatedIdat = BuildSyntheticPng(128, 112, 8, 6, 0, CompressZlib(new byte[expectedRaw - 1L]));
+            AssertSingleValidPngIssue(tussock, truncatedIdat, true);
+
+            byte[] oversizedIdat = BuildSyntheticPng(128, 112, 8, 6, 0, CompressZlib(new byte[expectedRaw + 1L]));
+            AssertSingleValidPngIssue(tussock, oversizedIdat, true);
+        }
+
+        // T-ART-04
+        [Test]
+        public void T_ART_04_FontReader_ResolvesFormat4And12AndRejectsGlyphZero()
+        {
+            byte[] fmt4Ok = BuildSyntheticFontFormat4Direct(0x0020, 0x007E, 1);
+            FontSnapshot snapOk = FontReader.ReadBytes(fmt4Ok);
+            Assert.That(snapOk.Valid, Is.True);
+            Assert.That(snapOk.CoversRange(0x0020, 0x007E), Is.True);
+
+            byte[] fmt4DeltaZero = BuildSyntheticFontFormat4Direct(0x0020, 0x007E, unchecked((short)-0x0020));
+            FontSnapshot snapDeltaZero = FontReader.ReadBytes(fmt4DeltaZero);
+            Assert.That(snapDeltaZero.Valid, Is.True);
+            Assert.That(snapDeltaZero.CoversRange(0x0020, 0x007E), Is.False);
+
+            byte[] fmt4IndexedZero = BuildSyntheticFontFormat4IndexedAscii(0x0041);
+            FontSnapshot snapIndexedZero = FontReader.ReadBytes(fmt4IndexedZero);
+            Assert.That(snapIndexedZero.Valid, Is.True);
+            Assert.That(snapIndexedZero.CoversRange(0x0020, 0x007E), Is.False);
+
+            byte[] fmt12Zero = BuildSyntheticFontFormat12(0x0020, 0x007E, 0u);
+            FontSnapshot snapFmt12Zero = FontReader.ReadBytes(fmt12Zero);
+            Assert.That(snapFmt12Zero.Valid, Is.True);
+            Assert.That(snapFmt12Zero.CoversRange(0x0020, 0x007E), Is.False);
+
+            byte[] fmt12Ok = BuildSyntheticFontFormat12(0x0020, 0x007E, 1u);
+            FontSnapshot snapFmt12Ok = FontReader.ReadBytes(fmt12Ok);
+            Assert.That(snapFmt12Ok.Valid, Is.True);
+            Assert.That(snapFmt12Ok.CoversRange(0x0020, 0x007E), Is.True);
+        }
+
         private static ArtAssetEntry RequireEntry(string assetPath)
         {
             Assert.That(ArtManifest.TryGetByPath(assetPath, out ArtAssetEntry entry), Is.True, $"Missing manifest entry: {assetPath}");
@@ -388,6 +448,178 @@ namespace Murim.Tests.Art
             }
 
             return string.Join("\n", lines);
+        }
+
+        private static void AssertSingleValidPngIssue(ArtAssetEntry entry, byte[] pngBytes, bool decodePixels)
+        {
+            var issues = new List<ArtValidationIssue>();
+            PngReadResult res = default;
+            Assert.DoesNotThrow(() => res = ArtRules.ValidatePngBytes(entry, pngBytes, decodePixels, issues));
+            Assert.That(res.Valid, Is.False);
+            Assert.That(issues.Count, Is.EqualTo(1));
+            Assert.That(issues[0].RuleName, Is.EqualTo("ValidPng"));
+            Assert.That(issues[0].ArtId, Is.EqualTo(entry.ArtId));
+            Assert.That(issues[0].FileName, Is.EqualTo(Path.GetFileName(entry.AssetPath)));
+        }
+
+        private static byte[] BuildSyntheticPng(
+            int width,
+            int height,
+            byte bitDepth,
+            byte colorType,
+            byte interlace,
+            byte[] idatPayload)
+        {
+            using var ms = new MemoryStream();
+            ms.Write(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }, 0, 8);
+            var ihdr = new byte[13];
+            WriteUInt32BE(ihdr, 0, (uint)width);
+            WriteUInt32BE(ihdr, 4, (uint)height);
+            ihdr[8] = bitDepth;
+            ihdr[9] = colorType;
+            ihdr[10] = 0;
+            ihdr[11] = 0;
+            ihdr[12] = interlace;
+            WritePngChunk(ms, "IHDR", ihdr);
+            WritePngChunk(ms, "IDAT", idatPayload);
+            WritePngChunk(ms, "IEND", System.Array.Empty<byte>());
+            return ms.ToArray();
+        }
+
+        private static void WritePngChunk(Stream s, string type, byte[] payload)
+        {
+            var lenBuf = new byte[4];
+            WriteUInt32BE(lenBuf, 0, (uint)payload.Length);
+            s.Write(lenBuf, 0, 4);
+            var typeBytes = new[] { (byte)type[0], (byte)type[1], (byte)type[2], (byte)type[3] };
+            s.Write(typeBytes, 0, 4);
+            if (payload.Length > 0)
+            {
+                s.Write(payload, 0, payload.Length);
+            }
+
+            s.Write(new byte[4], 0, 4);
+        }
+
+        private static byte[] CompressZlib(byte[] raw)
+        {
+            using var ms = new MemoryStream();
+            ms.WriteByte(0x78);
+            ms.WriteByte(0x9C);
+            using (var deflate = new DeflateStream(ms, CompressionMode.Compress, true))
+            {
+                deflate.Write(raw, 0, raw.Length);
+            }
+
+            ms.Write(new byte[4], 0, 4);
+            return ms.ToArray();
+        }
+
+        private static byte[] BuildSyntheticFontFormat4Direct(int startCode, int endCode, short idDelta)
+        {
+            using var sub = new MemoryStream();
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 32);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 1);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, (ushort)endCode);
+            WriteUInt16BE(sub, 0xFFFF);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, (ushort)startCode);
+            WriteUInt16BE(sub, 0xFFFF);
+            WriteUInt16BE(sub, unchecked((ushort)idDelta));
+            WriteUInt16BE(sub, 1);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 0);
+            return WrapSingleCmapSfnt(sub.ToArray());
+        }
+
+        private static byte[] BuildSyntheticFontFormat4IndexedAscii(int zeroGlyphCodepoint)
+        {
+            int count = 0x007E - 0x0020 + 1;
+            using var sub = new MemoryStream();
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, (ushort)(32 + count * 2));
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 1);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 0x007E);
+            WriteUInt16BE(sub, 0xFFFF);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 0x0020);
+            WriteUInt16BE(sub, 0xFFFF);
+            WriteUInt16BE(sub, 0);
+            WriteUInt16BE(sub, 1);
+            WriteUInt16BE(sub, 4);
+            WriteUInt16BE(sub, 0);
+            for (int cp = 0x0020; cp <= 0x007E; cp++)
+            {
+                WriteUInt16BE(sub, cp == zeroGlyphCodepoint ? (ushort)0 : (ushort)(cp - 0x001F));
+            }
+
+            return WrapSingleCmapSfnt(sub.ToArray());
+        }
+
+        private static byte[] BuildSyntheticFontFormat12(uint startCode, uint endCode, uint startGlyph)
+        {
+            using var sub = new MemoryStream();
+            WriteUInt16BE(sub, 12);
+            WriteUInt16BE(sub, 0);
+            WriteUInt32BE(sub, 28u);
+            WriteUInt32BE(sub, 0u);
+            WriteUInt32BE(sub, 1u);
+            WriteUInt32BE(sub, startCode);
+            WriteUInt32BE(sub, endCode);
+            WriteUInt32BE(sub, startGlyph);
+            return WrapSingleCmapSfnt(sub.ToArray());
+        }
+
+        private static byte[] WrapSingleCmapSfnt(byte[] subtable)
+        {
+            using var ms = new MemoryStream();
+            WriteUInt32BE(ms, 0x00010000u);
+            WriteUInt16BE(ms, 1);
+            WriteUInt16BE(ms, 16);
+            WriteUInt16BE(ms, 0);
+            WriteUInt16BE(ms, 0);
+            ms.Write(new[] { (byte)'c', (byte)'m', (byte)'a', (byte)'p' }, 0, 4);
+            WriteUInt32BE(ms, 0u);
+            WriteUInt32BE(ms, 28u);
+            WriteUInt32BE(ms, (uint)(12 + subtable.Length));
+            WriteUInt16BE(ms, 0);
+            WriteUInt16BE(ms, 1);
+            WriteUInt16BE(ms, 3);
+            WriteUInt16BE(ms, 1);
+            WriteUInt32BE(ms, 12u);
+            ms.Write(subtable, 0, subtable.Length);
+            return ms.ToArray();
+        }
+
+        private static void WriteUInt16BE(Stream s, ushort value)
+        {
+            s.WriteByte((byte)(value >> 8));
+            s.WriteByte((byte)(value & 0xFF));
+        }
+
+        private static void WriteUInt32BE(Stream s, uint value)
+        {
+            s.WriteByte((byte)(value >> 24));
+            s.WriteByte((byte)((value >> 16) & 0xFF));
+            s.WriteByte((byte)((value >> 8) & 0xFF));
+            s.WriteByte((byte)(value & 0xFF));
+        }
+
+        private static void WriteUInt32BE(byte[] buf, int off, uint value)
+        {
+            buf[off] = (byte)(value >> 24);
+            buf[off + 1] = (byte)((value >> 16) & 0xFF);
+            buf[off + 2] = (byte)((value >> 8) & 0xFF);
+            buf[off + 3] = (byte)(value & 0xFF);
         }
     }
 }

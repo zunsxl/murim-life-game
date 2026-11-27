@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Murim.Core.World
 {
     /// <summary>
@@ -42,9 +44,9 @@ namespace Murim.Core.World
             return FeedInt(h, c.FloraDensityPct);
         }
 
-        private static ulong FeedShorts(ulong h, short[] values)
+        private static ulong FeedShorts(ulong h, IReadOnlyList<short> values)
         {
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < values.Count; i++)
             {
                 ushort v = (ushort)values[i];
                 h = FeedByte(h, (byte)v);
@@ -54,9 +56,9 @@ namespace Murim.Core.World
             return h;
         }
 
-        private static ulong FeedBytes(ulong h, byte[] values)
+        private static ulong FeedBytes(ulong h, IReadOnlyList<byte> values)
         {
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < values.Count; i++)
             {
                 h = FeedByte(h, values[i]);
             }
@@ -64,9 +66,9 @@ namespace Murim.Core.World
             return h;
         }
 
-        private static ulong FeedWaterNodes(ulong h, WaterNode[] nodes)
+        private static ulong FeedWaterNodes(ulong h, IReadOnlyList<WaterNode> nodes)
         {
-            for (int i = 0; i < nodes.Length; i++)
+            for (int i = 0; i < nodes.Count; i++)
             {
                 WaterNode n = nodes[i];
                 h = FeedInt(h, n.XCm);
@@ -86,9 +88,9 @@ namespace Murim.Core.World
             return FeedInt(h, pool.LevelCm);
         }
 
-        private static ulong FeedFallNodes(ulong h, FallNode[] nodes)
+        private static ulong FeedFallNodes(ulong h, IReadOnlyList<FallNode> nodes)
         {
-            for (int i = 0; i < nodes.Length; i++)
+            for (int i = 0; i < nodes.Count; i++)
             {
                 FallNode n = nodes[i];
                 h = FeedInt(h, n.XCm);
@@ -99,9 +101,9 @@ namespace Murim.Core.World
             return h;
         }
 
-        private static ulong FeedSlopes(ulong h, SlopeSite[] slopes)
+        private static ulong FeedSlopes(ulong h, IReadOnlyList<SlopeSite> slopes)
         {
-            for (int i = 0; i < slopes.Length; i++)
+            for (int i = 0; i < slopes.Count; i++)
             {
                 SlopeSite s = slopes[i];
                 h = FeedInt(h, s.BottomXCm);
@@ -113,9 +115,9 @@ namespace Murim.Core.World
             return h;
         }
 
-        private static ulong FeedProps(ulong h, PropInstance[] props)
+        private static ulong FeedProps(ulong h, IReadOnlyList<PropInstance> props)
         {
-            for (int i = 0; i < props.Length; i++)
+            for (int i = 0; i < props.Count; i++)
             {
                 PropInstance p = props[i];
                 h = FeedByte(h, p.Variant);

@@ -77,7 +77,7 @@ namespace Murim.View
 
             Material floraInstance = CreateFloraMaterialInstance(worldFloraMaterial);
             var view = new PropView(
-                world.Props.Length,
+                world.Props.Count,
                 floraRoot,
                 worldSpriteMaterial,
                 floraInstance,
@@ -105,7 +105,7 @@ namespace Murim.View
             }
         }
 
-        private void Populate(PropInstance[] props, Transform parent)
+        private void Populate(IReadOnlyList<PropInstance> props, Transform parent)
         {
             int[] order = PropOrder.BackToFront(props);
             int lipRank = 0;

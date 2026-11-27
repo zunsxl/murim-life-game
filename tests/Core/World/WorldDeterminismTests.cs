@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Murim.Core.World;
 using Murim.Tests.Shared;
@@ -55,6 +56,34 @@ namespace Murim.Core.Tests.World
                 Assert.That(h2, Is.EqualTo(GoldenHashes.Seed2), $"Seed2=0x{h2:X16}UL");
                 Assert.That(h20261127, Is.EqualTo(GoldenHashes.Seed20261127), $"Seed20261127=0x{h20261127:X16}UL");
             });
+        }
+
+        // T-CORE-04
+        [Test]
+        public void ValleyWorldAndPropCatalog_ExposeReadOnlyNonArrayCollections()
+        {
+            ValleyWorld world = ValleyGenerator.Generate(1u, WorldConfig.Default);
+
+            AssertReadOnlyNonArray(world.HeightCm);
+            AssertReadOnlyNonArray(world.TierLevelPct);
+            AssertReadOnlyNonArray(world.RidgePct);
+            AssertReadOnlyNonArray(world.SurfaceWeights);
+            AssertReadOnlyNonArray(world.Stream);
+            AssertReadOnlyNonArray(world.Brook);
+            AssertReadOnlyNonArray(world.Waterfall);
+            AssertReadOnlyNonArray(world.Slopes);
+            AssertReadOnlyNonArray(world.Props);
+            AssertReadOnlyNonArray(PropCatalog.Variants);
+        }
+
+        private static void AssertReadOnlyNonArray<T>(IReadOnlyList<T> collection)
+        {
+            Assert.That(collection, Is.Not.Null);
+            Assert.That(collection, Is.Not.InstanceOf<T[]>());
+            var asList = collection as IList<T>;
+            Assert.That(asList, Is.Not.Null);
+            Assert.That(asList.IsReadOnly, Is.True);
+            Assert.Throws<NotSupportedException>(() => asList[0] = asList[0]);
         }
 
         private static void AssertLayout(

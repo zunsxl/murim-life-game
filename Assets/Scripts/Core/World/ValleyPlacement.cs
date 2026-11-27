@@ -134,7 +134,7 @@ namespace Murim.Core.World
         private static void PlaceAnchors(ValleyGenerationState state, PlacementState ps)
         {
             ValleyLayout l = state.Layout;
-            int zTop2 = ValleyWater.FindFirstZAtLeast(state.S2, l.Slope2X, 1000);
+            int zTop2 = Primitives.FindFirstZAtLeast(state.S2, l.Slope2X, 1000);
 
             AddAnchor(state, ps, new PropInstance(PropCatalog.PineAncient, (l.WfX - 18) * 100, 0, (l.FallZ + 9) * 100, 105, 100));
             AddAnchor(state, ps, new PropInstance(PropCatalog.PineAncient, (l.WfX + 18) * 100, 0, (l.FallZ + 9) * 100, 105, 100));

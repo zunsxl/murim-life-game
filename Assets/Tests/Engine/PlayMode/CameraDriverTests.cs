@@ -49,10 +49,6 @@ namespace Murim.Tests.PlayMode
         [UnityTest]
         public IEnumerator T_ENG_08_PanKeysDragScrollResetIgnoredInputsAndConfigOverride()
         {
-            Assert.That(
-                InputSystem.settings.scrollDeltaBehavior,
-                Is.EqualTo(InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms));
-
             yield return SceneManager.LoadSceneAsync("Valley", LoadSceneMode.Single);
             yield return MovePointerToWindowCenter();
 

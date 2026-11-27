@@ -180,7 +180,7 @@ namespace Murim.Core.Tests.World
         internal static void AssertBoundsAndRidges(ValleyWorld world)
         {
             int maxSouth = 0;
-            for (int i = 0; i < world.HeightCm.Length; i++)
+            for (int i = 0; i < world.HeightCm.Count; i++)
             {
                 Assert.That(world.HeightCm[i], Is.InRange((short)0, (short)12000), $"seed={world.Seed} idx={i}");
             }

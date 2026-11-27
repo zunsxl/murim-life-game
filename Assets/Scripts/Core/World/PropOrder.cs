@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Murim.Core.World
 {
@@ -7,14 +8,14 @@ namespace Murim.Core.World
     /// </summary>
     public static class PropOrder
     {
-        public static int[] BackToFront(PropInstance[] props)
+        public static int[] BackToFront(IReadOnlyList<PropInstance> props)
         {
             if (props == null)
             {
                 throw new ArgumentNullException(nameof(props));
             }
 
-            int[] order = new int[props.Length];
+            int[] order = new int[props.Count];
             for (int i = 0; i < order.Length; i++)
             {
                 order[i] = i;
@@ -24,7 +25,7 @@ namespace Murim.Core.World
             return order;
         }
 
-        private static int CompareIndices(PropInstance[] props, int a, int b)
+        private static int CompareIndices(IReadOnlyList<PropInstance> props, int a, int b)
         {
             PropInstance pa = props[a];
             PropInstance pb = props[b];

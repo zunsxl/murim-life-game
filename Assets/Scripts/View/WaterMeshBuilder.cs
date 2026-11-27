@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Murim.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -120,9 +121,9 @@ namespace Murim.View
             };
         }
 
-        private static Mesh BuildRibbonMesh(string name, WaterNode[] nodes)
+        private static Mesh BuildRibbonMesh(string name, IReadOnlyList<WaterNode> nodes)
         {
-            int nodeCount = nodes.Length;
+            int nodeCount = nodes.Count;
             int quadRows = Math.Max(0, nodeCount - 1);
             var buffers = new MeshBuffers(
                 nodeCount * RibbonVerticesPerNode,
@@ -138,10 +139,10 @@ namespace Murim.View
             return buffers.ToMesh(name);
         }
 
-        private static Vector2 ComputeRibbonPerp(WaterNode[] nodes, int index)
+        private static Vector2 ComputeRibbonPerp(IReadOnlyList<WaterNode> nodes, int index)
         {
             int prev = index > 0 ? index - 1 : 0;
-            int next = index < nodes.Length - 1 ? index + 1 : nodes.Length - 1;
+            int next = index < nodes.Count - 1 ? index + 1 : nodes.Count - 1;
             float dx = nodes[next].XCm - nodes[prev].XCm;
             float dz = nodes[next].ZCm - nodes[prev].ZCm;
             float len = Mathf.Sqrt(dx * dx + dz * dz);
@@ -261,10 +262,10 @@ namespace Murim.View
             return cursor;
         }
 
-        private static Mesh BuildWaterfallMesh(string name, FallNode[] nodes)
+        private static Mesh BuildWaterfallMesh(string name, IReadOnlyList<FallNode> nodes)
         {
             FallNode top = nodes[0];
-            FallNode bottom = nodes[nodes.Length - 1];
+            FallNode bottom = nodes[nodes.Count - 1];
             float centerU = top.XCm / 100f;
             float halfW = ValleyWorld.WaterfallWidthCm / 200f;
             float topV = Projection.PlaneVCm(top.ZCm, top.YCm) / 100f;

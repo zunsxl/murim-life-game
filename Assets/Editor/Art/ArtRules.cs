@@ -129,6 +129,41 @@ namespace Murim.Editor.Art
     {
         private const byte OpaqueThreshold = 128;
 
+        public static PngReadResult ValidatePngFile(
+            ArtAssetEntry entry,
+            bool decodePixels,
+            IList<ArtValidationIssue> issues)
+        {
+            var contract = new PngContract(entry.Width, entry.Height, entry.RequiresAlpha);
+            PngReadResult png = PngReader.ReadFile(entry.AssetPath, contract, decodePixels);
+            if (!png.Valid)
+            {
+                AddIssue(issues, entry, "ValidPng", png.Error);
+                return png;
+            }
+
+            ValidateImage(entry, png.Image, issues);
+            return png;
+        }
+
+        public static PngReadResult ValidatePngBytes(
+            ArtAssetEntry entry,
+            byte[] data,
+            bool decodePixels,
+            IList<ArtValidationIssue> issues)
+        {
+            var contract = new PngContract(entry.Width, entry.Height, entry.RequiresAlpha);
+            PngReadResult png = PngReader.ReadBytes(data, contract, decodePixels);
+            if (!png.Valid)
+            {
+                AddIssue(issues, entry, "ValidPng", png.Error);
+                return png;
+            }
+
+            ValidateImage(entry, png.Image, issues);
+            return png;
+        }
+
         public static void ValidateImage(
             ArtAssetEntry entry,
             ArtPixelBuffer image,

@@ -193,6 +193,21 @@ namespace Murim.Core.World
             return S(FloorDiv((outer - d) * 1024, outer - inner));
         }
 
+        internal static int FindFirstZAtLeast(short[] field, int x, int threshold)
+        {
+            for (int z = 0; z < ValleyWorld.VertsPerSide; z++)
+            {
+                if (field[z * ValleyWorld.VertsPerSide + x] >= threshold)
+                {
+                    return z;
+                }
+            }
+
+            // Unreachable for valid WorldConfig inputs and thresholds <= 1024: at z = 512,
+            // v - V2 >= 15350 cm > hwv2, so both s1 and s2 saturate to 1024.
+            return ValleyWorld.SizeM;
+        }
+
         private static int Corner(int i, int j, uint salt)
         {
             return (int)(Hash32(i, j, salt) & 2047u) - 1024;

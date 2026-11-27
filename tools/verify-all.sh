@@ -59,10 +59,70 @@ resolve_unity_editor() {
   RESOLVED_UNITY_EDITOR="$posix_unity"
 }
 
+validate_unity_results_xml() {
+  local results_file="$1"
+  if [[ ! -f "$results_file" ]]; then
+    echo "ERROR: Expected Unity test results XML missing: $results_file" >&2
+    exit 1
+  fi
+
+  local header
+  header="$(sed -n '/<test-run[[:space:]]/,/>/p' "$results_file" | tr '\r\n' '  ')"
+  if [[ -z "$header" ]]; then
+    echo "ERROR: Unity test results XML missing <test-run> element: $results_file" >&2
+    exit 1
+  fi
+
+  local result_val total_val
+  result_val="$(printf '%s' "$header" | sed -nE 's/.*[[:space:]]result="([^"]*)".*/\1/p')"
+  total_val="$(printf '%s' "$header" | sed -nE 's/.*[[:space:]]total="([0-9]+)".*/\1/p')"
+
+  if [[ "$result_val" != "Passed" ]]; then
+    echo "ERROR: Unity test results XML did not report result=\"Passed\" (got '${result_val:-missing}'): $results_file" >&2
+    exit 1
+  fi
+
+  if [[ -z "$total_val" || "$total_val" -lt 1 ]]; then
+    echo "ERROR: Unity test results XML reported zero or missing total test cases (total='${total_val:-missing}'): $results_file" >&2
+    exit 1
+  fi
+}
+
+contains_whole_token() {
+  local haystack="$1"
+  local needle="$2"
+  if [[ ${#needle} -lt 3 ]]; then
+    return 1
+  fi
+
+  awk -v h="$haystack" -v n="$needle" '
+    BEGIN {
+      hl = tolower(h);
+      nl = tolower(n);
+      nlen = length(nl);
+      hlen = length(hl);
+      pos = 1;
+      while (pos <= hlen) {
+        idx = index(substr(hl, pos), nl);
+        if (idx == 0) exit 1;
+        start = pos + idx - 1;
+        end = start + nlen;
+        before = (start == 1) ? "" : substr(hl, start - 1, 1);
+        after = (end > hlen) ? "" : substr(hl, end, 1);
+        if ((before == "" || before !~ /[a-z0-9]/) && (after == "" || after !~ /[a-z0-9]/)) {
+          exit 0;
+        }
+        pos = start + 1;
+      }
+      exit 1;
+    }'
+}
+
 run_core_suite() {
   local filter="$1"
   require_dotnet
   mkdir -p "$ARTIFACTS_DIR"
+  rm -rf "$ARTIFACTS_DIR/core-results"
 
   if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "fail" ]]; then
     echo "[stub] core failed" >&2
@@ -97,20 +157,34 @@ run_unity_tests() {
   resolve_unity_editor
   local unity_exe="$RESOLVED_UNITY_EDITOR"
   mkdir -p "$ARTIFACTS_DIR"
+  local results_file="$ARTIFACTS_DIR/$results_name"
+  local log_file="$ARTIFACTS_DIR/$log_name"
+  rm -f "$results_file" "$log_file"
 
   if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "fail" ]]; then
     echo "[stub] unity $platform failed" >&2
     exit 1
   fi
   if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "pass" ]]; then
+    printf '<test-run id="0" result="Passed" total="1" passed="1" failed="0" />\n' > "$results_file"
+    validate_unity_results_xml "$results_file"
     echo "[stub] unity $platform pass (category=$category, filter=$filter)"
+    return 0
+  fi
+  if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "zero-tests" ]]; then
+    printf '<test-run id="0" result="Passed" total="0" passed="0" failed="0" />\n' > "$results_file"
+    validate_unity_results_xml "$results_file"
+    return 0
+  fi
+  if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "no-xml" ]]; then
+    validate_unity_results_xml "$results_file"
     return 0
   fi
 
   local project_path results_path log_path
   project_path="$(to_native_path "$REPO_ROOT")"
-  results_path="$(to_native_path "$ARTIFACTS_DIR/$results_name")"
-  log_path="$(to_native_path "$ARTIFACTS_DIR/$log_name")"
+  results_path="$(to_native_path "$results_file")"
+  log_path="$(to_native_path "$log_file")"
 
   local -a cmd=(
     "$unity_exe"
@@ -130,6 +204,8 @@ run_unity_tests() {
   if ! "${cmd[@]}"; then
     exit 1
   fi
+
+  validate_unity_results_xml "$results_file"
 }
 
 run_engine_suite() {
@@ -146,6 +222,7 @@ run_build_suite() {
   resolve_unity_editor
   local unity_exe="$RESOLVED_UNITY_EDITOR"
   mkdir -p "$ARTIFACTS_DIR"
+  rm -f "$ARTIFACTS_DIR/build-windows.log" "$ARTIFACTS_DIR/player-smoke.log"
 
   if [[ "${MURIM_VERIFY_STUB_MODE:-}" == "fail" ]]; then
     echo "[stub] build failed" >&2
@@ -155,6 +232,8 @@ run_build_suite() {
     echo "[stub] build pass"
     return 0
   fi
+
+  rm -rf "$REPO_ROOT/Builds/Windows"
 
   local project_path log_path exe_path
   project_path="$(to_native_path "$REPO_ROOT")"
@@ -239,24 +318,21 @@ run_player_smoke_test() {
     exit 1
   fi
 
-  local cur_user cur_host cur_user_lc cur_host_lc
+  local cur_user cur_host
   cur_user="${USERNAME:-${USER:-}}"
   cur_host="${COMPUTERNAME:-${HOSTNAME:-}}"
-  cur_user_lc="$(printf '%s' "$cur_user" | tr '[:upper:]' '[:lower:]')"
-  cur_host_lc="$(printf '%s' "$cur_host" | tr '[:upper:]' '[:lower:]')"
 
-  local line line_lc
+  local line
   while IFS= read -r line; do
     if [[ "$line" == *"/"* || "$line" == *"\\"* ]]; then
       echo "ERROR: [Murim] log line contains path separator: $line" >&2
       exit 1
     fi
-    line_lc="$(printf '%s' "$line" | tr '[:upper:]' '[:lower:]')"
-    if [[ -n "$cur_user_lc" && "$line_lc" == *"$cur_user_lc"* ]]; then
+    if contains_whole_token "$line" "$cur_user"; then
       echo "ERROR: [Murim] log line contains user name." >&2
       exit 1
     fi
-    if [[ -n "$cur_host_lc" && "$line_lc" == *"$cur_host_lc"* ]]; then
+    if contains_whole_token "$line" "$cur_host"; then
       echo "ERROR: [Murim] log line contains machine name." >&2
       exit 1
     fi
@@ -283,31 +359,56 @@ run_self_test() {
   fi
 
   local self_path="$0"
+  trap 'rm -rf "$REPO_ROOT/artifacts/self-test"' EXIT
 
-  # Valid forms from §3.6.3 with stubbed pass
-  assert_exit_code 0 "core" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite core
-  assert_exit_code 0 "core-filter" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite core --filter SeedArgument
-  assert_exit_code 0 "engine" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite engine
-  assert_exit_code 0 "engine-filter" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite engine --filter ConfigLoading
-  assert_exit_code 0 "art" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite art
-  assert_exit_code 0 "build" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite build
-  assert_exit_code 0 "all-suites" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path"
+  # Valid forms from §3.6.3 with stubbed pass (requires --self-test-child)
+  assert_exit_code 0 "core" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite core
+  assert_exit_code 0 "core-filter" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite core --filter SeedArgument
+  assert_exit_code 0 "engine" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite engine
+  assert_exit_code 0 "engine-filter" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite engine --filter ConfigLoading
+  assert_exit_code 0 "art" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite art
+  assert_exit_code 0 "build" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite build
+  assert_exit_code 0 "all-suites" env MURIM_VERIFY_STUB_MODE=pass UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child
+
+  # Stub mode outside --self-test-child exits 2
+  assert_exit_code 2 "stub-outside-self-test-core" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite core
+  assert_exit_code 2 "stub-outside-self-test-all" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path"
 
   # Unknown suite or invalid arguments exit 2
-  assert_exit_code 2 "unknown-suite" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite unknown
-  assert_exit_code 2 "unknown-flag" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --bogus
-  assert_exit_code 2 "missing-suite-arg" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite
-  assert_exit_code 2 "filter-without-suite" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --filter Foo
+  assert_exit_code 2 "unknown-suite" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite unknown
+  assert_exit_code 2 "unknown-flag" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --bogus
+  assert_exit_code 2 "missing-suite-arg" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite
+  assert_exit_code 2 "filter-without-suite" env MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --filter Foo
 
   # Failing stub suite command exits 1
-  assert_exit_code 1 "failing-core" env MURIM_VERIFY_STUB_MODE=fail bash "$self_path" --suite core
-  assert_exit_code 1 "failing-engine" env MURIM_VERIFY_STUB_MODE=fail UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite engine
-  assert_exit_code 1 "failing-build" env MURIM_VERIFY_STUB_MODE=fail UNITY_EDITOR="/stub/Unity" bash "$self_path" --suite build
+  assert_exit_code 1 "failing-core" env MURIM_VERIFY_STUB_MODE=fail bash "$self_path" --self-test-child --suite core
+  assert_exit_code 1 "failing-engine" env MURIM_VERIFY_STUB_MODE=fail UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite engine
+  assert_exit_code 1 "failing-build" env MURIM_VERIFY_STUB_MODE=fail UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite build
+
+  # Zero-test and missing-XML Unity results exit 1
+  assert_exit_code 1 "unity-zero-tests-art" env MURIM_VERIFY_STUB_MODE=zero-tests UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite art
+  assert_exit_code 1 "unity-no-xml-art" env MURIM_VERIFY_STUB_MODE=no-xml UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite art
+  assert_exit_code 1 "unity-zero-tests-engine" env MURIM_VERIFY_STUB_MODE=zero-tests UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite engine
+  assert_exit_code 1 "unity-no-xml-engine" env MURIM_VERIFY_STUB_MODE=no-xml UNITY_EDITOR="/stub/Unity" bash "$self_path" --self-test-child --suite engine
 
   # Missing UNITY_EDITOR exits 2 for engine, art, build
-  assert_exit_code 2 "missing-unity-engine" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite engine
-  assert_exit_code 2 "missing-unity-art" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite art
-  assert_exit_code 2 "missing-unity-build" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --suite build
+  assert_exit_code 2 "missing-unity-engine" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite engine
+  assert_exit_code 2 "missing-unity-art" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite art
+  assert_exit_code 2 "missing-unity-build" env -u UNITY_EDITOR MURIM_VERIFY_STUB_MODE=pass bash "$self_path" --self-test-child --suite build
+
+  # T-BLD-02 whole-token matching
+  if contains_whole_token "[Murim] hash=AABBCCDD" "ab"; then
+    echo "SELF-TEST FAIL [token-short]: matched <3 char token" >&2
+    exit 1
+  fi
+  if contains_whole_token "[Murim] sandy123" "andy"; then
+    echo "SELF-TEST FAIL [token-substring]: matched non-boundary token" >&2
+    exit 1
+  fi
+  if ! contains_whole_token "[Murim] user=ANDY!" "andy"; then
+    echo "SELF-TEST FAIL [token-whole]: failed to match whole token" >&2
+    exit 1
+  fi
 
   echo "T-TOOL-01 self-test PASSED"
 }
@@ -316,6 +417,7 @@ main() {
   local suite=""
   local filter=""
   local self_test=0
+  local self_test_child=0
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -341,6 +443,10 @@ main() {
         self_test=1
         shift
         ;;
+      --self-test-child)
+        self_test_child=1
+        shift
+        ;;
       -h|--help)
         usage
         exit 0
@@ -352,6 +458,20 @@ main() {
         ;;
     esac
   done
+
+  if [[ "$self_test" -eq 1 && "$self_test_child" -eq 1 ]]; then
+    echo "ERROR: --self-test cannot be combined with --self-test-child." >&2
+    exit 2
+  fi
+
+  if [[ "$self_test_child" -ne 1 && -n "${MURIM_VERIFY_STUB_MODE+x}" ]]; then
+    echo "MURIM_VERIFY_STUB_MODE is set outside --self-test" >&2
+    exit 2
+  fi
+
+  if [[ "$self_test_child" -eq 1 ]]; then
+    ARTIFACTS_DIR="$REPO_ROOT/artifacts/self-test"
+  fi
 
   if [[ "$self_test" -eq 1 ]]; then
     if [[ -n "$suite" || -n "$filter" ]]; then

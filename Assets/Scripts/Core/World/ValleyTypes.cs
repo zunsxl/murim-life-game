@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Murim.Core.World
 {
@@ -134,18 +135,18 @@ namespace Murim.Core.World
 
         public uint Seed { get; internal set; }
         public WorldConfig Config { get; internal set; }
-        public short[] HeightCm { get; internal set; }
-        public byte[] TierLevelPct { get; internal set; }
-        public byte[] RidgePct { get; internal set; }
-        public byte[] SurfaceWeights { get; internal set; }
-        public WaterNode[] Stream { get; internal set; }
-        public WaterNode[] Brook { get; internal set; }
+        public IReadOnlyList<short> HeightCm { get; internal set; }
+        public IReadOnlyList<byte> TierLevelPct { get; internal set; }
+        public IReadOnlyList<byte> RidgePct { get; internal set; }
+        public IReadOnlyList<byte> SurfaceWeights { get; internal set; }
+        public IReadOnlyList<WaterNode> Stream { get; internal set; }
+        public IReadOnlyList<WaterNode> Brook { get; internal set; }
         public WaterPool PlungePool { get; internal set; }
         public WaterPool SpringPool { get; internal set; }
-        public FallNode[] Waterfall { get; internal set; }
-        public SlopeSite[] Slopes { get; internal set; }
+        public IReadOnlyList<FallNode> Waterfall { get; internal set; }
+        public IReadOnlyList<SlopeSite> Slopes { get; internal set; }
         public ValleyLayout Layout { get; internal set; }
-        public PropInstance[] Props { get; internal set; }
+        public IReadOnlyList<PropInstance> Props { get; internal set; }
         public int PlaneBottomCm { get; internal set; }
         public int PlaneCrestCm { get; internal set; }
         public int VistaUCm { get; internal set; }

@@ -52,16 +52,9 @@ namespace Murim.Core.Tests.World
             return config;
         }
 
-        public static int ComputeGradePct(short[] heightCm, int x, int z)
+        public static int ComputeGradePct(IReadOnlyList<short> heightCm, int x, int z)
         {
-            int xm = x > 0 ? x - 1 : 0;
-            int xp = x < ValleyWorld.SizeM ? x + 1 : ValleyWorld.SizeM;
-            int zm = z > 0 ? z - 1 : 0;
-            int zp = z < ValleyWorld.SizeM ? z + 1 : ValleyWorld.SizeM;
-
-            int gx = heightCm[z * ValleyWorld.VertsPerSide + xp] - heightCm[z * ValleyWorld.VertsPerSide + xm];
-            int gz = heightCm[zp * ValleyWorld.VertsPerSide + x] - heightCm[zm * ValleyWorld.VertsPerSide + x];
-            return (int)Primitives.FloorDiv(Primitives.Isqrt((long)gx * gx + (long)gz * gz), 2L);
+            return ValleySurface.ComputeGradePct(heightCm, x, z);
         }
 
         public static int WaterEdgeDistanceCm(ValleyWorld world, int xCm, int zCm)
@@ -71,13 +64,13 @@ namespace Murim.Core.Tests.World
             return d1 < d2 ? d1 : d2;
         }
 
-        public static int PassEdgeDistanceCm(int xCm, int zCm, WaterNode[] path, WaterPool pool)
+        public static int PassEdgeDistanceCm(int xCm, int zCm, IReadOnlyList<WaterNode> path, WaterPool pool)
         {
             long pdx = xCm - pool.XCm;
             long pdz = zCm - pool.ZCm;
             int bestE = (int)Primitives.Isqrt(pdx * pdx + pdz * pdz) - pool.RadiusCm;
 
-            for (int i = 0; i < path.Length - 1; i++)
+            for (int i = 0; i < path.Count - 1; i++)
             {
                 WaterNode a = path[i];
                 WaterNode b = path[i + 1];

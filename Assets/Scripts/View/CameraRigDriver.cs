@@ -38,17 +38,9 @@ namespace Murim.View
             _lastBackdropH = -1f;
             _lastBackdropAspect = -1f;
 
-            if (InputSystem.settings != null
-                && InputSystem.settings.scrollDeltaBehavior
-                    != InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms)
-            {
-                InputSystem.settings.scrollDeltaBehavior =
-                    InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms;
-            }
-
             if (Rig != null && _camera != null)
             {
-                ApplyPose(Rig.Pose, ResolveAspect());
+                ApplyPose(Rig.Pose, ResolveAspect(_camera));
             }
         }
 
@@ -84,7 +76,7 @@ namespace Murim.View
         {
             input = new CameraInput
             {
-                Aspect = ResolveAspect(),
+                Aspect = ResolveAspect(_camera),
                 ScreenHeightPx = ResolveScreenHeightPx(),
                 Blocked = Blocked,
             };
@@ -133,18 +125,18 @@ namespace Murim.View
             }
         }
 
-        private float ResolveAspect()
+        internal static float ResolveAspect(Camera cam)
         {
-            if (_camera != null && float.IsFinite(_camera.aspect) && _camera.aspect > 0f)
+            if (cam != null && float.IsFinite(cam.aspect) && cam.aspect > 0f)
             {
-                return _camera.aspect;
+                return cam.aspect;
             }
 
             int h = Screen.height;
             return h > 0 ? Screen.width / (float)h : 16f / 9f;
         }
 
-        private static int ResolveScreenHeightPx()
+        internal static int ResolveScreenHeightPx()
         {
             int h = Screen.height;
             return h > 0 ? h : 1080;

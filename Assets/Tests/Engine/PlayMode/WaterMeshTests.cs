@@ -56,14 +56,14 @@ namespace Murim.Tests.PlayMode
             AssertFoam(water.WaterFoam.GetComponent<MeshFilter>().sharedMesh, world.PlungePool);
         }
 
-        private static void AssertRibbon(Mesh mesh, WaterNode[] nodes)
+        private static void AssertRibbon(Mesh mesh, IReadOnlyList<WaterNode> nodes)
         {
-            Assert.That(mesh.vertexCount, Is.EqualTo(5 * nodes.Length));
+            Assert.That(mesh.vertexCount, Is.EqualTo(5 * nodes.Count));
             Vector3[] verts = mesh.vertices;
             Color32[] colors = mesh.colors32;
             Vector2[] uvs = mesh.uv;
 
-            for (int i = 0; i < nodes.Length; i++)
+            for (int i = 0; i < nodes.Count; i++)
             {
                 int row = i * 5;
                 for (int k = 0; k < 5; k++)
@@ -103,7 +103,7 @@ namespace Murim.Tests.PlayMode
             Assert.That(verts[0].y, Is.EqualTo(expectedV).Within(1e-4f));
         }
 
-        private static void AssertWaterfall(Mesh mesh, FallNode[] nodes)
+        private static void AssertWaterfall(Mesh mesh, IReadOnlyList<FallNode> nodes)
         {
             Assert.That(mesh.vertexCount, Is.EqualTo(4));
             Vector3[] verts = mesh.vertices;
@@ -113,7 +113,7 @@ namespace Murim.Tests.PlayMode
             }
 
             FallNode top = nodes[0];
-            FallNode bottom = nodes[nodes.Length - 1];
+            FallNode bottom = nodes[nodes.Count - 1];
             float expectedTopV = Projection.PlaneVCm(top.ZCm, top.YCm) / 100f;
             float expectedBottomV = Projection.PlaneVCm(bottom.ZCm, bottom.YCm) / 100f;
             float expectedCenterU = top.XCm / 100f;

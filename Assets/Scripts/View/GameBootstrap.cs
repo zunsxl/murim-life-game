@@ -14,7 +14,6 @@ namespace Murim.View
     /// </summary>
     public sealed class GameBootstrap : MonoBehaviour
     {
-        public const float DefaultViewHeightM = 44f;
         public const float HazeSpanM = 110f;
         public const float HazeMax = 0.45f;
         public const float CameraZ = -10f;
@@ -138,10 +137,8 @@ namespace Murim.View
             }
 
             var frame = new ViewFrame(world.PlaneBottomCm, world.PlaneCrestCm, world.VistaUCm, world.VistaVCm);
-            float initialAspect = float.IsFinite(targetCamera.aspect) && targetCamera.aspect > 0f
-                ? targetCamera.aspect
-                : (Screen.height > 0 ? Screen.width / (float)Screen.height : 16f / 9f);
-            int initialScreenHeight = Screen.height > 0 ? Screen.height : 1080;
+            float initialAspect = CameraRigDriver.ResolveAspect(targetCamera);
+            int initialScreenHeight = CameraRigDriver.ResolveScreenHeightPx();
 
             var rig = new CameraRig(frame, cameraConfig, initialAspect, initialScreenHeight);
             Transform backdropTransform = backdropRenderer != null ? backdropRenderer.transform : null;
@@ -218,7 +215,7 @@ namespace Murim.View
             {
                 targetCamera.gameObject.layer = DrawOrder.WorldLayer;
                 targetCamera.orthographic = true;
-                targetCamera.orthographicSize = DefaultViewHeightM * 0.5f;
+                targetCamera.orthographicSize = Murim.Core.Camera.CameraConfig.Default.DefaultViewHeightM * 0.5f;
                 targetCamera.nearClipPlane = CameraNear;
                 targetCamera.farClipPlane = CameraFar;
                 targetCamera.clearFlags = CameraClearFlags.SolidColor;
@@ -302,7 +299,7 @@ namespace Murim.View
                 world.Seed,
                 seedSource,
                 hashHex,
-                world.Props.Length,
+                world.Props.Count,
                 elapsedMs));
         }
     }
