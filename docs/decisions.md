@@ -14,8 +14,9 @@ and explicit quality-gate waivers. Update an existing entry rather than recordin
 - **Cultural setting (Chinese wuxia / Jianghu only):** The game exclusively follows classical Chinese wuxia /
   Jianghu (and Chinese cultivation where later approved) aesthetics and never uses Korean Murim influences.
   *(Supersedes earlier Korean Murim wording; `docs/vision.md` and `docs/art-direction.md` aligned in `v0.1.0`.)*
-- **Deterministic simulation:** Core simulation and map generation in `Assets/Scripts/Core/` remain pure C# and
-  seed-deterministic.
+- **Fixed hand-sculpted world:** The game world is a single hand-sculpted fixed map; procedural map generation
+  and seed-determinism requirements (for both world creation and future gameplay) are permanently removed.
+  *(Replaced prior **Deterministic simulation** standing rule in `v0.2.0` on 2026-11-28.)*
 - **Branch naming:** Use `vX.Y.Z-spec`, `vX.Y.Z-impl`, `vX.Y.Z-impl-ARCH-NNN`, and `vX.Y.Z-docs`. Never name a
   branch `vX.Y.Z` (reserved for release tags).
 
@@ -90,3 +91,11 @@ To waive a specific blocking deterministic gate finding, record an entry here co
   - **Self-contained overlay `EventSystem`:** `SystemOverlay.prefab` owns its `EventSystem` and `InputSystemUIInputModule` (disabled while closed, destroyed if an external `EventSystem` exists) so no scene-level UI object is needed (§3.5.3).
   - **Committed prefab & font asset as source of truth:** `OverlaySetupBuilder.cs` removed so re-running a builder cannot overwrite hand edits or deleted assets (§3.6.1).
   - **Trimmed TMP Essential Resources:** HDRP shader graphs and `EmojiOne` assets removed (`m_enableEmojiSupport: 0`) because the overlay is URP and ASCII-only (§3.6.1).
+
+### v0.2.0
+
+- **Product spec approval:** Approved by owner on 2026-11-28 (Draft 2, with mechanical `PS-3`/`PS-4` wording fixes) — exact quote: `"Approve it, update docs and push."` → [docs/specs/v0.2.0.md](specs/v0.2.0.md)
+- **Fixed hand-sculpted regional valley (replaces procedural generation & determinism):** Permanently remove `v0.1.0` procedural valley generation, external seed overrides, and the seed-determinism standing rule (no deterministic requirement for world creation or future gameplay). Author a single fixed, hand-sculpted regional mountain valley spanning at least 4 screens across at widest overview zoom, with untouched natural Chinese-wuxia mountain wilderness surrounding the central sect grounds *(replaced `v0.1.0` **Seed & determinism** and the **Deterministic simulation** standing rule on 2026-11-28)* → [F-01](specs/v0.2.0.md#features), [EC-10](specs/v0.2.0.md#edge-cases).
+- **Landscaped central sect grounds (no buildings, characters, or HUD):** Replace `v0.1.0`'s untouched-wilderness-only center with hand-composed, non-interactive landscaped terraced grounds aligned with the owner's reference composition: foreground mountain stream, right-side cascading waterfall, arched wooden footbridge, central stone-walled pine pond, laid flagstone courtyard pathways, stone retaining walls with low main-terrace balustrades, stone staircases (with the central grand stair flanked by two stone lantern posts), and open empty pads reserved for future buildings *(supersedes `v0.1.0`'s untouched-wilderness center on 2026-11-28)* → [F-02](specs/v0.2.0.md#features), [Out of scope](specs/v0.2.0.md#out-of-scope).
+- **Fully enclosed outer edges (no open sky horizon):** Enclose all four sides of the valley with untouched natural mountain slopes, forests, rocky ridges, bamboo groves, and stream borders so neither empty void nor an open sky/horizon strip is ever visible at any zoom *(replaces `v0.1.0`'s distant misty mountain horizon and sky backdrop on 2026-11-28)* → [F-01](specs/v0.2.0.md#features), [EC-3, EC-8](specs/v0.2.0.md#edge-cases).
+- **Retained medium, elevation foundation, controls, overlay & deferrals:** Retain strictly 2D painterly oblique 3/4 art (zero 3D models; visual style realignment and `ART-XXX` inventory owned separately by the Designer), the multi-level vertical elevation foundation for future structures/bridges/XYZ movement, classical Chinese-wuxia / Jianghu setting (Korean Murim permanently excluded), reference-never-ships policy, static environment with standard Windows cursor and no audio, and `v0.1.0` camera (`F-04`) and direct resizable-window launch + minimal `Esc` overlay (`F-05`) unchanged. Buildings, outer-valley man-made landmarks/roads, playable units/NPCs, gameplay HUD/minimap, time/cultivation simulation, landmark interaction/tooltips, ambient animations/VFX, camera rotation/middle-drag/edge-scrolling, title/settings/save-load, custom cursor, and audio remain deferred → [F-03, F-04, F-05](specs/v0.2.0.md#features), [Out of scope](specs/v0.2.0.md#out-of-scope).
