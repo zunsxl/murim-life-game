@@ -10,7 +10,7 @@ A Unity game set in the martial world of Murim.
 
 | Path | Purpose |
 |---|---|
-| `agents/` | Independent role instructions (`product-designer.md`, `software-architect.md`, `implementer.md`, `technical-writer.md`) |
+| `agents/` | Independent role instructions (`product-manager.md`, `designer.md`, `software-architect.md`, `implementer.md`, `technical-writer.md`) |
 | `quality-gates/` | Deterministic zero-dependency Python 3 quality gates and unit tests |
 | `docs/` | Living project documentation (`vision.md`, `scope.md`, `decisions.md`, `project-profile.md`, `art-direction.md`, `game.md`, `backlog.md`) |
 | `docs/specs/` | Versioned product and technical specifications (`vX.Y.Z.md`, `vX.Y.Z-technical.md`) and spec templates |

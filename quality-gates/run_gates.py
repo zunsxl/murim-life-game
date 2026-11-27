@@ -21,6 +21,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from gates.art_inventory_gate import run_art_inventory_gate
+from gates.art_quality_gate import run_art_quality_gate
 from gates.code_quality_gate import run_code_quality_gate
 from gates.common import EXIT_BLOCKED, EXIT_FAIL, EXIT_PASS, GateReport
 from gates.correctness_maintainability_gate import run_correctness_maintainability_gate
@@ -31,6 +32,7 @@ from gates.security_privacy_gate import run_security_privacy_gate
 AVAILABLE_GATES = {
     "product-spec": "Validate a product spec's structure, IDs, testability, links, and product-level boundaries.",
     "art-inventory": "Validate a product spec's ART-XXX inventory, exact counts, dispositions, options, and sourcing.",
+    "art-quality": "Compare supplied art assets (PNG, FBX, fonts, Unity .meta) against a spec's Art delivery contracts.",
     "requirements-architecture": "Validate a technical spec's baseline SHA, AC traceability, ticket DAG, execution plan, and art contracts.",
     "security-privacy": "Scan specs, configs, scripts, and code for secrets, PII/local paths, unsafe sinks, debug gating, and unpinned deps.",
     "code-quality": "Check layer boundaries, per-frame allocations/LINQ, complexity/size thresholds, duplication, and warnings-as-errors.",
@@ -56,6 +58,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--base", default=None, help="Base git revision for diff-scoped code/security gates")
     parser.add_argument("--head", default=None, help="Head git revision for diff-scoped code/security gates")
     parser.add_argument("--paths", nargs="*", default=None, help="Explicit file or directory paths to scan")
+    parser.add_argument("--art-dir", default=None, type=Path, help="Directory containing supplied art files for art-quality")
+    parser.add_argument("--art-id", nargs="*", dest="art_ids", default=None, help="Optional ART-NNN ID(s) to scope art-quality validation")
+    parser.add_argument("--require-meta", action="store_true", help="Require Unity .meta files to exist and match import settings in art-quality")
     parser.add_argument("--no-git", action="store_true", help="Skip git baseline commit lookup in requirements-architecture")
     parser.add_argument("--run-tools", action="store_true", help="Run external formatter/linter tools in code-quality")
     parser.add_argument("--run-tests", action="store_true", help="Run focused test runner in correctness-maintainability")
@@ -97,6 +102,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     spec = _resolve_opt(args.spec)
     product_spec = _resolve_opt(args.product_spec)
     decisions = _resolve_opt(args.decisions)
+    art_dir = _resolve_opt(args.art_dir)
 
     reports: List[GateReport] = []
     for gate_name in args.gates:
@@ -115,6 +121,24 @@ def main(argv: Optional[List[str]] = None) -> int:
                 reports.append(r)
             else:
                 reports.append(run_art_inventory_gate(spec, repo, decisions))
+
+        elif gate_name == "art-quality":
+            if spec is None:
+                r = GateReport(gate="Art Quality", target="(none)", _finding_prefix="AQ")
+                r.add_blocked("`--spec <tech-spec-or-contract-path>` is required for `art-quality`.")
+                reports.append(r)
+            else:
+                reports.append(
+                    run_art_quality_gate(
+                        spec_path=spec,
+                        repo=repo,
+                        art_dir=art_dir,
+                        paths=args.paths,
+                        art_ids=args.art_ids,
+                        decisions_path=decisions,
+                        require_meta=args.require_meta,
+                    )
+                )
 
         elif gate_name == "requirements-architecture":
             if spec is None:
