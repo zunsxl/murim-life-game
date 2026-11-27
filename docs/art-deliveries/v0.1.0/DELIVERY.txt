@@ -1,0 +1,29 @@
+Approved v0.1.0 art delivery
+
+Owner approval and publishing authorization (2026-11-27):
+"Approved.
+
+Push this to the pull-request."
+
+38 PNGs and one static Libre Baskerville Regular font plus its SIL OFL license.
+Runtime art is under Assets/Resources/Art. These preview boards never ship.
+manifest.json records exact delivered asset SHA256 hashes; family reports contain
+generation prompts, provenance, dimensions, pivots and processing details.
+
+Built-in image_gen produced the painted world assets. Owner-authorized scripted
+processing normalized canvas sizes, pivots, alpha, seams and color space.
+UI skins and the sky gradient use deterministic raster drawing. No reference
+image pixels were shipped. Source generation IDs are retained in the reports.
+
+Independent file-level audit: 143 checks PASS. This is not a Unity test run.
+Some source paintings were upsampled; exact export size does not establish
+native detail quality. Bare terrain repeats can reveal motifs; closest/widest
+zoom crispness and repetition require integrated PT-2 and PT-7 playtests.
+
+Integration remaining per technical spec section 4:
+- ARCH-004: import settings and Unity art tests.
+- ARCH-007: WorldProps.spriteatlas, one page, and sprite layering.
+- ARCH-008: OverlaySerif SDF.asset, UI nine-slice and title/button layout.
+- ART-008 atmosphere and ART-011 title treatment are engine values, not PNGs.
+Unity metadata, atlas, TMP assets, code and project settings are not part of this
+art-only commit. In-game acceptance has not been claimed.

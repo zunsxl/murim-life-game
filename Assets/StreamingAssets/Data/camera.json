@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "minViewHeightM": 12,
+  "maxViewHeightM": 88,
+  "defaultViewHeightM": 44,
+  "panSpeedPerViewHeight": 0.9,
+  "panAccelTimeS": 0.1,
+  "panStopTimeS": 0.22,
+  "zoomStepPct": 15,
+  "zoomSmoothTimeS": 0.12,
+  "resetSmoothTimeS": 0.35
+}

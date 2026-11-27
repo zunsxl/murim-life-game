@@ -1,0 +1,16 @@
+{
+  "asset": "Assets/Resources/Art/Props/Flora/flora_wildflower.png",
+  "problem": "Broad low-opacity pale painted haze surrounding flower heads in final export. This differs from harmless zero-alpha RGB on pine and rock sources.",
+  "fix": "Alpha remap round(clip((alpha-48)*255/207,0,255)); pixels with result alpha <=2 cleared to RGBA zero. RGB of all retained pixels unchanged.",
+  "checks": {
+    "canvas": [
+      160,
+      128
+    ],
+    "all_original_fully_opaque_pixels_preserved": true,
+    "four_pixel_margin_clear": true,
+    "ground_contact_and_opaque_top_unchanged": true
+  },
+  "sha256": "b9d95962e2cd9b9ff827a8e238900b8e636fc8e723ded510c2ef6b8df4bfef0b",
+  "review": "Threshold comparison visually inspected on dark backdrop. Threshold 48 removes broad haze while retaining stems and petals; thresholds 80+ visibly damage fine stems and are rejected."
+}

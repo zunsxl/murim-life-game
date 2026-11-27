@@ -1,0 +1,449 @@
+[
+  {
+    "name": "pine_ancient",
+    "path": "Assets\\Resources\\Art\\Props\\Pines\\pine_ancient.png",
+    "size": [
+      1536,
+      2048
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      768,
+      160
+    ],
+    "top_range": [
+      1474,
+      1802
+    ],
+    "top": 1618,
+    "transparent_fraction": 0.6636861165364584,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-01564638-e7df-4dde-9408-951465f6b4ed.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one ancient gnarled Chinese mountain pine, broad asymmetric boughs and layered flattened cloud-canopy olive needle pads, twisted trunk. Entire silhouette INCLUDING ALL BRANCH TIPS well within frame with generous 12% transparent margin, roots centered at bottom. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, no perspective convergence, ground depth foreshortened to 60%. True transparent background. No ground patch, no cast shadow, no text, no watermark, no scenery. Do not crop any part. This is a single isolated asset.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "74255af1bfafc9b26038cdc25994bedb598296bd5665fa97bee2c044d08bb17a"
+  },
+  {
+    "name": "pine_tall",
+    "path": "Assets\\Resources\\Art\\Props\\Pines\\pine_tall.png",
+    "size": [
+      1152,
+      1728
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      576,
+      128
+    ],
+    "top_range": [
+      1291,
+      1577
+    ],
+    "top": 1378,
+    "transparent_fraction": 0.6971591274434157,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-c635f51b-a411-44aa-96f0-57dc8fa424b3.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one tall mature Chinese mountain pine with layered flat cloud crown and long weathered trunk; entire tree with all branch tips and roots comfortably within frame, 12% empty margin. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, no perspective convergence, ground depth foreshortened to 60%. True transparent background. No ground patch, no cast shadow, no text, no watermark, no scenery. Do not crop any part. This is a single isolated asset.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "9342478093c291c1b5b31ca0e518d394eeeb2c547cf4983787d9075c20866301"
+  },
+  {
+    "name": "pine_leaning",
+    "path": "Assets\\Resources\\Art\\Props\\Pines\\pine_leaning.png",
+    "size": [
+      1408,
+      1152
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      448,
+      128
+    ],
+    "top_range": [
+      830,
+      1014
+    ],
+    "top": 906,
+    "transparent_fraction": 0.7223855991556187,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-ea06580d-c01a-46e3-b196-467d4918f0c3.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one Chinese cliffside pine leaning dramatically RIGHT, roots at lower left, crown center well to right of base, layered olive cloud-canopy needle pads, gnarled trunk; wide landscape sprite, entire tree and all branch tips inside 12% margin. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, no perspective convergence, ground depth foreshortened to 60%. True transparent background. No ground patch, no cast shadow, no text, no watermark, no scenery. Do not crop any part. This is a single isolated asset.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "b8079904868e7c96503bd4b5f0c4b168a78553d9d1a59819848bc9537c28b6a1"
+  },
+  {
+    "name": "pine_young",
+    "path": "Assets\\Resources\\Art\\Props\\Pines\\pine_young.png",
+    "size": [
+      640,
+      768
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      320,
+      96
+    ],
+    "top_range": [
+      507,
+      619
+    ],
+    "top": 553,
+    "transparent_fraction": 0.740863037109375,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-24d4c6d1-5135-4a23-b832-04a68eccdecd.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one compact young Chinese hillside pine, layered flattened olive cloud canopy, short slender weathered trunk, full isolated tree and roots inside generous 12% empty margin. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, ground depth 60%, no perspective convergence. True transparent background. No ground patch, no cast shadow, no text, watermark or scenery. Entire isolated asset visible.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "e2a58091ef7f6f05664d5983f06733f59e5a69fb1a100743306dd7eb3d552453"
+  },
+  {
+    "name": "bamboo_dense",
+    "path": "Assets\\Resources\\Art\\Props\\Bamboo\\bamboo_dense.png",
+    "size": [
+      768,
+      1600
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      384,
+      240
+    ],
+    "top_range": [
+      1106,
+      1352
+    ],
+    "top": 1218,
+    "transparent_fraction": 0.5971687825520834,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-ccf71b21-4d5b-4758-ae3d-3b44ae95d93d.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one dense grove cluster of exactly 16 slender jointed Chinese bamboo culms, pale olive warm gold stalks and airy layered leaf fans; clear vertical stalk rhythm, exposed bases spread in ellipse; entire grove inside 12% empty margin. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, ground depth 60%, no perspective convergence. True transparent background. No ground patch, no cast shadow, no text, watermark or scenery. Entire isolated asset visible.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "531f5c74fd52d43810ee99bd0d559d8abde039ba09a36b3d6a4a964701a78046"
+  },
+  {
+    "name": "bamboo_edge",
+    "path": "Assets\\Resources\\Art\\Props\\Bamboo\\bamboo_edge.png",
+    "size": [
+      640,
+      1216
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      320,
+      192
+    ],
+    "top_range": [
+      830,
+      1014
+    ],
+    "top": 914,
+    "transparent_fraction": 0.7077405427631579,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-ba0be91e-9c50-4bfb-b6ff-0226c92e46eb.png",
+    "prompt": "Production 2D painterly game sprite, classical Chinese wuxia earth-and-ink style. one medium grove edge cluster of exactly 10 slender jointed Chinese bamboo culms, airy olive jade leaf fans, warm golden stalks, clearly spaced bases; entire grove inside 12% empty margin. Fine hand-painted brushwork, warm upper-left golden afternoon highlights, cool shaded lower-right surfaces, restrained olive and warm slate palette. Orthographic oblique view 36.87 degrees above horizon, ground depth 60%, no perspective convergence. True transparent background. No ground patch, no cast shadow, no text, watermark or scenery. Entire isolated asset visible.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "6069060ea12397ef96c6142dac440af0f5c995d4d7818dffe6e6eca7a8977741"
+  },
+  {
+    "name": "bamboo_young",
+    "path": "Assets\\Resources\\Art\\Props\\Bamboo\\bamboo_young.png",
+    "size": [
+      384,
+      704
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      192,
+      128
+    ],
+    "top_range": [
+      461,
+      563
+    ],
+    "top": 510,
+    "transparent_fraction": 0.816702178030303,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-6e873cd2-dfcf-4c4c-a09f-742d52c9543e.png",
+    "prompt": "Production 2D hand-painted game sprite in classical Chinese wuxia earth-and-ink brushwork. one sparse young Chinese bamboo clump of exactly 5 jointed pale olive stalks and delicate leaf fans; entire clump inside generous 12% empty margin. Warm upper-left golden sunlight, cool lower-right shaded sides, olive moss and gray brown stone palette. Orthographic oblique 36.87 degree elevated view, depth 60%. Genuine transparent background with NO GLOW OR HALO, no scenery, no soil patch, no cast shadows, no text. Entire silhouette unclipped.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "a96521f9303fb67f1ba6f1a04843f7e7745c82567954198e4668d6f35fa7ba1e"
+  },
+  {
+    "name": "rock_outcrop",
+    "path": "Assets\\Resources\\Art\\Props\\Rocks\\rock_outcrop.png",
+    "size": [
+      1024,
+      1088
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      512,
+      320
+    ],
+    "top_range": [
+      415,
+      760
+    ],
+    "top": 581,
+    "transparent_fraction": 0.5263097426470589,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-033108b5-0065-4304-9af6-d0236fb779f7.png",
+    "prompt": "Production 2D hand-painted game sprite in classical Chinese wuxia earth-and-ink brushwork. one large rounded yet faceted gray brown mountain rock outcrop, tall irregular asymmetrical mass capped with olive moss on upward surfaces; entire rock inside 12% empty margin. Warm upper-left golden sunlight, cool lower-right shaded sides, olive moss and gray brown stone palette. Orthographic oblique 36.87 degree elevated view, depth 60%. Genuine transparent background with NO GLOW OR HALO, no scenery, no soil patch, no cast shadows, no text. Entire silhouette unclipped.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "b08d2f0ca7c2670e512583f5db6c1f105098c979f5dc9c969d0aad8f5697e778"
+  },
+  {
+    "name": "rock_boulder",
+    "path": "Assets\\Resources\\Art\\Props\\Rocks\\rock_boulder.png",
+    "size": [
+      384,
+      448
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      192,
+      128
+    ],
+    "top_range": [
+      166,
+      300
+    ],
+    "top": 231,
+    "transparent_fraction": 0.48861258370535715,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-233b6c4f-0bc1-4642-9d9f-131de2ff1c02.png",
+    "prompt": "Production 2D hand-painted game sprite in classical Chinese wuxia earth-and-ink brushwork. one medium rounded gray brown mountain boulder capped in olive moss, embedded dark lower base, softly faceted stone; whole object inside 12% margin. Warm upper-left golden sunlight, cool lower-right shaded sides, olive moss and gray brown stone palette. Orthographic oblique 36.87 degree elevated view, depth 60%. Genuine transparent background with NO GLOW OR HALO, no scenery, no soil patch, no cast shadows, no text. Entire silhouette unclipped.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "e24aae7e7643e68d211ed6ca3bfdc7af84a487fa729764a2e121e451c3f5fa18"
+  },
+  {
+    "name": "rock_riverstone",
+    "path": "Assets\\Resources\\Art\\Props\\Rocks\\rock_riverstone.png",
+    "size": [
+      256,
+      192
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      128,
+      76
+    ],
+    "top_range": [
+      37,
+      110
+    ],
+    "top": 73,
+    "transparent_fraction": 0.60821533203125,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-4f6d7e61-b13a-4a64-9fa7-2e2294e15a7a.png",
+    "prompt": "Single production 2D painterly game sprite: one low flat smooth gray brown streamside river stone, subtle olive moss at upper rim, broad elliptical footprint; whole isolated stone inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, muted olive moss, warm slate stone. Upper-left warm sunlight painted on object, cooler lower-right surfaces. Orthographic oblique view 36.87 degrees elevation, 60% ground depth. Transparent background, no glow/halo, no shadows or ground around object, no text. Full unclipped object.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "40830090a3e612e5402839875c802de09fdc0c014f7298e9316e8afe7747c14c"
+  },
+  {
+    "name": "rock_ridged",
+    "path": "Assets\\Resources\\Art\\Props\\Rocks\\rock_ridged.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      256,
+      144
+    ],
+    "top_range": [
+      203,
+      364
+    ],
+    "top": 275,
+    "transparent_fraction": 0.5490684509277344,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-50d60631-5b81-4a8f-b0a9-efdf8996404c.png",
+    "prompt": "Single production 2D painterly game sprite: one angular ridged hillside gray brown stone with olive moss caps, irregular natural striations; whole object inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, muted olive moss, warm slate stone. Upper-left warm sunlight painted on object, cooler lower-right surfaces. Orthographic oblique view 36.87 degrees elevation, 60% ground depth. Transparent background, no glow/halo, no shadows or ground around object, no text. Full unclipped object.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "6b5b2d52fd14b2b8ce4266c31b8379a414b1bdeea080be3a176ef2bae45d3c87"
+  },
+  {
+    "name": "rock_cluster",
+    "path": "Assets\\Resources\\Art\\Props\\Rocks\\rock_cluster.png",
+    "size": [
+      256,
+      192
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      128,
+      80
+    ],
+    "top_range": [
+      32,
+      108
+    ],
+    "top": 69,
+    "transparent_fraction": 0.6694132486979166,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-cb654eff-dfc7-4f17-be65-8b6ed2d04d11.png",
+    "prompt": "Single production 2D painterly game sprite: one small scattered cluster of exactly 4 low gray brown pebbles with sparse olive moss; compact elliptical footprint, whole cluster inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, muted olive and warm slate palette. Warm upper-left sunlight painted on object, cool lower-right shadows. Orthographic oblique elevated 36.87 degree view, ground depth 60%. Fully transparent background, no glow/halo, no surrounding ground, no cast shadow, no text. All object edges inside frame.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "2b04d2ca5c3d90300d92d0ce1158fd2937eadbcfadfd09ff5612e62001a97c18"
+  },
+  {
+    "name": "flora_wildflower",
+    "path": "Assets\\Resources\\Art\\Props\\Flora\\flora_wildflower.png",
+    "size": [
+      160,
+      128
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      80,
+      48
+    ],
+    "top_range": [
+      28,
+      76
+    ],
+    "top": 41,
+    "transparent_fraction": 0.864013671875,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-52264449-8695-4877-97e8-9fb7227ab1d9.png",
+    "prompt": "Single production 2D painterly game sprite: one delicate low patch of tiny cream-white wildflowers on muted olive stems, sparse airy cluster, no soil patch; whole plant inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, muted olive and warm slate palette. Warm upper-left sunlight painted on object, cool lower-right shadows. Orthographic oblique elevated 36.87 degree view, ground depth 60%. Fully transparent background, no glow/halo, no surrounding ground, no cast shadow, no text. All object edges inside frame.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable. Final alpha haze cleanup per wildflower-fix-report.json. Final alpha haze cleanup per wildflower-fix-report.json.",
+    "sha256": "b9d95962e2cd9b9ff827a8e238900b8e636fc8e723ded510c2ef6b8df4bfef0b"
+  },
+  {
+    "name": "flora_shrub",
+    "path": "Assets\\Resources\\Art\\Props\\Flora\\flora_shrub.png",
+    "size": [
+      224,
+      224
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      112,
+      64
+    ],
+    "top_range": [
+      83,
+      154
+    ],
+    "top": 116,
+    "transparent_fraction": 0.6504304846938775,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-8c02b792-0d3f-4084-a73f-3e30006b5a1a.png",
+    "prompt": "Single production 2D painterly game sprite: one low muted olive mountain shrub, restrained small painterly leaves, compact dome, no soil patch; whole plant inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, subdued natural olive foliage. Warm upper-left sunlight painted onto leaves, cooler lower-right shade. Orthographic oblique 36.87 degree elevation. True transparent background, no backdrop, glow, halo, soil, cast shadow or text. Whole isolated plant.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "b28f28de2dfb0a5caf2b8457ccfdd1b3e82e8269f5912b206f2c4541bb467acc"
+  },
+  {
+    "name": "flora_fern",
+    "path": "Assets\\Resources\\Art\\Props\\Flora\\flora_fern.png",
+    "size": [
+      128,
+      144
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      64,
+      40
+    ],
+    "top_range": [
+      55,
+      100
+    ],
+    "top": 77,
+    "transparent_fraction": 0.7578125,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-a8afb167-eba8-4366-a927-5e9f1c4a5f84.png",
+    "prompt": "Single production 2D painterly game sprite: one small streamside fern tuft, delicate olive fronds, no soil patch; whole plant inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, subdued natural olive foliage. Warm upper-left sunlight painted onto leaves, cooler lower-right shade. Orthographic oblique 36.87 degree elevation. True transparent background, no backdrop, glow, halo, soil, cast shadow or text. Whole isolated plant.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "825d9922ada09bd011d508b08e2d768f50ef835f9b7dd141b857bf524efb684e"
+  },
+  {
+    "name": "flora_tussock",
+    "path": "Assets\\Resources\\Art\\Props\\Flora\\flora_tussock.png",
+    "size": [
+      128,
+      112
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      64,
+      32
+    ],
+    "top_range": [
+      32,
+      67
+    ],
+    "top": 45,
+    "transparent_fraction": 0.7849469866071429,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-d92982c5-1c3b-4285-a5f8-9fb4f816dd2f.png",
+    "prompt": "Single production 2D painterly game sprite: one small mountain grass tussock, muted olive gold thin arching blades, no soil patch; whole plant inside 12% margin. Classical Chinese wuxia earth-and-ink brushwork, subdued deep olive and rich verdant moss, warm slate earth. Warm upper-left afternoon highlights, cool lower-right surfaces. Orthographic oblique elevated 36.87 degree view. Genuine transparent background, no surrounding scenery, cast shadow, glow or text; complete unclipped silhouette.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "25110b5fc76085f506c9f074287b564d87c1ca1285be11bdc021e34b83d71390"
+  },
+  {
+    "name": "bank_lip",
+    "path": "Assets\\Resources\\Art\\Props\\Banks\\bank_lip.png",
+    "size": [
+      384,
+      192
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      192,
+      112
+    ],
+    "top_range": [
+      0,
+      76
+    ],
+    "top": 55,
+    "transparent_fraction": 0.5642903645833334,
+    "opaque_near_pivot": true,
+    "alpha_max": 255,
+    "source": "exec-ed0f1f69-9f90-4284-ae1e-99a94705cc49.png",
+    "prompt": "Single production 2D painterly game sprite: one horizontal mossy cliff-edge overhang lip, a 3 metre run of rich verdant turf top and hanging moss over rounded earth-and-stone edge. Wide short strip, top surface visible above drooping moss, isolated with empty space all sides; no other objects. Classical Chinese wuxia earth-and-ink brushwork, subdued deep olive and rich verdant moss, warm slate earth. Warm upper-left afternoon highlights, cool lower-right surfaces. Orthographic oblique elevated 36.87 degree view. Genuine transparent background, no surrounding scenery, cast shadow, glow or text; complete unclipped silhouette.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "fd6c6e62a22788dc621c82684431d546f1affa58e82e1721e2965bece489f0f1"
+  },
+  {
+    "name": "shadow_soft",
+    "path": "Assets\\Resources\\Art\\Props\\Shadows\\shadow_soft.png",
+    "size": [
+      512,
+      320
+    ],
+    "mode": "RGBA",
+    "pivot": [
+      154,
+      192
+    ],
+    "top_range": null,
+    "top": null,
+    "transparent_fraction": 0.573919677734375,
+    "opaque_near_pivot": false,
+    "alpha_max": 95,
+    "source": "exec-7ae50926-201f-49e0-8fcc-ab4b4e550227.png",
+    "prompt": "Single reusable 2D hand-painted cast ground shadow sprite for a Chinese wuxia painterly game. Isolated soft irregular cool dark gray-green wash, spreading from upper-left origin toward lower-right, organically feathered edges, broad oblique flattened footprint. No object, no tree, no rock, no light glow, no text, no hard oval boundary. Transparent background, translucent brushy shadow only. Wide landscape canvas.",
+    "processing": "Alpha normalized 255/250; invisible RGB cleared; premultiplied resize; canvas/pivot placement; lip end fade or shadow opacity normalization where applicable.",
+    "sha256": "91ac1ab6de6aa3fb2dc9523f9b00fefa33fd2a1cf1013736ac5cc9bafe4728ed"
+  }
+]

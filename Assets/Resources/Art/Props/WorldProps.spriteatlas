@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WorldProps
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 0
+      maxTextureSize: 0
+      textureCompression: 0
+      filterMode: 2
+      generateMipMaps: 1
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 8192
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 2
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 8
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: da0cc094d8d0a43458de97ac0a438920, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - f9e731118f79bc24e869dcb814dcce23: 21300000
+    - c7a8af31e6783c449ab144ccaf749163: 21300000
+    - 002b88d197013474ca52314318f6ae62: 21300000
+    - 94e89e82691242f45b3dd258cf12e9c3: 21300000
+    - c36f5a93023aad944bcf4912a4d83370: 21300000
+    - 8239a2a3d1e2b8944aa61433353c661f: 21300000
+    - 003040e3bdbbc964ea3f2443f412971a: 21300000
+    - 46ddfa957f17d864b9572c6d49127831: 21300000
+    - f49be44619275cf4c9d74c8736d6f8da: 21300000
+    - 555cd3a6a2bcb0948a1653869497fd34: 21300000
+    - eb8a59e662573a84f92840edb9cd0931: 21300000
+    - 82bd61a7adec00049a3d8594e368f4fe: 21300000
+    - c11db6f78538392438fd8f8a797e6ed2: 21300000
+    - c22cb7f7b69ceda4fab00aafdcaaf455: 21300000
+    - 879d172b184bb4e4c8632df1d6adf3bf: 21300000
+    - d3ae6b3d7e959f04980a757855b96240: 21300000
+    - 494d3b8d4e898e64d9b253f1e8d2714a: 21300000
+    - f667b58f549ee3b40a6f52705f69ab6c: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: f9e731118f79bc24e869dcb814dcce23, type: 3}
+  - {fileID: 21300000, guid: c7a8af31e6783c449ab144ccaf749163, type: 3}
+  - {fileID: 21300000, guid: 002b88d197013474ca52314318f6ae62, type: 3}
+  - {fileID: 21300000, guid: 94e89e82691242f45b3dd258cf12e9c3, type: 3}
+  - {fileID: 21300000, guid: c36f5a93023aad944bcf4912a4d83370, type: 3}
+  - {fileID: 21300000, guid: 8239a2a3d1e2b8944aa61433353c661f, type: 3}
+  - {fileID: 21300000, guid: 003040e3bdbbc964ea3f2443f412971a, type: 3}
+  - {fileID: 21300000, guid: 46ddfa957f17d864b9572c6d49127831, type: 3}
+  - {fileID: 21300000, guid: f49be44619275cf4c9d74c8736d6f8da, type: 3}
+  - {fileID: 21300000, guid: 555cd3a6a2bcb0948a1653869497fd34, type: 3}
+  - {fileID: 21300000, guid: eb8a59e662573a84f92840edb9cd0931, type: 3}
+  - {fileID: 21300000, guid: 82bd61a7adec00049a3d8594e368f4fe, type: 3}
+  - {fileID: 21300000, guid: c11db6f78538392438fd8f8a797e6ed2, type: 3}
+  - {fileID: 21300000, guid: c22cb7f7b69ceda4fab00aafdcaaf455, type: 3}
+  - {fileID: 21300000, guid: 879d172b184bb4e4c8632df1d6adf3bf, type: 3}
+  - {fileID: 21300000, guid: d3ae6b3d7e959f04980a757855b96240, type: 3}
+  - {fileID: 21300000, guid: 494d3b8d4e898e64d9b253f1e8d2714a, type: 3}
+  - {fileID: 21300000, guid: f667b58f549ee3b40a6f52705f69ab6c, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - rock_boulder
+  - bamboo_dense
+  - shadow_soft
+  - bank_lip
+  - flora_tussock
+  - flora_fern
+  - rock_riverstone
+  - flora_wildflower
+  - rock_ridged
+  - bamboo_young
+  - rock_outcrop
+  - pine_young
+  - bamboo_edge
+  - pine_leaning
+  - pine_ancient
+  - rock_cluster
+  - pine_tall
+  - flora_shrub
+  m_RenderDataMap: {}
+  m_Tag: WorldProps
+  m_IsVariant: 0

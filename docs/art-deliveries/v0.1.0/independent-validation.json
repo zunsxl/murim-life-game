@@ -1,0 +1,1407 @@
+{
+  "scope": "Independent file-level audit against technical contract section 4; no repository quality gate was run.",
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "Exactly 38 contract PNG paths",
+      "pass": true,
+      "expected_count": 38,
+      "actual_count": 38,
+      "missing": [],
+      "unexpected": []
+    },
+    {
+      "check": "Terrain/terrain_moss_turf.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_moss_turf.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_slate_soil.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_slate_soil.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_mossy_stone.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_mossy_stone.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_pebble_bank.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_pebble_bank.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_bank_grassy.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_bank_grassy.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_bank_earth_stone.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_bank_earth_stone.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_hillside_slope.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_hillside_slope.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Terrain/terrain_ridge_ground.png format",
+      "pass": true,
+      "actual_size": [
+        2048,
+        2048
+      ],
+      "expected_size": [
+        2048,
+        2048
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Terrain/terrain_ridge_ground.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Water/water_stream.png format",
+      "pass": true,
+      "actual_size": [
+        1024,
+        1024
+      ],
+      "expected_size": [
+        1024,
+        1024
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Water/water_stream.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Water/water_shore.png format",
+      "pass": true,
+      "actual_size": [
+        1024,
+        1024
+      ],
+      "expected_size": [
+        1024,
+        1024
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Water/water_shore.png edge continuity",
+      "pass": true,
+      "horizontal_edge_max_delta": 0,
+      "vertical_edge_max_delta": 0,
+      "note": "Boundary equality is a mechanical check, not proof of imperceptible repetition."
+    },
+    {
+      "check": "Water/water_fall.png format",
+      "pass": true,
+      "actual_size": [
+        512,
+        2048
+      ],
+      "expected_size": [
+        512,
+        2048
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Water/water_foam.png format",
+      "pass": true,
+      "actual_size": [
+        1280,
+        768
+      ],
+      "expected_size": [
+        1280,
+        768
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Pines/pine_ancient.png format",
+      "pass": true,
+      "actual_size": [
+        1536,
+        2048
+      ],
+      "expected_size": [
+        1536,
+        2048
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Pines/pine_tall.png format",
+      "pass": true,
+      "actual_size": [
+        1152,
+        1728
+      ],
+      "expected_size": [
+        1152,
+        1728
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Pines/pine_leaning.png format",
+      "pass": true,
+      "actual_size": [
+        1408,
+        1152
+      ],
+      "expected_size": [
+        1408,
+        1152
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Pines/pine_young.png format",
+      "pass": true,
+      "actual_size": [
+        640,
+        768
+      ],
+      "expected_size": [
+        640,
+        768
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Bamboo/bamboo_dense.png format",
+      "pass": true,
+      "actual_size": [
+        768,
+        1600
+      ],
+      "expected_size": [
+        768,
+        1600
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Bamboo/bamboo_edge.png format",
+      "pass": true,
+      "actual_size": [
+        640,
+        1216
+      ],
+      "expected_size": [
+        640,
+        1216
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Bamboo/bamboo_young.png format",
+      "pass": true,
+      "actual_size": [
+        384,
+        704
+      ],
+      "expected_size": [
+        384,
+        704
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Rocks/rock_outcrop.png format",
+      "pass": true,
+      "actual_size": [
+        1024,
+        1088
+      ],
+      "expected_size": [
+        1024,
+        1088
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Rocks/rock_boulder.png format",
+      "pass": true,
+      "actual_size": [
+        384,
+        448
+      ],
+      "expected_size": [
+        384,
+        448
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Rocks/rock_riverstone.png format",
+      "pass": true,
+      "actual_size": [
+        256,
+        192
+      ],
+      "expected_size": [
+        256,
+        192
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Rocks/rock_ridged.png format",
+      "pass": true,
+      "actual_size": [
+        512,
+        512
+      ],
+      "expected_size": [
+        512,
+        512
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Rocks/rock_cluster.png format",
+      "pass": true,
+      "actual_size": [
+        256,
+        192
+      ],
+      "expected_size": [
+        256,
+        192
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Flora/flora_wildflower.png format",
+      "pass": true,
+      "actual_size": [
+        160,
+        128
+      ],
+      "expected_size": [
+        160,
+        128
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Flora/flora_shrub.png format",
+      "pass": true,
+      "actual_size": [
+        224,
+        224
+      ],
+      "expected_size": [
+        224,
+        224
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Flora/flora_fern.png format",
+      "pass": true,
+      "actual_size": [
+        128,
+        144
+      ],
+      "expected_size": [
+        128,
+        144
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Flora/flora_tussock.png format",
+      "pass": true,
+      "actual_size": [
+        128,
+        112
+      ],
+      "expected_size": [
+        128,
+        112
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Banks/bank_lip.png format",
+      "pass": true,
+      "actual_size": [
+        384,
+        192
+      ],
+      "expected_size": [
+        384,
+        192
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Props/Shadows/shadow_soft.png format",
+      "pass": true,
+      "actual_size": [
+        512,
+        320
+      ],
+      "expected_size": [
+        512,
+        320
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "UI/overlay_panel.png format",
+      "pass": true,
+      "actual_size": [
+        512,
+        512
+      ],
+      "expected_size": [
+        512,
+        512
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "UI/overlay_divider.png format",
+      "pass": true,
+      "actual_size": [
+        512,
+        8
+      ],
+      "expected_size": [
+        512,
+        8
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "UI/overlay_button_normal.png format",
+      "pass": true,
+      "actual_size": [
+        320,
+        96
+      ],
+      "expected_size": [
+        320,
+        96
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "UI/overlay_button_hover.png format",
+      "pass": true,
+      "actual_size": [
+        320,
+        96
+      ],
+      "expected_size": [
+        320,
+        96
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "UI/overlay_button_pressed.png format",
+      "pass": true,
+      "actual_size": [
+        320,
+        96
+      ],
+      "expected_size": [
+        320,
+        96
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Backdrop/backdrop_sky.png format",
+      "pass": true,
+      "actual_size": [
+        16,
+        1024
+      ],
+      "expected_size": [
+        16,
+        1024
+      ],
+      "actual_mode": "RGB",
+      "expected_mode": "RGB",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Backdrop/backdrop_peaks_far.png format",
+      "pass": true,
+      "actual_size": [
+        4096,
+        1024
+      ],
+      "expected_size": [
+        4096,
+        1024
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Backdrop/backdrop_peaks_near.png format",
+      "pass": true,
+      "actual_size": [
+        4096,
+        1024
+      ],
+      "expected_size": [
+        4096,
+        1024
+      ],
+      "actual_mode": "RGBA",
+      "expected_mode": "RGBA",
+      "png_bit_depth": 8
+    },
+    {
+      "check": "Pines/pine_ancient outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Pines/pine_ancient >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.6636861165364584
+    },
+    {
+      "check": "Pines/pine_ancient top height",
+      "pass": true,
+      "top": 1630,
+      "expected": [
+        1474,
+        1802
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Pines/pine_ancient opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        768,
+        160
+      ]
+    },
+    {
+      "check": "Pines/pine_tall outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Pines/pine_tall >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.6971591274434157
+    },
+    {
+      "check": "Pines/pine_tall top height",
+      "pass": true,
+      "top": 1386,
+      "expected": [
+        1291,
+        1577
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Pines/pine_tall opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        576,
+        128
+      ]
+    },
+    {
+      "check": "Pines/pine_leaning outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Pines/pine_leaning >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.7223855991556187
+    },
+    {
+      "check": "Pines/pine_leaning top height",
+      "pass": true,
+      "top": 916,
+      "expected": [
+        830,
+        1014
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Pines/pine_leaning opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        448,
+        128
+      ]
+    },
+    {
+      "check": "Pines/pine_young outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Pines/pine_young >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.740863037109375
+    },
+    {
+      "check": "Pines/pine_young top height",
+      "pass": true,
+      "top": 560,
+      "expected": [
+        507,
+        619
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Pines/pine_young opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        320,
+        96
+      ]
+    },
+    {
+      "check": "Bamboo/bamboo_dense outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Bamboo/bamboo_dense >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.5971687825520834
+    },
+    {
+      "check": "Bamboo/bamboo_dense top height",
+      "pass": true,
+      "top": 1225,
+      "expected": [
+        1106,
+        1352
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Bamboo/bamboo_dense opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        384,
+        240
+      ]
+    },
+    {
+      "check": "Bamboo/bamboo_edge outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Bamboo/bamboo_edge >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.7077405427631579
+    },
+    {
+      "check": "Bamboo/bamboo_edge top height",
+      "pass": true,
+      "top": 915,
+      "expected": [
+        830,
+        1014
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Bamboo/bamboo_edge opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        320,
+        192
+      ]
+    },
+    {
+      "check": "Bamboo/bamboo_young outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Bamboo/bamboo_young >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.816702178030303
+    },
+    {
+      "check": "Bamboo/bamboo_young top height",
+      "pass": true,
+      "top": 510,
+      "expected": [
+        461,
+        563
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Bamboo/bamboo_young opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        192,
+        128
+      ]
+    },
+    {
+      "check": "Rocks/rock_outcrop outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Rocks/rock_outcrop >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.5263097426470589
+    },
+    {
+      "check": "Rocks/rock_outcrop top height",
+      "pass": true,
+      "top": 582,
+      "expected": [
+        415,
+        760
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Rocks/rock_outcrop opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        512,
+        320
+      ]
+    },
+    {
+      "check": "Rocks/rock_boulder outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Rocks/rock_boulder >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.48861258370535715
+    },
+    {
+      "check": "Rocks/rock_boulder top height",
+      "pass": true,
+      "top": 231,
+      "expected": [
+        166,
+        300
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Rocks/rock_boulder opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        192,
+        128
+      ]
+    },
+    {
+      "check": "Rocks/rock_riverstone outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Rocks/rock_riverstone >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.60821533203125
+    },
+    {
+      "check": "Rocks/rock_riverstone top height",
+      "pass": true,
+      "top": 73,
+      "expected": [
+        37,
+        110
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Rocks/rock_riverstone opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        128,
+        76
+      ]
+    },
+    {
+      "check": "Rocks/rock_ridged outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Rocks/rock_ridged >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.5490684509277344
+    },
+    {
+      "check": "Rocks/rock_ridged top height",
+      "pass": true,
+      "top": 274,
+      "expected": [
+        203,
+        364
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Rocks/rock_ridged opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        256,
+        144
+      ]
+    },
+    {
+      "check": "Rocks/rock_cluster outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Rocks/rock_cluster >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.6694132486979166
+    },
+    {
+      "check": "Rocks/rock_cluster top height",
+      "pass": true,
+      "top": 69,
+      "expected": [
+        32,
+        108
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Rocks/rock_cluster opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        128,
+        80
+      ]
+    },
+    {
+      "check": "Flora/flora_wildflower outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Flora/flora_wildflower >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.864013671875
+    },
+    {
+      "check": "Flora/flora_wildflower top height",
+      "pass": true,
+      "top": 41,
+      "expected": [
+        28,
+        76
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Flora/flora_wildflower opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        80,
+        48
+      ]
+    },
+    {
+      "check": "Flora/flora_shrub outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Flora/flora_shrub >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.6504304846938775
+    },
+    {
+      "check": "Flora/flora_shrub top height",
+      "pass": true,
+      "top": 116,
+      "expected": [
+        83,
+        154
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Flora/flora_shrub opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        112,
+        64
+      ]
+    },
+    {
+      "check": "Flora/flora_fern outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Flora/flora_fern >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.7578125
+    },
+    {
+      "check": "Flora/flora_fern top height",
+      "pass": true,
+      "top": 77,
+      "expected": [
+        55,
+        100
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Flora/flora_fern opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        64,
+        40
+      ]
+    },
+    {
+      "check": "Flora/flora_tussock outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Flora/flora_tussock >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.7849469866071429
+    },
+    {
+      "check": "Flora/flora_tussock top height",
+      "pass": true,
+      "top": 47,
+      "expected": [
+        32,
+        67
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Flora/flora_tussock opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        64,
+        32
+      ]
+    },
+    {
+      "check": "Banks/bank_lip outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Banks/bank_lip >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.5642903645833334
+    },
+    {
+      "check": "Banks/bank_lip top height",
+      "pass": true,
+      "top": 57,
+      "expected": [
+        0,
+        76
+      ],
+      "alpha_threshold": 128
+    },
+    {
+      "check": "Banks/bank_lip opaque within 16px pivot",
+      "pass": true,
+      "opaque_alpha255": true,
+      "alpha128": true,
+      "pivot": [
+        192,
+        112
+      ]
+    },
+    {
+      "check": "Banks/bank_lip overhang depth",
+      "pass": true,
+      "depth": 78,
+      "expected": [
+        40,
+        100
+      ]
+    },
+    {
+      "check": "Banks/bank_lip end fade",
+      "pass": true,
+      "left_alpha_envelope": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        19,
+        30,
+        37,
+        45,
+        52,
+        60,
+        67,
+        75,
+        82,
+        90,
+        97,
+        105,
+        112,
+        120,
+        127,
+        135,
+        142,
+        150,
+        157,
+        165,
+        172,
+        180,
+        187,
+        195,
+        202,
+        210,
+        217,
+        225,
+        232,
+        240,
+        247
+      ],
+      "right_alpha_envelope": [
+        247,
+        240,
+        232,
+        225,
+        217,
+        210,
+        202,
+        195,
+        187,
+        180,
+        172,
+        165,
+        157,
+        150,
+        142,
+        135,
+        127,
+        120,
+        112,
+        105,
+        97,
+        90,
+        82,
+        75,
+        67,
+        60,
+        52,
+        45,
+        37,
+        30,
+        21,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "check": "Shadows/shadow_soft outer 4px transparent",
+      "pass": true
+    },
+    {
+      "check": "Shadows/shadow_soft >=20% alpha-zero",
+      "pass": true,
+      "transparent_fraction": 0.573919677734375
+    },
+    {
+      "check": "Shadows/shadow_soft alpha <=0.5",
+      "pass": true,
+      "maximum_alpha": 95
+    },
+    {
+      "check": "Shadows/shadow_soft casts lower right",
+      "pass": true,
+      "alpha_centroid": [
+        198.64928259728416,
+        162.472538667105
+      ],
+      "pivot_image_xy": [
+        154,
+        127
+      ]
+    },
+    {
+      "check": "Button alpha silhouettes identical at 0.5",
+      "pass": true
+    },
+    {
+      "check": "Button states contain different color pixels",
+      "pass": true
+    },
+    {
+      "check": "Panel center flat and alpha 0.85..0.92",
+      "pass": true,
+      "center_rgba": [
+        29,
+        40,
+        36,
+        228
+      ]
+    },
+    {
+      "check": "Divider end fades to zero",
+      "pass": true
+    },
+    {
+      "check": "Waterfall side edges alpha-zero",
+      "pass": true
+    },
+    {
+      "check": "Waterfall outer 10% fades",
+      "pass": true
+    },
+    {
+      "check": "Foam transparent inside 35% and outside 48%",
+      "pass": true
+    },
+    {
+      "check": "far peaks top 10% transparent",
+      "pass": true
+    },
+    {
+      "check": "far peaks horizontal seam",
+      "pass": true
+    },
+    {
+      "check": "far peaks bottom fade",
+      "pass": true
+    },
+    {
+      "check": "far summit height 55..90%",
+      "pass": true,
+      "height_from_bottom": 865
+    },
+    {
+      "check": "near peaks top 10% transparent",
+      "pass": true
+    },
+    {
+      "check": "near peaks horizontal seam",
+      "pass": true
+    },
+    {
+      "check": "near peaks bottom fade",
+      "pass": true
+    },
+    {
+      "check": "near summit height 55..90%",
+      "pass": true,
+      "height_from_bottom": 868
+    },
+    {
+      "check": "Sky exact #EFD3A0 bottom",
+      "pass": true
+    },
+    {
+      "check": "Exactly one static font file",
+      "pass": true,
+      "font_files": [
+        "LibreBaskerville-Regular.ttf"
+      ]
+    },
+    {
+      "check": "Font has no variable axes",
+      "pass": true
+    },
+    {
+      "check": "Matching nonempty license",
+      "pass": true,
+      "license_file": "LibreBaskerville-Regular-LICENSE.txt"
+    },
+    {
+      "check": "Font ASCII coverage",
+      "pass": true,
+      "missing_codepoints": []
+    }
+  ],
+  "failures": [],
+  "fingerprints": {
+    "Terrain/terrain_moss_turf.png": "529d131d9c51dcca0e42711aee78efe7fd4b6562007a4e6d7e304cffe6bf6412",
+    "Terrain/terrain_slate_soil.png": "2ac26853e46e1a3d58f7884dd56533874ea9c105c4d379d2d4e58433643be38d",
+    "Terrain/terrain_mossy_stone.png": "2075e21b91854c781feed9d81a4492a94c5356a6ec9d3bdf3f86b734afa193db",
+    "Terrain/terrain_pebble_bank.png": "8bacb9d2cb6c5f56140c5a129a2eda180170b27c8bf345e47ebd0822cd34d20d",
+    "Terrain/terrain_bank_grassy.png": "62e48b9b920e1d608d3a7c79f60c002cd4bfd3df52a0b67d0db713257ad10eed",
+    "Terrain/terrain_bank_earth_stone.png": "1c1895024394c0fa0a20296021bdf79927fb968acc9b57cb0f1b89d89e48cdb7",
+    "Terrain/terrain_hillside_slope.png": "5f9b738420dddcdde2b3e72769b90986484792ec1a594dde1d86f9f312f18c27",
+    "Terrain/terrain_ridge_ground.png": "62ea080db64afc78b2be78f5ebc29ca95fa6703335a2068b9a813b8391fed6db",
+    "Water/water_stream.png": "f1b4996e2212022e545f213ce6ceb30d0d42c5159916ac673588f21f05adea46",
+    "Water/water_shore.png": "e25da26e4336a42b073b11222e1740349a083a83061f343f09c912d78e18c363",
+    "Water/water_fall.png": "d81b27f802e896999bd32e163d795e845d7419f24b455b010ef9d41ff5bb2c46",
+    "Water/water_foam.png": "67ac1d2806631738da8193958cd6bdc366229aefd54d1c1f1949c687f077bb5b",
+    "Props/Pines/pine_ancient.png": "74255af1bfafc9b26038cdc25994bedb598296bd5665fa97bee2c044d08bb17a",
+    "Props/Pines/pine_tall.png": "9342478093c291c1b5b31ca0e518d394eeeb2c547cf4983787d9075c20866301",
+    "Props/Pines/pine_leaning.png": "b8079904868e7c96503bd4b5f0c4b168a78553d9d1a59819848bc9537c28b6a1",
+    "Props/Pines/pine_young.png": "e2a58091ef7f6f05664d5983f06733f59e5a69fb1a100743306dd7eb3d552453",
+    "Props/Bamboo/bamboo_dense.png": "531f5c74fd52d43810ee99bd0d559d8abde039ba09a36b3d6a4a964701a78046",
+    "Props/Bamboo/bamboo_edge.png": "6069060ea12397ef96c6142dac440af0f5c995d4d7818dffe6e6eca7a8977741",
+    "Props/Bamboo/bamboo_young.png": "a96521f9303fb67f1ba6f1a04843f7e7745c82567954198e4668d6f35fa7ba1e",
+    "Props/Rocks/rock_outcrop.png": "b08d2f0ca7c2670e512583f5db6c1f105098c979f5dc9c969d0aad8f5697e778",
+    "Props/Rocks/rock_boulder.png": "e24aae7e7643e68d211ed6ca3bfdc7af84a487fa729764a2e121e451c3f5fa18",
+    "Props/Rocks/rock_riverstone.png": "40830090a3e612e5402839875c802de09fdc0c014f7298e9316e8afe7747c14c",
+    "Props/Rocks/rock_ridged.png": "6b5b2d52fd14b2b8ce4266c31b8379a414b1bdeea080be3a176ef2bae45d3c87",
+    "Props/Rocks/rock_cluster.png": "2b04d2ca5c3d90300d92d0ce1158fd2937eadbcfadfd09ff5612e62001a97c18",
+    "Props/Flora/flora_wildflower.png": "b9d95962e2cd9b9ff827a8e238900b8e636fc8e723ded510c2ef6b8df4bfef0b",
+    "Props/Flora/flora_shrub.png": "b28f28de2dfb0a5caf2b8457ccfdd1b3e82e8269f5912b206f2c4541bb467acc",
+    "Props/Flora/flora_fern.png": "825d9922ada09bd011d508b08e2d768f50ef835f9b7dd141b857bf524efb684e",
+    "Props/Flora/flora_tussock.png": "25110b5fc76085f506c9f074287b564d87c1ca1285be11bdc021e34b83d71390",
+    "Props/Banks/bank_lip.png": "fd6c6e62a22788dc621c82684431d546f1affa58e82e1721e2965bece489f0f1",
+    "Props/Shadows/shadow_soft.png": "91ac1ab6de6aa3fb2dc9523f9b00fefa33fd2a1cf1013736ac5cc9bafe4728ed",
+    "UI/overlay_panel.png": "77492ead99296f0fb6d5fd7135a921e9c30f906882389c1b46d68ed8779a0615",
+    "UI/overlay_divider.png": "2f8555634854c7bd6b4f883057bb01e619cf8aac09f8b8712dece5044f48c182",
+    "UI/overlay_button_normal.png": "b83b1c8ab11975cb211e9566437166f6ef479692596e8e11edddc6012990d825",
+    "UI/overlay_button_hover.png": "8d5a3f49377b25d2b2b385f0a586aa2f23046457ba7448c6842e950548205d1d",
+    "UI/overlay_button_pressed.png": "5dca50bb7b9d6257042bdda7c0233196d8d91ffbca8967301d2c01de1e3f4293",
+    "Backdrop/backdrop_sky.png": "3fb34247b92e0426af81bbe69694a7d6cc55db566291386f9ea54e0bb084e920",
+    "Backdrop/backdrop_peaks_far.png": "4e95a29f04e8b151e1d0087e5682262297ac6ec5e1db83b24f2fc03aae612f4a",
+    "Backdrop/backdrop_peaks_near.png": "cf76549a4040ed96d6b1cec5ed8427e2a1e0275609cb1b640a9962ccde249cf5"
+  },
+  "not_verified": [
+    "Unity imports, custom pivot metadata and nine-slice settings",
+    "WorldProps.spriteatlas packing and runtime integration",
+    "OverlaySerif SDF.asset TMP generation",
+    "Owner in-game close/wide zoom visual acceptance; atlas, materials, sorting and no-void camera behavior",
+    "Bamboo culm count, precise projection, painted illumination and leaning crown center require visual review; automated checks cannot establish these."
+  ]
+}

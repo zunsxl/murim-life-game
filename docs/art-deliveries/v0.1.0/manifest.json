@@ -1,0 +1,486 @@
+{
+  "contract_commit": "7a1b42119b547ea9629ef4b6e2546145ddb54ff0",
+  "png_count": 38,
+  "files": [
+    {
+      "path": "Assets/Resources/Art/Backdrop/backdrop_peaks_far.png",
+      "sha256": "4e95a29f04e8b151e1d0087e5682262297ac6ec5e1db83b24f2fc03aae612f4a",
+      "bytes": 2485645,
+      "size": [
+        4096,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Backdrop/backdrop_peaks_near.png",
+      "sha256": "cf76549a4040ed96d6b1cec5ed8427e2a1e0275609cb1b640a9962ccde249cf5",
+      "bytes": 3393713,
+      "size": [
+        4096,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Backdrop/backdrop_sky.png",
+      "sha256": "3fb34247b92e0426af81bbe69694a7d6cc55db566291386f9ea54e0bb084e920",
+      "bytes": 1181,
+      "size": [
+        16,
+        1024
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Bamboo/bamboo_dense.png",
+      "sha256": "531f5c74fd52d43810ee99bd0d559d8abde039ba09a36b3d6a4a964701a78046",
+      "bytes": 1340923,
+      "size": [
+        768,
+        1600
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        384,
+        240
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Bamboo/bamboo_edge.png",
+      "sha256": "6069060ea12397ef96c6142dac440af0f5c995d4d7818dffe6e6eca7a8977741",
+      "bytes": 691699,
+      "size": [
+        640,
+        1216
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        320,
+        192
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Bamboo/bamboo_young.png",
+      "sha256": "a96521f9303fb67f1ba6f1a04843f7e7745c82567954198e4668d6f35fa7ba1e",
+      "bytes": 183077,
+      "size": [
+        384,
+        704
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        192,
+        128
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Banks/bank_lip.png",
+      "sha256": "fd6c6e62a22788dc621c82684431d546f1affa58e82e1721e2965bece489f0f1",
+      "bytes": 84982,
+      "size": [
+        384,
+        192
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        192,
+        112
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Flora/flora_fern.png",
+      "sha256": "825d9922ada09bd011d508b08e2d768f50ef835f9b7dd141b857bf524efb684e",
+      "bytes": 18780,
+      "size": [
+        128,
+        144
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        64,
+        40
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Flora/flora_shrub.png",
+      "sha256": "b28f28de2dfb0a5caf2b8457ccfdd1b3e82e8269f5912b206f2c4541bb467acc",
+      "bytes": 56195,
+      "size": [
+        224,
+        224
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        112,
+        64
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Flora/flora_tussock.png",
+      "sha256": "25110b5fc76085f506c9f074287b564d87c1ca1285be11bdc021e34b83d71390",
+      "bytes": 13032,
+      "size": [
+        128,
+        112
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        64,
+        32
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Flora/flora_wildflower.png",
+      "sha256": "b9d95962e2cd9b9ff827a8e238900b8e636fc8e723ded510c2ef6b8df4bfef0b",
+      "bytes": 12478,
+      "size": [
+        160,
+        128
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        80,
+        48
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Pines/pine_ancient.png",
+      "sha256": "74255af1bfafc9b26038cdc25994bedb598296bd5665fa97bee2c044d08bb17a",
+      "bytes": 2680155,
+      "size": [
+        1536,
+        2048
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        768,
+        160
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Pines/pine_leaning.png",
+      "sha256": "b8079904868e7c96503bd4b5f0c4b168a78553d9d1a59819848bc9537c28b6a1",
+      "bytes": 1250191,
+      "size": [
+        1408,
+        1152
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        448,
+        128
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Pines/pine_tall.png",
+      "sha256": "9342478093c291c1b5b31ca0e518d394eeeb2c547cf4983787d9075c20866301",
+      "bytes": 1746872,
+      "size": [
+        1152,
+        1728
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        576,
+        128
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Pines/pine_young.png",
+      "sha256": "e2a58091ef7f6f05664d5983f06733f59e5a69fb1a100743306dd7eb3d552453",
+      "bytes": 394806,
+      "size": [
+        640,
+        768
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        320,
+        96
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Rocks/rock_boulder.png",
+      "sha256": "e24aae7e7643e68d211ed6ca3bfdc7af84a487fa729764a2e121e451c3f5fa18",
+      "bytes": 187265,
+      "size": [
+        384,
+        448
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        192,
+        128
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Rocks/rock_cluster.png",
+      "sha256": "2b04d2ca5c3d90300d92d0ce1158fd2937eadbcfadfd09ff5612e62001a97c18",
+      "bytes": 39898,
+      "size": [
+        256,
+        192
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        128,
+        80
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Rocks/rock_outcrop.png",
+      "sha256": "b08d2f0ca7c2670e512583f5db6c1f105098c979f5dc9c969d0aad8f5697e778",
+      "bytes": 1196607,
+      "size": [
+        1024,
+        1088
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        512,
+        320
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Rocks/rock_ridged.png",
+      "sha256": "6b5b2d52fd14b2b8ce4266c31b8379a414b1bdeea080be3a176ef2bae45d3c87",
+      "bytes": 289712,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        256,
+        144
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Rocks/rock_riverstone.png",
+      "sha256": "40830090a3e612e5402839875c802de09fdc0c014f7298e9316e8afe7747c14c",
+      "bytes": 43444,
+      "size": [
+        256,
+        192
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        128,
+        76
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Props/Shadows/shadow_soft.png",
+      "sha256": "91ac1ab6de6aa3fb2dc9523f9b00fefa33fd2a1cf1013736ac5cc9bafe4728ed",
+      "bytes": 21255,
+      "size": [
+        512,
+        320
+      ],
+      "mode": "RGBA",
+      "pivot_pixels_bottom_left": [
+        154,
+        192
+      ],
+      "pixels_per_unit": 128
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_bank_earth_stone.png",
+      "sha256": "1c1895024394c0fa0a20296021bdf79927fb968acc9b57cb0f1b89d89e48cdb7",
+      "bytes": 5947554,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_bank_grassy.png",
+      "sha256": "62e48b9b920e1d608d3a7c79f60c002cd4bfd3df52a0b67d0db713257ad10eed",
+      "bytes": 6372527,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_hillside_slope.png",
+      "sha256": "5f9b738420dddcdde2b3e72769b90986484792ec1a594dde1d86f9f312f18c27",
+      "bytes": 7089369,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_moss_turf.png",
+      "sha256": "529d131d9c51dcca0e42711aee78efe7fd4b6562007a4e6d7e304cffe6bf6412",
+      "bytes": 6719879,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_mossy_stone.png",
+      "sha256": "2075e21b91854c781feed9d81a4492a94c5356a6ec9d3bdf3f86b734afa193db",
+      "bytes": 6625290,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_pebble_bank.png",
+      "sha256": "8bacb9d2cb6c5f56140c5a129a2eda180170b27c8bf345e47ebd0822cd34d20d",
+      "bytes": 6335595,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_ridge_ground.png",
+      "sha256": "62ea080db64afc78b2be78f5ebc29ca95fa6703335a2068b9a813b8391fed6db",
+      "bytes": 7135663,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/Terrain/terrain_slate_soil.png",
+      "sha256": "2ac26853e46e1a3d58f7884dd56533874ea9c105c4d379d2d4e58433643be38d",
+      "bytes": 5925788,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "Assets/Resources/Art/UI/Fonts/LibreBaskerville-Regular-LICENSE.txt",
+      "sha256": "28f6979946897ff9d8771ce4949e6c51fbfee99c29f31a93ffa575171ac37622",
+      "bytes": 4601
+    },
+    {
+      "path": "Assets/Resources/Art/UI/Fonts/LibreBaskerville-Regular.ttf",
+      "sha256": "df9fddf43dbd7de435c316b86a52b3d6b3ad2f6fb2ed3f6fd8bdc1835f30eec1",
+      "bytes": 156008
+    },
+    {
+      "path": "Assets/Resources/Art/UI/overlay_button_hover.png",
+      "sha256": "8d5a3f49377b25d2b2b385f0a586aa2f23046457ba7448c6842e950548205d1d",
+      "bytes": 931,
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/UI/overlay_button_normal.png",
+      "sha256": "b83b1c8ab11975cb211e9566437166f6ef479692596e8e11edddc6012990d825",
+      "bytes": 833,
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/UI/overlay_button_pressed.png",
+      "sha256": "5dca50bb7b9d6257042bdda7c0233196d8d91ffbca8967301d2c01de1e3f4293",
+      "bytes": 847,
+      "size": [
+        320,
+        96
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/UI/overlay_divider.png",
+      "sha256": "2f8555634854c7bd6b4f883057bb01e619cf8aac09f8b8712dece5044f48c182",
+      "bytes": 313,
+      "size": [
+        512,
+        8
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/UI/overlay_panel.png",
+      "sha256": "77492ead99296f0fb6d5fd7135a921e9c30f906882389c1b46d68ed8779a0615",
+      "bytes": 4762,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Water/water_fall.png",
+      "sha256": "d81b27f802e896999bd32e163d795e845d7419f24b455b010ef9d41ff5bb2c46",
+      "bytes": 1483822,
+      "size": [
+        512,
+        2048
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Water/water_foam.png",
+      "sha256": "67ac1d2806631738da8193958cd6bdc366229aefd54d1c1f1949c687f077bb5b",
+      "bytes": 397422,
+      "size": [
+        1280,
+        768
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Water/water_shore.png",
+      "sha256": "e25da26e4336a42b073b11222e1740349a083a83061f343f09c912d78e18c363",
+      "bytes": 2200156,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "Assets/Resources/Art/Water/water_stream.png",
+      "sha256": "f1b4996e2212022e545f213ce6ceb30d0d42c5159916ac673588f21f05adea46",
+      "bytes": 1034810,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB"
+    }
+  ]
+}
