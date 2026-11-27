@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "midTierHeightM": 12,
+  "upperTierHeightM": 26,
+  "sideRidgeHeightM": 30,
+  "northRidgeHeightM": 26,
+  "treeDensityPct": 100,
+  "rockDensityPct": 100,
+  "floraDensityPct": 100
+}
