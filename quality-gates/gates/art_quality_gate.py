@@ -1,8 +1,17 @@
 """Deterministic Art Quality Gate (AQ-1 .. AQ-8).
 
-Compares supplied art assets (PNG textures/sprites, binary FBX 3D models,
-TTF/OTF fonts, and optional Unity .meta files) against an Art Delivery Contract
-using Python 3 standard library only.
+Compares supplied art assets (PNG seamless tiles, textures and 2D sprites,
+binary FBX 3D models where a contract still lists them, TTF/OTF fonts, and
+optional Unity .meta files) against an Art Delivery Contract using Python 3
+standard library only.
+
+Two contract styles are understood:
+
+* Strictly 2D contracts that describe **Seamless tile rules** and **Sprite
+  rules** separately, list sprites with a canvas, a pivot and a "Top" range,
+  and state that no 3D model file is accepted. Any model file found in the art
+  tree is then a finding.
+* Earlier contracts with one set of common texture rules and FBX models.
 """
 
 from __future__ import annotations
@@ -15,7 +24,7 @@ import re
 import struct
 import sys
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
@@ -39,6 +48,13 @@ WATERMARK_TEXT_RE = re.compile(
 
 TEXTURE_EXTS = {".png"}
 MODEL_EXTS = {".fbx"}
+# Every extension Unity imports through ModelImporter; scanned for when a contract forbids 3D models.
+MODEL_SCAN_EXTS = {".fbx", ".obj", ".blend", ".dae", ".gltf", ".glb", ".3ds"}
+PAIR_RE = re.compile(r"\(\s*(\d{1,5})\s*,\s*(\d{1,5})\s*\)")
+PX_RANGE_RE = re.compile(r"(\d{1,5})\s*[–\-]\s*(\d{1,5})")
+SPRITE_SEG_RE = re.compile(r"\bsprite\b[^|.;]{0,12}\bcanvas\b", re.IGNORECASE)
+OPAQUE_ALPHA = 128  # alpha >= 0.5 counts as opaque
+PIVOT_CONTACT_RADIUS_PX = 16
 FONT_EXTS = {".ttf", ".otf"}
 ALL_ART_EXTS = TEXTURE_EXTS | MODEL_EXTS | FONT_EXTS
 
@@ -63,6 +79,15 @@ class TextureRule:
     outer_lr_fade_pct: Optional[float] = None
     ring_inner_transparent_pct: Optional[float] = None
     ring_outer_transparent_pct: Optional[float] = None
+    ring_vertical_scale: Optional[float] = None
+    outer_lr_fade_px: Optional[int] = None
+    # 2D sprite rules
+    is_sprite: bool = False
+    pivot_px: Optional[Tuple[int, int]] = None  # from the bottom-left corner
+    top_px_min: Optional[int] = None  # highest opaque pixel above the pivot row
+    top_px_max: Optional[int] = None
+    margin_px: Optional[int] = None  # outer band that must be fully transparent
+    max_alpha: Optional[float] = None  # 0..1
     import_settings: Dict[str, object] = field(default_factory=dict)
 
     def needs_pixels(self) -> bool:
@@ -77,27 +102,16 @@ class TextureRule:
                 self.outer_lr_fade_pct is not None,
                 self.ring_inner_transparent_pct is not None,
                 self.ring_outer_transparent_pct is not None,
+                self.outer_lr_fade_px is not None,
+                self.pivot_px is not None,
+                self.top_px_min is not None,
+                self.margin_px is not None,
+                self.max_alpha is not None,
             )
         )
 
     def clone_format(self) -> "TextureRule":
-        return TextureRule(
-            width=self.width,
-            height=self.height,
-            channels=self.channels,
-            bit_depth=self.bit_depth,
-            srgb=self.srgb,
-            seamless_4way=self.seamless_4way,
-            seamless_lr=self.seamless_lr,
-            require_alpha_variation=self.require_alpha_variation,
-            exact_bottom_hex=self.exact_bottom_hex,
-            exact_top_hex=self.exact_top_hex,
-            top_transparent_pct=self.top_transparent_pct,
-            outer_lr_fade_pct=self.outer_lr_fade_pct,
-            ring_inner_transparent_pct=self.ring_inner_transparent_pct,
-            ring_outer_transparent_pct=self.ring_outer_transparent_pct,
-            import_settings=dict(self.import_settings),
-        )
+        return replace(self, import_settings=dict(self.import_settings))
 
 
 @dataclass
@@ -146,6 +160,7 @@ class ArtDeliverable:
 class ParsedArtContract:
     base_dir: str = ""
     require_art_readme_credits: bool = False
+    forbid_models: bool = False
     deliverables: List[ArtDeliverable] = field(default_factory=list)
     skipped_non_file_items: List[str] = field(default_factory=list)
 
@@ -188,7 +203,10 @@ def _parse_import_clause(text: str, base_import: Dict[str, object]) -> Dict[str,
     imp = dict(base_import)
     if re.search(r"\bSprite\s*\(2D\s+and\s+UI\)", text, re.IGNORECASE):
         imp["texture_type"] = "Sprite"
-    if re.search(r"\bSingle\b", text, re.IGNORECASE):
+    elif re.search(r"\b(?:texture\s+)?type\s+Default\b", text, re.IGNORECASE):
+        imp["texture_type"] = "Default"
+    # Unity option names are capitalised; lower-case "single"/"point" in prose are not settings.
+    if re.search(r"\bSingle\b", text):
         imp["sprite_mode"] = "Single"
     ppu_m = re.search(r"(\d+)\s+pixels\s+per\s+unit\b", text, re.IGNORECASE)
     if ppu_m:
@@ -201,7 +219,7 @@ def _parse_import_clause(text: str, base_import: Dict[str, object]) -> Dict[str,
         imp["filter_mode"] = "Bilinear"
     elif re.search(r"\bTrilinear\b", text, re.IGNORECASE):
         imp["filter_mode"] = "Trilinear"
-    elif re.search(r"\bPoint\b", text, re.IGNORECASE):
+    elif re.search(r"\bPoint\b", text):
         imp["filter_mode"] = "Point"
     aniso_m = re.search(r"\bAniso\s+(\d+)\b", text, re.IGNORECASE)
     if aniso_m:
@@ -212,6 +230,13 @@ def _parse_import_clause(text: str, base_import: Dict[str, object]) -> Dict[str,
         imp["compression"] = "HighQuality"
     if re.search(r"\balpha\s+is\s+transparency\b", text, re.IGNORECASE):
         imp["alpha_is_transparency"] = True
+    if re.search(r"\bmesh\s+type\s+Tight\b|\bTight\s+mesh\b", text, re.IGNORECASE):
+        imp["sprite_mesh_type"] = "Tight"
+    elif re.search(r"\bFull\s+Rect\b", text, re.IGNORECASE):
+        imp["sprite_mesh_type"] = "FullRect"
+    max_m = re.search(r"\bmax\s+size\s+(\d{2,5})\b", text, re.IGNORECASE)
+    if max_m:
+        imp["max_texture_size"] = int(max_m.group(1))
     if re.search(r"\bsRGB\s+on\b", text, re.IGNORECASE):
         imp["srgb"] = True
     elif re.search(r"\bsRGB\s+off\b", text, re.IGNORECASE):
@@ -275,12 +300,17 @@ def _apply_texture_clauses(rule: TextureRule, text: str, default_seamless_wrap: 
         rule.top_transparent_pct = float(top_trans_m.group(1))
 
     outer_fade_m = re.search(
-        r"outer\s+(\d+(?:\.\d+)?)\s*%\s+on\s+each\s+side\s+fading\s+to\s+alpha\s+0\b",
+        r"outer\s+(\d+(?:\.\d+)?)\s*(%|px|pixels?)\s+"
+        r"(?:on\s+each\s+side|at\s+the\s+left\s+and\s+right(?:\s+ends)?)\s+"
+        r"(?:fading|fades?)\s+to\s+alpha\s+0\b",
         text,
         re.IGNORECASE,
     )
     if outer_fade_m:
-        rule.outer_lr_fade_pct = float(outer_fade_m.group(1))
+        if outer_fade_m.group(2) == "%":
+            rule.outer_lr_fade_pct = float(outer_fade_m.group(1))
+        else:
+            rule.outer_lr_fade_px = int(float(outer_fade_m.group(1)))
 
     ring_m = re.search(
         r"fully\s+transparent\s+inside\s+(\d+(?:\.\d+)?)\s*%\s+and\s+outside\s+(\d+(?:\.\d+)?)\s*%",
@@ -290,6 +320,23 @@ def _apply_texture_clauses(rule: TextureRule, text: str, default_seamless_wrap: 
     if ring_m:
         rule.ring_inner_transparent_pct = float(ring_m.group(1))
         rule.ring_outer_transparent_pct = float(ring_m.group(2))
+        # An obliquely viewed ring is an ellipse: "(scaled by 0.6 vertically)".
+        ring_scale_m = re.search(r"scaled\s+by\s+(\d(?:\.\d+)?)\s+vertically", text, re.IGNORECASE)
+        if ring_scale_m and float(ring_scale_m.group(1)) > 0:
+            rule.ring_vertical_scale = float(ring_scale_m.group(1))
+
+    max_alpha_m = re.search(r"\balpha\s+(?:at\s+most|≤|<=)\s*(\d(?:\.\d+)?)", text, re.IGNORECASE)
+    if max_alpha_m and 0.0 < float(max_alpha_m.group(1)) <= 1.0:
+        rule.max_alpha = float(max_alpha_m.group(1))
+
+    margin_m = re.search(
+        r"outer\s+(\d{1,3})\s*(?:px|pixels?)(?:\s+of\s+the\s+canvas)?\s+(?:are|is)\s+fully\s+transparent"
+        r"|\b0\s+on\s+the\s+outer\s+(\d{1,3})\s*(?:px|pixels?)",
+        text,
+        re.IGNORECASE,
+    )
+    if margin_m:
+        rule.margin_px = int(margin_m.group(1) or margin_m.group(2))
 
     if rule.channels == "RGBA" and re.search(
         r"alpha\s*(?:=|is)|transparent|cut-?out|translucent|fading|fade|ring|aura",
@@ -344,6 +391,57 @@ def _parse_model_metrics(rule: ModelRule, row_map: Dict[str, str], full_row_text
                 rule.max_triangles = int(tm2.group(1).replace(",", ""))
 
 
+def _apply_sprite_metrics(rule: TextureRule, row_map: Dict[str, str], text: str) -> None:
+    """Read canvas, pivot, and "Top" range of a 2D sprite from table columns or inline text."""
+    canvas_cell = next((v for k, v in row_map.items() if "canvas" in k), "")
+    cm = DIM_RE.search(canvas_cell) if canvas_cell else None
+    if cm:
+        rule.width = int(cm.group(1))
+        rule.height = int(cm.group(2))
+
+    pivot_cell = next((v for k, v in row_map.items() if "pivot" in k), "")
+    pm = (
+        PAIR_RE.search(pivot_cell)
+        if pivot_cell
+        else re.search(r"\bpivot\s*`?\(\s*(\d{1,5})\s*,\s*(\d{1,5})\s*\)", text, re.IGNORECASE)
+    )
+    if pm:
+        rule.pivot_px = (int(pm.group(1)), int(pm.group(2)))
+
+    top_cell = next((v for k, v in row_map.items() if re.match(r"top\b", k)), "")
+    tm = PX_RANGE_RE.search(top_cell) if top_cell else None
+    if tm:
+        lo, hi = int(tm.group(1)), int(tm.group(2))
+        rule.top_px_min, rule.top_px_max = min(lo, hi), max(lo, hi)
+
+
+def _split_rule_paragraphs(preamble: str) -> Tuple[str, str, str]:
+    """Split a contract preamble into (generic, seamless-tile, sprite) rule text.
+
+    Paragraphs are recognised by their bold label (``**Seamless tile rules.**``,
+    ``**Sprite rules.**``). The sprite-atlas paragraph describes an integration
+    asset, not delivered art, and is dropped.
+    """
+    generic: List[str] = []
+    tile: List[str] = []
+    sprite: List[str] = []
+    for para in re.split(r"\n\s*\n", preamble):
+        flat = " ".join(para.split())
+        if not flat:
+            continue
+        label_m = re.match(r"\*\*([^*]+?)\.?\*\*", flat)
+        label = label_m.group(1).lower() if label_m else ""
+        if re.search(r"\bsprite\s+atlas\b", label):
+            continue
+        if re.search(r"\bseamless\b|\btile\s+rules\b", label):
+            tile.append(flat)
+        elif re.search(r"\bsprite\s+rules\b", label):
+            sprite.append(flat)
+        else:
+            generic.append(flat)
+    return "\n\n".join(generic), "\n\n".join(tile), "\n\n".join(sprite)
+
+
 def parse_art_contract(text: str) -> ParsedArtContract:
     """Parse art delivery contracts from a technical spec or standalone contract markdown."""
     sections = parse_sections(text)
@@ -377,13 +475,39 @@ def parse_art_contract(text: str) -> ParsedArtContract:
         parsed.base_dir = _norm_rel(base_m.group(1))
 
     parsed.require_art_readme_credits = bool(re.search(r"ART_README", preamble, re.IGNORECASE))
+    parsed.forbid_models = bool(
+        re.search(
+            r"\bno\s+3D\s+model\s+files?\b[^.]*\b(?:delivered|accepted|allowed)\b",
+            " ".join(preamble.split()),
+            re.IGNORECASE,
+        )
+    )
+
+    # A strictly 2D contract states seamless-tile and sprite rules separately; keep their
+    # import settings apart instead of reading one mixed set from the whole preamble.
+    generic_text, tile_text, sprite_text = _split_rule_paragraphs(preamble)
+    class_mode = bool(tile_text or sprite_text)
 
     # Common texture defaults
     common_tex = TextureRule()
     common_tex.bit_depth = 8 if re.search(r"8\s+bits?\s+per\s+channel", preamble, re.IGNORECASE) else 8
     common_tex.srgb = True
-    common_tex.import_settings = _parse_import_clause(preamble, {})
+    common_tex.import_settings = _parse_import_clause(generic_text if class_mode else preamble, {})
     default_seamless_wrap = bool(re.search(r"wrap\s+Repeat\s+for\s+seamless", preamble, re.IGNORECASE))
+
+    tile_tex: Optional[TextureRule] = None
+    if tile_text:
+        tile_tex = common_tex.clone_format()
+        _apply_texture_clauses(tile_tex, tile_text, False)
+        tile_tex.seamless_4way = True
+
+    sprite_tex: Optional[TextureRule] = None
+    if sprite_text:
+        sprite_tex = common_tex.clone_format()
+        _apply_texture_clauses(sprite_tex, sprite_text, False)
+        sprite_tex.is_sprite = True
+        sprite_tex.channels = "RGBA"
+        sprite_tex.require_alpha_variation = True
 
     # Common model defaults
     common_model = ModelRule()
@@ -424,9 +548,34 @@ def parse_art_contract(text: str) -> ParsedArtContract:
 
         # Subsection-level import overrides
         sub_tex_base = common_tex.clone_format()
-        imp_line_m = re.search(r"^\s*-\s*\*{0,2}Import[^:]*:\*{0,2}\s*(.+)$", sub.body, re.IGNORECASE | re.MULTILINE)
+        # The bullet may wrap onto indented continuation lines.
+        imp_line_m = re.search(
+            r"^\s*-\s*\*{0,2}Import[^:\n]*:\*{0,2}\s*(.+(?:\n[ \t]+\S.*)*)",
+            sub.body,
+            re.IGNORECASE | re.MULTILINE,
+        )
         if imp_line_m:
-            sub_tex_base.import_settings = _parse_import_clause(imp_line_m.group(1), sub_tex_base.import_settings)
+            sub_tex_base.import_settings = _parse_import_clause(
+                " ".join(imp_line_m.group(1).split()), sub_tex_base.import_settings
+            )
+        # Prose form: "... import as textures (type Default, mipmaps on, Trilinear)".
+        as_tex_m = re.search(r"\bimport(?:ed|s)?\s+as\s+textures?\s*\(([^)]*)\)", sub.body, re.IGNORECASE)
+        sub_as_tex_clause = " ".join(as_tex_m.group(1).split()) if as_tex_m else ""
+        if sub_as_tex_clause:
+            sub_tex_base.import_settings = _parse_import_clause(sub_as_tex_clause, sub_tex_base.import_settings)
+
+        def _base_for(seg_text: str, header_keys: Iterable[str]) -> TextureRule:
+            """Pick sprite, seamless-tile, or plain texture defaults for one deliverable."""
+            if sprite_tex is not None and (
+                SPRITE_SEG_RE.search(seg_text) or any("pivot" in k or "canvas" in k for k in header_keys)
+            ):
+                return sprite_tex.clone_format()
+            if tile_tex is not None and re.search(r"\bseamless\b(?!\s+left[- ]right)", seg_text, re.IGNORECASE):
+                base = tile_tex.clone_format()
+                if sub_as_tex_clause:
+                    base.import_settings = _parse_import_clause(sub_as_tex_clause, base.import_settings)
+                return base
+            return sub_tex_base.clone_format()
 
         # Subsection-level albedo spec (e.g., "albedo 2048 × 2048 RGBA" or "albedo RGB")
         sub_albedo_rule = sub_tex_base.clone_format()
@@ -527,10 +676,12 @@ def parse_art_contract(text: str) -> ParsedArtContract:
                             pass
 
                     if ext in TEXTURE_EXTS:
-                        t_rule = sub_tex_base.clone_format()
+                        t_rule = _base_for(seg, row.by_header.keys())
                         if re.search(r"\bsame(?:\s+format|\s+rules)?\b", seg, re.IGNORECASE) and prev_tex_rule is not None:
                             t_rule = prev_tex_rule.clone_format()
                         _apply_texture_clauses(t_rule, seg, default_seamless_wrap)
+                        if t_rule.is_sprite:
+                            _apply_sprite_metrics(t_rule, row.by_header, seg)
                         # If multiple tokens existed and seg lacked dimensions, check row-level Size column
                         if t_rule.width is None and "size" in row.by_header:
                             _apply_texture_clauses(t_rule, row.by_header["size"], default_seamless_wrap)
@@ -616,8 +767,10 @@ def parse_art_contract(text: str) -> ParsedArtContract:
                 parsed.skipped_non_file_items.append(f"{art_id}: line {sub.start_line}")
                 continue
 
-            sub_tex = sub_tex_base.clone_format()
+            sub_tex = _base_for(non_table_text, ())
             _apply_texture_clauses(sub_tex, non_table_text, default_seamless_wrap)
+            if sub_tex.is_sprite:
+                _apply_sprite_metrics(sub_tex, {}, non_table_text)
 
             for offset, line in non_table_lines:
                 if re.search(r"\bno\s+(?:image|asset)\s+file\b", line, re.IGNORECASE):
@@ -1179,7 +1332,11 @@ META_TEXTURE_TYPE_MAP = {"0": "Default", "8": "Sprite"}
 META_SPRITE_MODE_MAP = {"0": "None", "1": "Single", "2": "Multiple"}
 META_FILTER_MODE_MAP = {"0": "Point", "1": "Bilinear", "2": "Trilinear"}
 META_WRAP_MODE_MAP = {"0": "Repeat", "1": "Clamp", "2": "Mirror", "3": "MirrorOnce"}
-META_COMPRESSION_MAP = {"0": "None", "1": "LowQuality", "2": "NormalQuality", "3": "HighQuality"}
+# TextureImporterCompression: Uncompressed = 0, Compressed = 1, CompressedHQ = 2, CompressedLQ = 3.
+META_COMPRESSION_MAP = {"0": "None", "1": "NormalQuality", "2": "HighQuality", "3": "LowQuality"}
+META_SPRITE_MESH_TYPE_MAP = {"0": "FullRect", "1": "Tight"}
+META_SPRITE_ALIGNMENT_CUSTOM = 9
+PIVOT_TOLERANCE = 0.002
 
 
 def parse_unity_meta(meta_path: Path) -> Dict[str, object]:
@@ -1197,6 +1354,7 @@ def parse_unity_meta(meta_path: Path) -> Dict[str, object]:
         ("wrapU", "wrap_u", META_WRAP_MODE_MAP),
         ("wrapV", "wrap_v", META_WRAP_MODE_MAP),
         ("textureCompression", "compression", META_COMPRESSION_MAP),
+        ("spriteMeshType", "sprite_mesh_type", META_SPRITE_MESH_TYPE_MAP),
     ):
         val = _get(key)
         if val is not None:
@@ -1213,6 +1371,7 @@ def parse_unity_meta(meta_path: Path) -> Dict[str, object]:
         ("spritePixelsToUnits", "ppu"),
         ("aniso", "aniso"),
         ("maxTextureSize", "max_texture_size"),
+        ("alignment", "sprite_alignment"),
         ("meshCompression", "mesh_compression"),
         ("materialImportMode", "material_import_mode"),
         ("animationType", "animation_type"),
@@ -1246,6 +1405,10 @@ def parse_unity_meta(meta_path: Path) -> Dict[str, object]:
             int(float(bm.group(3))),
             int(float(bm.group(4))),
         )
+
+    pm = re.search(r"spritePivot:\s*\{x:\s*(-?[0-9.]+),\s*y:\s*(-?[0-9.]+)\}", text)
+    if pm:
+        parsed["sprite_pivot"] = (float(pm.group(1)), float(pm.group(2)))
 
     return parsed
 
@@ -1362,15 +1525,9 @@ def _check_texture_pixels(
 
     # Alpha checks
     if bpp == 4:
-        min_a = 255
-        max_a = 0
-        for row in rows:
-            for x in range(w):
-                a = row[x * 4 + 3]
-                if a < min_a:
-                    min_a = a
-                if a > max_a:
-                    max_a = a
+        alpha_rows = [bytes(row[3::4]) for row in rows]
+        min_a = min(min(ar) for ar in alpha_rows)
+        max_a = max(max(ar) for ar in alpha_rows)
 
         if max_a == 0:
             aq4_fail += 1
@@ -1409,7 +1566,10 @@ def _check_texture_pixels(
                     f"Keep the top {rule.top_transparent_pct:g}% of `{d.filename}` at alpha 0.",
                 )
 
-        if rule.outer_lr_fade_pct is not None:
+        if rule.outer_lr_fade_pct is not None or rule.outer_lr_fade_px is not None:
+            fade_desc = (
+                f"{rule.outer_lr_fade_pct:g}%" if rule.outer_lr_fade_pct is not None else f"{rule.outer_lr_fade_px} px"
+            )
             edge_non_zero = 0
             for y in range(h):
                 row = rows[y]
@@ -1424,7 +1584,7 @@ def _check_texture_pixels(
                     "HIGH",
                     d.rel_path,
                     f"`{d.art_id}` left/right outer edges contain {edge_non_zero} non-zero alpha pixel(s) (must fade to alpha 0).",
-                    f"Fade the outer {rule.outer_lr_fade_pct:g}% on both left and right edges to alpha 0.",
+                    f"Fade the outer {fade_desc} on both left and right edges to alpha 0.",
                 )
 
         if rule.ring_inner_transparent_pct is not None and rule.ring_outer_transparent_pct is not None:
@@ -1432,10 +1592,13 @@ def _check_texture_pixels(
             cy = h / 2.0
             r_in = (rule.ring_inner_transparent_pct / 100.0) * w
             r_out = (rule.ring_outer_transparent_pct / 100.0) * w
+            v_scale = rule.ring_vertical_scale or 1.0  # < 1 for a ring seen obliquely (an ellipse)
             bad_ring = 0
             for y in range(h):
                 row = rows[y]
-                dy = (y + 0.5) - cy
+                if max(alpha_rows[y]) == 0:
+                    continue
+                dy = ((y + 0.5) - cy) / v_scale
                 for x in range(w):
                     dx = (x + 0.5) - cx
                     dist = math.hypot(dx, dy)
@@ -1450,6 +1613,93 @@ def _check_texture_pixels(
                     f"`{d.art_id}` radial foam ring has {bad_ring} non-transparent pixel(s) inside {rule.ring_inner_transparent_pct:g}% or outside {rule.ring_outer_transparent_pct:g}% width radius.",
                     "Clear alpha to 0 inside the inner radius and outside the outer radius.",
                 )
+
+        # ---- 2D sprite rules: transparent margin, alpha ceiling, pivot contact, and "Top" range
+        if rule.margin_px:
+            m = min(rule.margin_px, w // 2, h // 2)
+            bad_margin = 0
+            for y in range(h):
+                ar = alpha_rows[y]
+                if y < m or y >= h - m:
+                    bad_margin += w - ar.count(0)
+                else:
+                    bad_margin += (m - ar[:m].count(0)) + (m - ar[w - m :].count(0))
+            if bad_margin:
+                aq4_fail += 1
+                report.add_finding(
+                    "AQ-4",
+                    "HIGH",
+                    d.rel_path,
+                    f"`{d.art_id}` outer {rule.margin_px} px of the canvas contains {bad_margin} non-transparent pixel(s).",
+                    f"Keep the outer {rule.margin_px} px of `{d.filename}` at alpha 0.",
+                )
+
+        if rule.max_alpha is not None:
+            limit = int(math.ceil(rule.max_alpha * 255.0))
+            if max_a > limit:
+                aq4_fail += 1
+                report.add_finding(
+                    "AQ-4",
+                    "HIGH",
+                    d.rel_path,
+                    f"`{d.art_id}` maximum alpha is {max_a / 255.0:.2f} (contract allows at most {rule.max_alpha:.2f}).",
+                    f"Lower the opacity of `{d.filename}` to at most {rule.max_alpha:.2f} everywhere.",
+                )
+
+        if rule.pivot_px is not None:
+            px, py = rule.pivot_px
+            if not (0 <= px <= w and 0 <= py <= h):
+                aq4_fail += 1
+                report.add_finding(
+                    "AQ-4",
+                    "HIGH",
+                    d.rel_path,
+                    f"`{d.art_id}` contract pivot ({px}, {py}) lies outside the {w}x{h} canvas.",
+                    "Correct the pivot or canvas size in the art contract.",
+                )
+            else:
+                top_row = next((y for y in range(h) if max(alpha_rows[y]) >= OPAQUE_ALPHA), None)
+                if rule.top_px_min is not None and rule.top_px_max is not None:
+                    if top_row is None:
+                        aq4_fail += 1
+                        report.add_finding(
+                            "AQ-4",
+                            "HIGH",
+                            d.rel_path,
+                            f"`{d.art_id}` sprite has no opaque pixels (alpha >= 0.5), so its height cannot be measured.",
+                            f"Paint `{d.filename}` with an opaque subject on a transparent background.",
+                        )
+                    else:
+                        top_px = (h - top_row) - py
+                        if not (rule.top_px_min <= top_px <= rule.top_px_max):
+                            aq4_fail += 1
+                            report.add_finding(
+                                "AQ-4",
+                                "HIGH",
+                                d.rel_path,
+                                f"`{d.art_id}` highest opaque pixel is {top_px} px above the pivot row "
+                                f"(contract requires {rule.top_px_min}-{rule.top_px_max} px).",
+                                f"Repaint or reposition `{d.filename}` so the subject's top lies "
+                                f"{rule.top_px_min}-{rule.top_px_max} px above the pivot at ({px}, {py}).",
+                            )
+                # The subject must stand on its pivot. Not checked for translucent sprites (shadows).
+                if rule.max_alpha is None and top_row is not None:
+                    row_px = h - 1 - min(py, h - 1)  # image row (from the top) containing the pivot
+                    r = PIVOT_CONTACT_RADIUS_PX
+                    x0, x1 = max(0, px - r), min(w, px + r + 1)
+                    touches = any(
+                        max(alpha_rows[y][x0:x1]) >= OPAQUE_ALPHA
+                        for y in range(max(0, row_px - r), min(h, row_px + r + 1))
+                    )
+                    if not touches:
+                        aq4_warn += 1
+                        report.add_finding(
+                            "AQ-4",
+                            "MEDIUM",
+                            d.rel_path,
+                            f"`{d.art_id}` has no opaque pixel within {r} px of its pivot ({px}, {py}).",
+                            f"Place the subject's ground-contact centre on the pivot in `{d.filename}`.",
+                        )
 
     # Seamless edge continuity check (MEDIUM warning)
     if rule.seamless_4way or rule.seamless_lr:
@@ -1525,6 +1775,33 @@ def _check_meta(
         expected = dict(d.texture_rule.import_settings)
         if d.texture_rule.srgb is not None and "srgb" not in expected:
             expected["srgb"] = d.texture_rule.srgb
+        rule = d.texture_rule
+        if rule.pivot_px is not None and rule.width and rule.height:
+            exp_pivot = (rule.pivot_px[0] / rule.width, rule.pivot_px[1] / rule.height)
+            got_pivot = meta.get("sprite_pivot")
+            got_align = meta.get("sprite_alignment")
+            if got_align is not None and got_align != META_SPRITE_ALIGNMENT_CUSTOM:
+                fails += 1
+                report.add_finding(
+                    "AQ-7",
+                    "HIGH",
+                    d.rel_path + ".meta",
+                    f"`{d.art_id}` Unity `.meta` sprite `alignment` is `{got_align}` (contract requires a custom pivot, `9`).",
+                    f"Set the sprite pivot mode of `{d.filename}` to Custom.",
+                )
+            if isinstance(got_pivot, tuple) and (
+                abs(got_pivot[0] - exp_pivot[0]) > PIVOT_TOLERANCE or abs(got_pivot[1] - exp_pivot[1]) > PIVOT_TOLERANCE
+            ):
+                fails += 1
+                report.add_finding(
+                    "AQ-7",
+                    "HIGH",
+                    d.rel_path + ".meta",
+                    f"`{d.art_id}` Unity `.meta` `spritePivot` is ({got_pivot[0]:.4f}, {got_pivot[1]:.4f}) "
+                    f"(contract pivot {rule.pivot_px} on a {rule.width}x{rule.height} canvas is "
+                    f"({exp_pivot[0]:.4f}, {exp_pivot[1]:.4f})).",
+                    f"Set `spritePivot` of `{d.filename}` to ({exp_pivot[0]:.4f}, {exp_pivot[1]:.4f}).",
+                )
     elif d.kind == "model" and d.model_rule is not None:
         expected = dict(d.model_rule.import_settings)
 
@@ -1590,7 +1867,7 @@ def run_art_quality_gate(
                 for dirpath, _, filenames in os.walk(full_p):
                     for fn in sorted(filenames):
                         fp = Path(dirpath) / fn
-                        if fp.suffix.lower() in ALL_ART_EXTS:
+                        if fp.suffix.lower() in ALL_ART_EXTS | MODEL_SCAN_EXTS:
                             explicit_files.append(fp.resolve())
 
         if explicit_files:
@@ -1721,6 +1998,8 @@ def run_art_quality_gate(
             in_font_dir = fp.suffix.lower() in FONT_EXTS and any(
                 rel.startswith(fd + "/") for fd in font_dirs
             )
+            if contract.forbid_models and fp.suffix.lower() in MODEL_SCAN_EXTS:
+                continue  # reported under AQ-5
             if rel not in contracted_set and not in_font_dir:
                 aq2_fail += 1
                 report.add_finding(
@@ -1749,7 +2028,7 @@ def run_art_quality_gate(
 
     if not tex_deliverables:
         report.add_check("AQ-3", "PNG validity, dimensions, bit depth, and channels", "SKIP", "No supplied textures to check")
-        report.add_check("AQ-4", "Pixel, alpha, and seamless texture contract rules", "SKIP", "No supplied textures to check")
+        report.add_check("AQ-4", "Pixel, alpha, sprite, and seamless texture contract rules", "SKIP", "No supplied textures to check")
     else:
         for d in tex_deliverables:
             rule = d.texture_rule
@@ -1819,7 +2098,7 @@ def run_art_quality_gate(
         )
         report.add_check(
             "AQ-4",
-            "Pixel, alpha, and seamless texture contract rules",
+            "Pixel, alpha, sprite, and seamless texture contract rules",
             "PASS" if aq4_fail == 0 else "FAIL",
             f"Checked {len(tex_deliverables)} PNG(s); {aq4_fail} error(s), {aq4_warn} warning(s)",
         )
@@ -1829,7 +2108,35 @@ def run_art_quality_gate(
     # ------------------------------------------------------------------
     model_deliverables = [d for d in deliverables if d.kind == "model" and d.rel_path in resolved_assets]
     aq5_fail = 0
-    if not model_deliverables:
+    if contract.forbid_models:
+        # Strictly 2D contract: no 3D model file may exist anywhere in the art tree.
+        scan_root = art_dir if art_dir is not None else (repo / contract.base_dir if contract.base_dir else None)
+        stray: Set[Path] = {fp for fp in explicit_files if fp.suffix.lower() in MODEL_SCAN_EXTS}
+        if scan_root is not None and scan_root.is_dir():
+            for dirpath, _, filenames in os.walk(scan_root):
+                for fn in filenames:
+                    if Path(fn).suffix.lower() in MODEL_SCAN_EXTS:
+                        stray.add((Path(dirpath) / fn).resolve())
+        for fp in sorted(stray):
+            try:
+                rel = fp.relative_to(repo_resolved).as_posix()
+            except ValueError:
+                rel = fp.name
+            aq5_fail += 1
+            report.add_finding(
+                "AQ-5",
+                "HIGH",
+                rel,
+                f"3D model file `{fp.name}` supplied, but the art contract accepts no 3D model files (strictly 2D art).",
+                "Remove the model file and deliver the item as the contracted 2D tile or sprite.",
+            )
+        report.add_check(
+            "AQ-5",
+            "No 3D model files (strictly 2D art contract)",
+            "PASS" if aq5_fail == 0 else "FAIL",
+            f"{len(stray)} model file(s) found",
+        )
+    elif not model_deliverables:
         report.add_check("AQ-5", "FBX binary, topology, UVs, bounds, and forbidden elements", "SKIP", "No supplied FBX models to check")
     else:
         for d in model_deliverables:

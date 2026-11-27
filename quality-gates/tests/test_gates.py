@@ -934,6 +934,402 @@ Files go under `Assets/Resources/Art/`.
         self.assertEqual(by_path["Assets/Resources/Art/UI/overlay_divider.png"].texture_rule.height, 8)
 
 
+ART_CONTRACT_2D_SPEC = """# Murim Universe v0.3.0 · Technical spec
+
+## 4. Art delivery contracts
+
+Every art file is a flat 2D painting: **no 3D model file of any kind is delivered or
+accepted**. Files go under `Assets/Resources/Art/` with exact names. Credit each family in
+`Assets/Art/ART_README.md`.
+
+**Common rules for all world art (ART-001–ART-004).**
+
+- **Scale.** 128 pixels = 1 metre of screen plane.
+- **Format.** PNG, 8 bits per channel, sRGB, straight alpha where RGBA, exact pixel sizes as listed.
+
+**Seamless tile rules.** RGB, tiles without a visible seam on all four edges, no single feature that would make the
+repeat obvious. Import: texture type Default, sRGB on, mipmaps on, Trilinear, wrap Repeat, compression High Quality,
+max size = native.
+
+**Sprite rules.** RGBA with a fully transparent background (alpha 0, no matte or halo); the outer 2 pixels of the
+canvas are fully transparent unless stated; the canvas and pivot are exactly as listed, with the pivot given in pixels
+from the bottom-left corner. Import: texture type Sprite (2D and UI), Single, 128 pixels per unit, custom pivot, mesh
+type Tight, mipmaps on, Trilinear, wrap Clamp, alpha is transparency, compression High Quality, max size 4096.
+
+**Sprite atlas (integration asset, ARCH-007).** `Assets/Resources/Art/Props/WorldProps.spriteatlas` packs every
+sprite into one page: max texture size 8192, padding 8, mipmaps on, Trilinear, sRGB, compression High Quality.
+
+### 4.1 ART-001 Ground Tiles
+
+- **Destination:** `Assets/Resources/Art/Terrain/`
+- **Files (1):** `terrain_moss_turf.png`
+- **Format:** 16 × 16 RGB seamless tile; each depicts 16 m × 16 m of the screen plane.
+
+### 4.2 ART-002 Banks
+
+| Variant | Deliverable |
+|---|---|
+| Earth bank | `Terrain/terrain_bank_earth.png`: 16 × 16 RGB seamless tile; the large embedded boulders are `rock_boulder` sprites (ART-004) |
+| Lip sprite | `Props/Banks/bank_lip.png`: sprite, canvas 32 × 16, pivot `(16, 8)`. The outer 3 px at the left and right ends fade to alpha 0 |
+
+### 4.3 ART-003 Water
+
+- **Destination:** `Assets/Resources/Art/Water/`
+
+| Variant | Deliverable |
+|---|---|
+| Stream | `water_stream.png`: 16 × 16 RGB seamless tile |
+| Fall and foam | `water_fall.png`: 16 × 32 RGBA; the outer 10 % on each side fades to alpha 0; wrap Clamp. And `water_foam.png`: 40 × 24 RGBA, an oblique foam ring centred in the image, fully transparent inside 35 % and outside 48 % of the image width from the centre measured horizontally (scaled by 0.6 vertically), wrap Clamp |
+
+Water files import as textures (type Default, mipmaps on, Trilinear), not sprites.
+
+### 4.4 ART-004 Rocks and Shadow
+
+- **Destination:** `Assets/Resources/Art/Props/Rocks/`; sprite rules above.
+
+| File | Canvas px | Pivot px | Top px | Logical height |
+|---|---|---|---|---|
+| `rock_boulder.png` | 24 × 32 | `(12, 8)` | 14–20 | 1.8 m |
+
+| Variant | Deliverable |
+|---|---|
+| Ground shadow | `Assets/Resources/Art/Props/Shadows/shadow_soft.png`: sprite, canvas 32 × 20, pivot `(10, 12)`. Soft dark patch; alpha at most 0.50 anywhere and 0 on the outer 2 px |
+| Atmosphere | No image file. Delivered as shader values |
+
+### 4.5 ART-005 UI Frame
+
+- **Destination:** `Assets/Resources/Art/UI/`
+- **Import (all):** Sprite (2D and UI), Single, 100 pixels per unit, Full Rect mesh, no mipmaps, wrap Clamp, Bilinear,
+  compression None, alpha is transparency.
+
+| File | Size | 9-slice border | Notes |
+|---|---|---|---|
+| `overlay_panel.png` | 16 × 16 RGBA | 4 px all sides | centre translucent (alpha 0.85–0.92) |
+"""
+
+SPRITE_META_2D = (
+    "fileFormatVersion: 2\n"
+    "TextureImporter:\n"
+    "  enableMipMap: 1\n"
+    "  sRGBTexture: 1\n"
+    "  filterMode: 2\n"
+    "  wrapU: 1\n"
+    "  wrapV: 1\n"
+    "  alphaIsTransparency: 1\n"
+    "  spriteMode: 1\n"
+    "  alignment: 9\n"
+    "  spritePivot: {x: 0.5, y: 0.25}\n"
+    "  spritePixelsToUnits: 128\n"
+    "  spriteMeshType: 1\n"
+    "  textureType: 8\n"
+    "  maxTextureSize: 4096\n"
+    "  textureCompression: 2\n"
+)
+
+TILE_META_2D = (
+    "fileFormatVersion: 2\n"
+    "TextureImporter:\n"
+    "  enableMipMap: 1\n"
+    "  sRGBTexture: 1\n"
+    "  filterMode: 2\n"
+    "  wrapU: 0\n"
+    "  wrapV: 0\n"
+    "  alphaIsTransparency: 0\n"
+    "  spriteMode: 0\n"
+    "  spritePixelsToUnits: 100\n"
+    "  textureType: 0\n"
+    "  maxTextureSize: 2048\n"
+    "  textureCompression: 2\n"
+)
+
+
+def _sprite_png(w: int, h: int, pivot: tuple[int, int], top_px: int, margin: int = 2, alpha: int = 255) -> bytes:
+    """A solid block standing on the pivot, reaching `top_px` above the pivot row."""
+    px, py = pivot
+    top_row = (h - py) - top_px
+    x0, x1 = max(margin, px - 4), min(w - margin, px + 4)
+    return _make_png(
+        w,
+        h,
+        color_type=6,
+        pixel_fn=lambda x, y: (90, 100, 80, alpha if (x0 <= x < x1 and top_row <= y < h - margin) else 0),
+    )
+
+
+def _oblique_foam_png(w: int = 40, h: int = 24, v_scale: float = 0.6) -> bytes:
+    def px(x: int, y: int):
+        d = math.hypot(x + 0.5 - w / 2.0, (y + 0.5 - h / 2.0) / v_scale)
+        return (240, 245, 250, 220 if 0.37 * w <= d <= 0.46 * w else 0)
+
+    return _make_png(w, h, color_type=6, pixel_fn=px)
+
+
+def _write_valid_2d_art_set(repo: Path) -> None:
+    art_root = repo / "Assets" / "Resources" / "Art"
+    for sub in ("Terrain", "Water", "UI", "Props/Banks", "Props/Rocks", "Props/Shadows"):
+        (art_root / sub).mkdir(parents=True, exist_ok=True)
+    (repo / "Assets" / "Art").mkdir(parents=True, exist_ok=True)
+    (repo / "Assets" / "Art" / "ART_README.md").write_text(
+        "# Credits\nART-001 ART-002 ART-003 ART-004 ART-005\n", encoding="utf-8"
+    )
+
+    for rel in ("Terrain/terrain_moss_turf.png", "Terrain/terrain_bank_earth.png", "Water/water_stream.png"):
+        tile = art_root / rel
+        tile.write_bytes(_make_png(16, 16, color_type=2, pixel_fn=lambda x, y: (60, 110, 55)))
+        Path(str(tile) + ".meta").write_text(TILE_META_2D, encoding="utf-8")
+
+    (art_root / "Water" / "water_fall.png").write_bytes(
+        _make_png(16, 32, color_type=6, pixel_fn=lambda x, y: (230, 235, 240, 0 if x in (0, 1, 14, 15) else 210))
+    )
+    (art_root / "Water" / "water_foam.png").write_bytes(_oblique_foam_png())
+
+    # Lip: 32x16, pivot (16, 8); ends fade to alpha 0
+    (art_root / "Props" / "Banks" / "bank_lip.png").write_bytes(
+        _make_png(
+            32,
+            16,
+            color_type=6,
+            pixel_fn=lambda x, y: (70, 100, 60, 255 if (3 <= x < 29 and 2 <= y < 14) else 0),
+        )
+    )
+    # Boulder: 24x32, pivot (12, 8), top 14-20 px above the pivot row
+    boulder = art_root / "Props" / "Rocks" / "rock_boulder.png"
+    boulder.write_bytes(_sprite_png(24, 32, (12, 8), 17))
+    Path(str(boulder) + ".meta").write_text(SPRITE_META_2D, encoding="utf-8")
+    # Shadow: 32x20, pivot (10, 12), alpha <= 0.5
+    (art_root / "Props" / "Shadows" / "shadow_soft.png").write_bytes(_sprite_png(32, 20, (10, 12), 4, alpha=110))
+
+    panel = art_root / "UI" / "overlay_panel.png"
+    panel.write_bytes(_make_png(16, 16, color_type=6, pixel_fn=lambda x, y: (30, 50, 45, 225)))
+    Path(str(panel) + ".meta").write_text(
+        "fileFormatVersion: 2\n"
+        "TextureImporter:\n"
+        "  textureType: 8\n"
+        "  spriteMode: 1\n"
+        "  spritePixelsToUnits: 100\n"
+        "  spriteMeshType: 0\n"
+        "  enableMipMap: 0\n"
+        "  filterMode: 1\n"
+        "  wrapU: 1\n"
+        "  wrapV: 1\n"
+        "  textureCompression: 0\n"
+        "  alphaIsTransparency: 1\n"
+        "  sRGBTexture: 1\n"
+        "  spriteBorder: {x: 4, y: 4, z: 4, w: 4}\n",
+        encoding="utf-8",
+    )
+
+
+class TestArtQualityGate2DContract(unittest.TestCase):
+    def _repo(self, tmp: str) -> tuple[Path, Path]:
+        repo = Path(tmp)
+        spec = repo / "docs" / "specs" / "v0.3.0-technical.md"
+        spec.parent.mkdir(parents=True)
+        spec.write_text(ART_CONTRACT_2D_SPEC, encoding="utf-8")
+        _write_valid_2d_art_set(repo)
+        return repo, spec
+
+    def test_parses_tile_sprite_and_texture_rules_separately(self) -> None:
+        parsed = parse_art_contract(ART_CONTRACT_2D_SPEC)
+        self.assertTrue(parsed.forbid_models)
+        self.assertEqual(len(parsed.skipped_non_file_items), 1)
+        by_name = {d.filename: d for d in parsed.deliverables}
+        self.assertEqual(
+            set(by_name),
+            {
+                "terrain_moss_turf.png",
+                "terrain_bank_earth.png",
+                "bank_lip.png",
+                "water_stream.png",
+                "water_fall.png",
+                "water_foam.png",
+                "rock_boulder.png",
+                "shadow_soft.png",
+                "overlay_panel.png",
+            },
+        )
+        self.assertTrue(all(d.kind == "texture" for d in parsed.deliverables))
+
+        # Seamless tiles: plain textures that repeat; never sprite settings.
+        for name in ("terrain_moss_turf.png", "terrain_bank_earth.png", "water_stream.png"):
+            rule = by_name[name].texture_rule
+            self.assertFalse(rule.is_sprite, name)
+            self.assertTrue(rule.seamless_4way, name)
+            self.assertEqual((rule.width, rule.height, rule.channels), (16, 16, "RGB"), name)
+            imp = rule.import_settings
+            self.assertEqual(imp["texture_type"], "Default", name)
+            self.assertEqual((imp["wrap_u"], imp["wrap_v"]), ("Repeat", "Repeat"), name)
+            self.assertNotIn("ppu", imp, name)
+            self.assertNotIn("sprite_mode", imp, name)
+            self.assertNotIn("alpha_is_transparency", imp, name)
+
+        # World sprites: sprite rules, pivot, top range, transparent margin.
+        boulder = by_name["rock_boulder.png"].texture_rule
+        self.assertTrue(boulder.is_sprite)
+        self.assertEqual((boulder.width, boulder.height, boulder.channels), (24, 32, "RGBA"))
+        self.assertEqual(boulder.pivot_px, (12, 8))
+        self.assertEqual((boulder.top_px_min, boulder.top_px_max), (14, 20))
+        self.assertEqual(boulder.margin_px, 2)
+        imp = boulder.import_settings
+        self.assertEqual(
+            (imp["texture_type"], imp["sprite_mode"], imp["ppu"], imp["sprite_mesh_type"], imp["max_texture_size"]),
+            ("Sprite", "Single", 128, "Tight", 4096),
+        )
+        self.assertEqual((imp["wrap_u"], imp["wrap_v"]), ("Clamp", "Clamp"))
+
+        lip = by_name["bank_lip.png"].texture_rule
+        self.assertTrue(lip.is_sprite)
+        self.assertEqual((lip.width, lip.height, lip.pivot_px, lip.outer_lr_fade_px), (32, 16, (16, 8), 3))
+        self.assertEqual(by_name["bank_lip.png"].rel_path, "Assets/Resources/Art/Props/Banks/bank_lip.png")
+
+        shadow = by_name["shadow_soft.png"].texture_rule
+        self.assertTrue(shadow.is_sprite)
+        self.assertEqual((shadow.pivot_px, shadow.max_alpha, shadow.margin_px), ((10, 12), 0.5, 2))
+        self.assertEqual(by_name["shadow_soft.png"].rel_path, "Assets/Resources/Art/Props/Shadows/shadow_soft.png")
+
+        # Plain textures take the subsection's "import as textures (...)" settings.
+        fall = by_name["water_fall.png"].texture_rule
+        self.assertFalse(fall.is_sprite)
+        self.assertEqual(fall.outer_lr_fade_pct, 10.0)
+        self.assertEqual(fall.import_settings["texture_type"], "Default")
+        self.assertEqual(fall.import_settings["wrap_u"], "Clamp")
+        foam = by_name["water_foam.png"].texture_rule
+        self.assertEqual(
+            (foam.ring_inner_transparent_pct, foam.ring_outer_transparent_pct, foam.ring_vertical_scale),
+            (35.0, 48.0, 0.6),
+        )
+
+        # UI sprites keep their own subsection import settings, including the wrapped second line.
+        panel = by_name["overlay_panel.png"].texture_rule.import_settings
+        self.assertEqual((panel["ppu"], panel["sprite_mesh_type"], panel["compression"]), (100, "FullRect", "None"))
+        self.assertFalse(panel["mipmaps"])
+        self.assertTrue(panel["alpha_is_transparency"])
+        self.assertNotIn("max_texture_size", panel)
+
+    def test_valid_2d_art_delivery_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, spec = self._repo(tmp)
+            report = run_art_quality_gate(spec, repo)
+            self.assertEqual(report.decision, "PASS", report.to_markdown())
+            self.assertEqual(report.exit_code, EXIT_PASS)
+            self.assertEqual(report.findings, [], report.to_markdown())
+            statuses = {c.check_id: c.status for c in report.checks}
+            self.assertEqual(statuses["AQ-5"], "PASS")
+            self.assertEqual(statuses["AQ-7"], "PASS")
+
+    def test_detects_sprite_pixel_failures(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, spec = self._repo(tmp)
+            art_root = repo / "Assets" / "Resources" / "Art"
+            # Too tall: 26 px above the pivot row (contract 14-20), and it reaches the canvas edge
+            (art_root / "Props" / "Rocks" / "rock_boulder.png").write_bytes(_sprite_png(24, 32, (12, 8), 24, margin=0))
+            # Shadow too opaque
+            (art_root / "Props" / "Shadows" / "shadow_soft.png").write_bytes(_sprite_png(32, 20, (10, 12), 4, alpha=200))
+            # Lip ends do not fade out, and no transparency at all
+            (art_root / "Props" / "Banks" / "bank_lip.png").write_bytes(
+                _make_png(32, 16, color_type=6, pixel_fn=lambda x, y: (70, 100, 60, 255))
+            )
+            # A top-down (circular) ring is not the contracted oblique ring
+            (art_root / "Water" / "water_foam.png").write_bytes(_oblique_foam_png(v_scale=1.0))
+
+            report = run_art_quality_gate(spec, repo)
+            self.assertEqual(report.decision, "FAIL", report.to_markdown())
+            msgs = [f"{f.location}: {f.message}" for f in report.findings if f.check_id == "AQ-4"]
+            joined = "\n".join(msgs)
+            self.assertIn("rock_boulder.png: `ART-004` highest opaque pixel is 24 px above the pivot row", joined)
+            self.assertIn("rock_boulder.png: `ART-004` outer 2 px of the canvas contains", joined)
+            self.assertIn("shadow_soft.png: `ART-004` maximum alpha is 0.78", joined)
+            self.assertIn("bank_lip.png: `ART-002` requires alpha transparency", joined)
+            self.assertIn("bank_lip.png: `ART-002` left/right outer edges", joined)
+            self.assertIn("water_foam.png: `ART-003` radial foam ring", joined)
+
+    def test_detects_sprite_off_pivot_and_empty_sprite(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, spec = self._repo(tmp)
+            # A canvas large enough for the subject to sit well away from its pivot.
+            spec.write_text(
+                ART_CONTRACT_2D_SPEC.replace(
+                    "| `rock_boulder.png` | 24 × 32 | `(12, 8)` |", "| `rock_boulder.png` | 64 × 64 | `(32, 8)` |"
+                ),
+                encoding="utf-8",
+            )
+            boulder = repo / "Assets" / "Resources" / "Art" / "Props" / "Rocks" / "rock_boulder.png"
+            Path(str(boulder) + ".meta").unlink()
+            # Right height (18 px above the pivot row) but floating at the left edge, away from the pivot
+            boulder.write_bytes(
+                _make_png(64, 64, color_type=6, pixel_fn=lambda x, y: (90, 100, 80, 255 if (2 <= x < 7 and 38 <= y < 42) else 0))
+            )
+            report = run_art_quality_gate(spec, repo, art_ids=["ART-004"])
+            self.assertEqual(report.decision, "PASS", report.to_markdown())  # advisory only
+            self.assertTrue(
+                any(f.check_id == "AQ-4" and f.severity == "MEDIUM" and "within 16 px of its pivot" in f.message for f in report.findings),
+                report.to_markdown(),
+            )
+            # Faint pixels only: nothing opaque to measure
+            boulder.write_bytes(
+                _make_png(64, 64, color_type=6, pixel_fn=lambda x, y: (90, 100, 80, 40 if (24 <= x < 40 and 30 <= y < 60) else 0))
+            )
+            report = run_art_quality_gate(spec, repo, art_ids=["ART-004"])
+            self.assertEqual(report.decision, "FAIL")
+            self.assertTrue(any("no opaque pixels" in f.message for f in report.findings), report.to_markdown())
+
+    def test_detects_meta_pivot_and_texture_type_mismatches(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, spec = self._repo(tmp)
+            art_root = repo / "Assets" / "Resources" / "Art"
+            boulder_meta = art_root / "Props" / "Rocks" / "rock_boulder.png.meta"
+            boulder_meta.write_text(
+                SPRITE_META_2D.replace("alignment: 9", "alignment: 7")
+                .replace("spritePivot: {x: 0.5, y: 0.25}", "spritePivot: {x: 0.5, y: 0}")
+                .replace("spritePixelsToUnits: 128", "spritePixelsToUnits: 100")
+                .replace("textureCompression: 2", "textureCompression: 1"),
+                encoding="utf-8",
+            )
+            # A seamless tile imported as a clamped sprite
+            (art_root / "Terrain" / "terrain_moss_turf.png.meta").write_text(
+                TILE_META_2D.replace("textureType: 0", "textureType: 8").replace("wrapU: 0", "wrapU: 1"),
+                encoding="utf-8",
+            )
+            report = run_art_quality_gate(spec, repo, require_meta=False)
+            self.assertEqual(report.decision, "FAIL", report.to_markdown())
+            aq7 = "\n".join(f"{f.location}: {f.message}" for f in report.findings if f.check_id == "AQ-7")
+            self.assertIn("rock_boulder.png.meta: `ART-004` Unity `.meta` sprite `alignment` is `7`", aq7)
+            self.assertIn("`spritePivot` is (0.5000, 0.0000)", aq7)
+            self.assertIn("setting `ppu` is `100` (contract requires `128`)", aq7)
+            self.assertIn("setting `compression` is `NormalQuality` (contract requires `HighQuality`)", aq7)
+            self.assertIn("terrain_moss_turf.png.meta: `ART-001` Unity `.meta` setting `texture_type` is `Sprite`", aq7)
+            self.assertIn("setting `wrap_u` is `Clamp` (contract requires `Repeat`)", aq7)
+
+    def test_2d_contract_rejects_any_model_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, spec = self._repo(tmp)
+            rocks = repo / "Assets" / "Resources" / "Art" / "Props" / "Rocks"
+            (rocks / "rock_boulder.fbx").write_bytes(_make_fbx(height_m=1.8, min_y_m=-0.5, radius_m=1.0, num_tris=4))
+            (rocks / "rock_extra.obj").write_text("v 0 0 0\n", encoding="utf-8")
+
+            report = run_art_quality_gate(spec, repo)
+            self.assertEqual(report.decision, "FAIL", report.to_markdown())
+            aq5 = sorted(f.location for f in report.findings if f.check_id == "AQ-5")
+            self.assertEqual(
+                aq5,
+                [
+                    "Assets/Resources/Art/Props/Rocks/rock_boulder.fbx",
+                    "Assets/Resources/Art/Props/Rocks/rock_extra.obj",
+                ],
+            )
+            # Explicit --paths are scanned too, and the model is reported once (AQ-5, not AQ-2)
+            scoped = run_art_quality_gate(spec, repo, paths=["Assets/Resources/Art/Props/Rocks"])
+            self.assertEqual(scoped.decision, "FAIL")
+            self.assertEqual(len([f for f in scoped.findings if f.check_id == "AQ-5"]), 2)
+            self.assertFalse([f for f in scoped.findings if f.check_id == "AQ-2"], scoped.to_markdown())
+
+    def test_legacy_contract_keeps_fbx_checks(self) -> None:
+        parsed = parse_art_contract(ART_CONTRACT_SPEC)
+        self.assertFalse(parsed.forbid_models)
+        self.assertTrue(any(d.kind == "model" for d in parsed.deliverables))
+        self.assertFalse(any(d.texture_rule.is_sprite for d in parsed.deliverables if d.texture_rule))
+
+
 class TestCliRunner(unittest.TestCase):
     def test_cli_list_and_json_output(self) -> None:
         runner = ROOT / "run_gates.py"

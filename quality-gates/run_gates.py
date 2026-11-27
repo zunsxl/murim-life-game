@@ -32,7 +32,7 @@ from gates.security_privacy_gate import run_security_privacy_gate
 AVAILABLE_GATES = {
     "product-spec": "Validate a product spec's structure, IDs, testability, links, and product-level boundaries.",
     "art-inventory": "Validate a product spec's ART-XXX inventory, exact counts, dispositions, options, and sourcing.",
-    "art-quality": "Compare supplied art assets (PNG, FBX, fonts, Unity .meta) against a spec's Art delivery contracts.",
+    "art-quality": "Compare supplied art assets (PNG tiles/textures/2D sprites, fonts, Unity .meta; no 3D models for 2D contracts) against a spec's Art delivery contracts.",
     "requirements-architecture": "Validate a technical spec's baseline SHA, AC traceability, ticket DAG, execution plan, and art contracts.",
     "security-privacy": "Scan specs, configs, scripts, and code for secrets, PII/local paths, unsafe sinks, debug gating, and unpinned deps.",
     "code-quality": "Check layer boundaries, per-frame allocations/LINQ, complexity/size thresholds, duplication, and warnings-as-errors.",
