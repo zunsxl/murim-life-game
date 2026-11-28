@@ -17,4 +17,4 @@ require an owner decision recorded in [docs/decisions.md](decisions.md).
 
 | Version | Spec | Status | Notes |
 |---|---|---|---|
-| `v0.1.0` | `docs/specs/v0.1.0.md` *(not yet created)* | Planned | Initial milestone |
+| `v0.1.0` | [docs/specs/v0.1.0.md](specs/v0.1.0.md) | Draft 4 | 1:1 reference map recreation baseline |
