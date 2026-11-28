@@ -8,7 +8,9 @@
     "Murim.View",
     "Unity.InputSystem",
     "Unity.InputSystem.TestFramework",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "UnityEngine.UI",
+    "Unity.RenderPipelines.Universal.Runtime"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

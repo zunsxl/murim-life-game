@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "walkSpeed": 5.0,
+  "airSpeed": 8.0,
+  "verticalSpeed": 8.0,
+  "defaultOrthoSize": 11.25,
+  "minOrthoSize": 4.5,
+  "maxOrthoSize": 28.125,
+  "zoomStep": 1.1,
+  "panSpeed": 1.2,
+  "defaultFocusX": 70.0,
+  "defaultFocusZ": 29.0
+}

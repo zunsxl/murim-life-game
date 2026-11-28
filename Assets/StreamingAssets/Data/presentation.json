@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "labelVisibleSeconds": 1.5,
+  "labelFadeSeconds": 0.5,
+  "markerVisibleSeconds": 0.8,
+  "markerFadeSeconds": 0.4,
+  "cutFadeSeconds": 0.25,
+  "riverFlowSpeed": 1.2,
+  "waterfallSpeed": 3.0,
+  "bambooSwayAmplitude": 0.12,
+  "bambooSwayPeriod": 3.5,
+  "pineSwayAmplitude": 0.05,
+  "pineSwayPeriod": 4.5,
+  "grassSwayAmplitude": 0.04,
+  "grassSwayPeriod": 2.2,
+  "flowerSwayAmplitude": 0.03,
+  "flowerSwayPeriod": 2.0
+}
