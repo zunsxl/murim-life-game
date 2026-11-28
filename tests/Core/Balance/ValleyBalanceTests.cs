@@ -7,6 +7,7 @@ namespace Murim.Core.Tests.Balance
     [TestFixture]
     public sealed class ValleyBalanceTests
     {
+        // T-BAL-01
         [Test]
         public void T_BAL_01_ValleySpanToDefaultViewWidthRatio()
         {
@@ -21,6 +22,7 @@ namespace Murim.Core.Tests.Balance
             Assert.That(ratio, Is.InRange(3.0f, 5.0f));
         }
 
+        // T-BAL-02
         [Test]
         public void T_BAL_02_DefaultExplorationTraversalTimings()
         {
@@ -37,6 +39,7 @@ namespace Murim.Core.Tests.Balance
             Assert.That(layerChangeSeconds, Is.LessThanOrEqualTo(0.75f + 1e-5f));
         }
 
+        // T-BAL-03
         [Test]
         public void T_BAL_03_AirLayerClearancesAndSolidTop()
         {
@@ -80,6 +83,7 @@ namespace Murim.Core.Tests.Balance
             Assert.That(ValleyConstants.AirLayer3Altitude - maxSolidTopInBounds, Is.GreaterThanOrEqualTo(ValleyConstants.MinAirClearance));
         }
 
+        // T-BAL-04
         [Test]
         public void T_BAL_04_SlopeGradientAndCliffBandRise()
         {

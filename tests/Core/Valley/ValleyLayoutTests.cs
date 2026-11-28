@@ -8,6 +8,7 @@ namespace Murim.Core.Tests.Valley
     [TestFixture]
     public sealed class ValleyLayoutTests
     {
+        // T-CORE-01
         [Test]
         public void T_CORE_01_AuthoredDimensionsAndMalformedInputs()
         {
@@ -57,6 +58,7 @@ namespace Murim.Core.Tests.Valley
                 ValleyConstants.AuthoredAirBounds, ValleyConstants.AuthoredStartX, ValleyConstants.AuthoredStartZ)));
         }
 
+        // T-CORE-02
         [Test]
         public void T_CORE_02_EdgeDeltasAndSlopeShoulders()
         {
@@ -106,6 +108,7 @@ namespace Murim.Core.Tests.Valley
                 badHeights, badCells, badCover, Array.Empty<PropPlacement>(), new AirBounds(0f, 2f, 0f, 2f), 0, 0)));
         }
 
+        // T-CORE-03
         [Test]
         public void T_CORE_03_CheckAuthoredAndBrokenRules()
         {
@@ -210,6 +213,7 @@ namespace Murim.Core.Tests.Valley
             AssertBrokenRule("CoverCount", ValleyLayoutData.Heights, ValleyLayoutData.Cells, tooMuchCover, ValleyLayoutData.Props, ValleyConstants.AuthoredStartX, ValleyConstants.AuthoredStartZ);
         }
 
+        // T-CORE-04
         [Test]
         public void T_CORE_04_AuthoredComponentsAndSlopes()
         {
@@ -267,6 +271,7 @@ namespace Murim.Core.Tests.Valley
             }
         }
 
+        // T-CORE-05
         [Test]
         public void T_CORE_05_HeightAtInterpolationOnTier12()
         {
@@ -287,6 +292,7 @@ namespace Murim.Core.Tests.Valley
             Assert.That(tier12.HeightAt(3.25f, 2.75f), Is.EqualTo(0.625f).Within(1e-5f));
         }
 
+        // T-CORE-06
         [Test]
         public void T_CORE_06_SolidTopSurfaceAtAndAirClearance()
         {
@@ -323,6 +329,7 @@ namespace Murim.Core.Tests.Valley
             }
         }
 
+        // T-CORE-07
         [Test]
         public void T_CORE_07_RaycastGroundCapAndUncutCrest()
         {
@@ -363,6 +370,7 @@ namespace Murim.Core.Tests.Valley
             Assert.That(crestHit.Point.Y, Is.EqualTo(crestH).Within(1e-2f));
         }
 
+        // T-CORE-08
         [Test]
         public void T_CORE_08_AuthoredPropsAndCover()
         {

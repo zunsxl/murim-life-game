@@ -240,15 +240,19 @@ namespace Murim.Core.Valley
 
         private static PropSummary InspectProps(ValleyLayout layout, List<string> violations)
         {
-            int pines = 0, pineU = 0, pineL = 0, pineS = 0;
-            int boulders = 0, bU = 0, bS = 0, bL = 0;
-            int shrubs = 0, crests = 0, toes = 0, rocks = 0, foam = 0, westPines = 0;
+            int[] counts = new int[12];
+            int westPines = 0;
             bool onSlope = false;
             bool nearStart = false;
 
             for (int i = 0; i < layout.Props.Count; i++)
             {
                 PropPlacement p = layout.Props[i];
+                counts[(int)p.Kind]++;
+                if (ValleyKindMetadata.IsPine(p.Kind) && p.Cx < 24 && p.Cz >= 12)
+                {
+                    westPines++;
+                }
                 if (ValleyKindMetadata.IsBlockingProp(p.Kind))
                 {
                     if (ValleyKindMetadata.IsSlopeKind(layout.KindAt(p.Cx, p.Cz)))
@@ -260,7 +264,6 @@ namespace Murim.Core.Valley
                         nearStart = true;
                     }
                 }
-                CountPropKind(p, ref pines, ref pineU, ref pineL, ref pineS, ref boulders, ref bU, ref bS, ref bL, ref shrubs, ref crests, ref toes, ref rocks, ref foam, ref westPines);
             }
 
             if (onSlope)
@@ -271,30 +274,28 @@ namespace Murim.Core.Valley
             {
                 violations.Add("BlockingPropNearStart: blocking prop placed within 3 cells of start.");
             }
-            return new PropSummary(pines, pineU, pineL, pineS, boulders, bU, bS, bL, shrubs, crests, toes, rocks, foam, westPines);
+            return BuildPropSummary(counts, westPines);
         }
 
-        private static void CountPropKind(
-            PropPlacement p,
-            ref int pines, ref int pineU, ref int pineL, ref int pineS,
-            ref int boulders, ref int bU, ref int bS, ref int bL,
-            ref int shrubs, ref int crests, ref int toes, ref int rocks, ref int foam, ref int westPines)
+        private static PropSummary BuildPropSummary(int[] counts, int westPines)
         {
-            switch (p.Kind)
-            {
-                case PropKind.PineUpright: pines++; pineU++; if (p.Cx < 24 && p.Cz >= 12) westPines++; break;
-                case PropKind.PineLeaning: pines++; pineL++; if (p.Cx < 24 && p.Cz >= 12) westPines++; break;
-                case PropKind.PineSpreading: pines++; pineS++; if (p.Cx < 24 && p.Cz >= 12) westPines++; break;
-                case PropKind.BoulderUpright: boulders++; bU++; break;
-                case PropKind.BoulderSquat: boulders++; bS++; break;
-                case PropKind.BoulderLow: boulders++; bL++; break;
-                case PropKind.ShrubRound:
-                case PropKind.ShrubSpreading: shrubs++; break;
-                case PropKind.CliffCrest: crests++; break;
-                case PropKind.CliffToe: toes++; break;
-                case PropKind.RiverRocks: rocks++; break;
-                case PropKind.FallFoam: foam++; break;
-            }
+            int pineU = counts[(int)PropKind.PineUpright];
+            int pineL = counts[(int)PropKind.PineLeaning];
+            int pineS = counts[(int)PropKind.PineSpreading];
+            int bU = counts[(int)PropKind.BoulderUpright];
+            int bS = counts[(int)PropKind.BoulderSquat];
+            int bL = counts[(int)PropKind.BoulderLow];
+            int shrubs = counts[(int)PropKind.ShrubRound] + counts[(int)PropKind.ShrubSpreading];
+
+            return new PropSummary(
+                pineU + pineL + pineS, pineU, pineL, pineS,
+                bU + bS + bL, bU, bS, bL,
+                shrubs,
+                counts[(int)PropKind.CliffCrest],
+                counts[(int)PropKind.CliffToe],
+                counts[(int)PropKind.RiverRocks],
+                counts[(int)PropKind.FallFoam],
+                westPines);
         }
 
         private static void CheckPropMinimums(PropSummary s, List<string> violations)

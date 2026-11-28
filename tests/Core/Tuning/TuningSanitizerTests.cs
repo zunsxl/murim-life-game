@@ -7,6 +7,7 @@ namespace Murim.Core.Tests.Tuning
     [TestFixture]
     public sealed class TuningSanitizerTests
     {
+        // T-CORE-32
         [Test]
         public void T_CORE_32_ValidValuesPassThrough()
         {
