@@ -4,6 +4,23 @@ using Murim.Core.Valley;
 namespace Murim.Core.Exploration.Placeholder
 {
     /// <summary>
+    /// Cell-pinned 2D endpoint passed to <see cref="GridPathfinder.FindPath"/>.
+    /// </summary>
+    public readonly struct PathEndpoint
+    {
+        public readonly Vec2 Position;
+        public readonly int CellX;
+        public readonly int CellZ;
+
+        public PathEndpoint(Vec2 position, int cellX, int cellZ)
+        {
+            Position = position;
+            CellX = cellX;
+            CellZ = cellZ;
+        }
+    }
+
+    /// <summary>
     /// Deterministic 8-neighbour A* pathfinder with greedy ±0.3 m line-of-sight simplification
     /// and pre-allocated working buffers per spec §3.2.
     /// </summary>
@@ -55,12 +72,8 @@ namespace Murim.Core.Exploration.Placeholder
 
         public int FindPath(
             ValleyLayout layout,
-            Vec2 startPos,
-            int startCx,
-            int startCz,
-            Vec2 targetPos,
-            int goalCx,
-            int goalCz,
+            PathEndpoint start,
+            PathEndpoint goal,
             Vec2[] outputWaypoints)
         {
             if (layout == null)
@@ -77,19 +90,19 @@ namespace Murim.Core.Exploration.Placeholder
                 throw new ArgumentException("Layout exceeds pre-allocated pathfinder capacity.");
             }
 
-            if (startCx == goalCx && startCz == goalCz)
+            if (start.CellX == goal.CellX && start.CellZ == goal.CellZ)
             {
-                outputWaypoints[0] = targetPos;
+                outputWaypoints[0] = goal.Position;
                 return 1;
             }
 
-            int rawCellCount = RunAStar(layout, startCx, startCz, goalCx, goalCz);
+            int rawCellCount = RunAStar(layout, start.CellX, start.CellZ, goal.CellX, goal.CellZ);
             if (rawCellCount <= 0)
             {
                 return 0;
             }
 
-            int rawWaypointCount = BuildRawWaypoints(layout.Width, startPos, targetPos, rawCellCount);
+            int rawWaypointCount = BuildRawWaypoints(layout.Width, start.Position, goal.Position, rawCellCount);
             return SimplifyWaypoints(layout, rawWaypointCount, outputWaypoints);
         }
 
@@ -184,21 +197,21 @@ namespace Murim.Core.Exploration.Placeholder
                     }
 
                     int stepCost = (dx != 0 && dz != 0) ? DiagonalCost : OrthogonalCost;
-                    int tentativeG = baseG + stepCost;
-                    RelaxNeighbor(current, neighbor, nx, nz, goalCx, goalCz, tentativeG);
+                    int h = OctileHeuristic(nx, nz, goalCx, goalCz);
+                    RelaxNeighbor(current, neighbor, baseG + stepCost, h);
                 }
             }
         }
 
-        private void RelaxNeighbor(int current, int neighbor, int nx, int nz, int goalCx, int goalCz, int tentativeG)
+        private void RelaxNeighbor(int current, int neighbor, int tentativeG, int heuristic)
         {
             if (_openStamp[neighbor] != _searchId)
             {
                 _openStamp[neighbor] = _searchId;
                 _parent[neighbor] = current;
                 _gScore[neighbor] = tentativeG;
-                _hScore[neighbor] = OctileHeuristic(nx, nz, goalCx, goalCz);
-                _fScore[neighbor] = tentativeG + _hScore[neighbor];
+                _hScore[neighbor] = heuristic;
+                _fScore[neighbor] = tentativeG + heuristic;
                 HeapPush(neighbor);
                 return;
             }
@@ -305,23 +318,20 @@ namespace Murim.Core.Exploration.Placeholder
                 return true;
             }
 
-            return TraverseSegmentDda(layout, a, b, cx, cz, endCx, endCz);
+            return TraverseSegmentDda(layout, a, b);
         }
 
-        private static bool TraverseSegmentDda(
-            ValleyLayout layout,
-            Vec2 a,
-            Vec2 b,
-            int cx,
-            int cz,
-            int endCx,
-            int endCz)
+        private static bool TraverseSegmentDda(ValleyLayout layout, Vec2 a, Vec2 b)
         {
+            int cx = (int)MathF.Floor(a.X);
+            int cz = (int)MathF.Floor(a.Y);
+            int endCx = (int)MathF.Floor(b.X);
+            int endCz = (int)MathF.Floor(b.Y);
+
             float dx = b.X - a.X;
             float dz = b.Y - a.Y;
             int stepX = dx > 0f ? 1 : (dx < 0f ? -1 : 0);
             int stepZ = dz > 0f ? 1 : (dz < 0f ? -1 : 0);
-
             float tDeltaX = stepX != 0 ? MathF.Abs(1f / dx) : float.PositiveInfinity;
             float tDeltaZ = stepZ != 0 ? MathF.Abs(1f / dz) : float.PositiveInfinity;
             float tMaxX = InitTMax(a.X, dx, cx, stepX);
@@ -334,33 +344,47 @@ namespace Murim.Core.Exploration.Placeholder
                 {
                     break;
                 }
-                if (MathF.Abs(tMaxX - tMaxZ) < Eps)
-                {
-                    if (!layout.IsWalkable(cx + stepX, cz) || !layout.IsWalkable(cx, cz + stepZ))
-                    {
-                        return false;
-                    }
-                    cx += stepX;
-                    cz += stepZ;
-                    tMaxX += tDeltaX;
-                    tMaxZ += tDeltaZ;
-                }
-                else if (tMaxX < tMaxZ)
-                {
-                    cx += stepX;
-                    tMaxX += tDeltaX;
-                }
-                else
-                {
-                    cz += stepZ;
-                    tMaxZ += tDeltaZ;
-                }
-                if (!layout.IsWalkable(cx, cz))
+                if (!AdvanceDdaStep(layout, ref cx, ref cz, stepX, stepZ, ref tMaxX, ref tMaxZ, tDeltaX, tDeltaZ))
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        private static bool AdvanceDdaStep(
+            ValleyLayout layout,
+            ref int cx,
+            ref int cz,
+            int stepX,
+            int stepZ,
+            ref float tMaxX,
+            ref float tMaxZ,
+            float tDeltaX,
+            float tDeltaZ)
+        {
+            if (MathF.Abs(tMaxX - tMaxZ) < Eps)
+            {
+                if (!layout.IsWalkable(cx + stepX, cz) || !layout.IsWalkable(cx, cz + stepZ))
+                {
+                    return false;
+                }
+                cx += stepX;
+                cz += stepZ;
+                tMaxX += tDeltaX;
+                tMaxZ += tDeltaZ;
+            }
+            else if (tMaxX < tMaxZ)
+            {
+                cx += stepX;
+                tMaxX += tDeltaX;
+            }
+            else
+            {
+                cz += stepZ;
+                tMaxZ += tDeltaZ;
+            }
+            return layout.IsWalkable(cx, cz);
         }
 
         private static float InitTMax(float origin, float delta, int cell, int step)

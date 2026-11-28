@@ -42,7 +42,11 @@ namespace Murim.Core.Tests.Placeholder
             // path must go south around z=0 and east, then north.
             GridPathfinder pathfinder = new GridPathfinder(16);
             Vec2[] output = new Vec2[20];
-            int count = pathfinder.FindPath(layout, new Vec2(0.5f, 1.5f), 0, 1, new Vec2(2.5f, 2.5f), 2, 2, output);
+            int count = pathfinder.FindPath(
+                layout,
+                new PathEndpoint(new Vec2(0.5f, 1.5f), 0, 1),
+                new PathEndpoint(new Vec2(2.5f, 2.5f), 2, 2),
+                output);
             Assert.That(count, Is.GreaterThan(0));
             Assert.That(output[count - 1], Is.EqualTo(new Vec2(2.5f, 2.5f)));
 
@@ -62,7 +66,11 @@ namespace Murim.Core.Tests.Placeholder
             Vec2 start = new Vec2(1.5f, 1.5f);
             Vec2 target = new Vec2(6.5f, 5.5f);
 
-            int count = pathfinder.FindPath(flat8, start, 1, 1, target, 6, 5, output);
+            int count = pathfinder.FindPath(
+                flat8,
+                new PathEndpoint(start, 1, 1),
+                new PathEndpoint(target, 6, 5),
+                output);
             Assert.That(count, Is.EqualTo(1));
             Assert.That(output[0], Is.EqualTo(target));
         }
@@ -80,15 +88,19 @@ namespace Murim.Core.Tests.Placeholder
             controller.Click(origin, dir, ValleyConstants.FullViewCutY);
             controller.Tick();
 
-            long before = GC.GetAllocatedBytesForCurrentThread();
+            long b1 = GC.GetAllocatedBytesForCurrentThread();
             controller.Click(origin, dir, ValleyConstants.FullViewCutY);
+            long afterClick = GC.GetAllocatedBytesForCurrentThread() - b1;
+
+            long b2 = GC.GetAllocatedBytesForCurrentThread();
             for (int i = 0; i < 60; i++)
             {
                 controller.Tick();
             }
-            long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+            long afterTicks = GC.GetAllocatedBytesForCurrentThread() - b2;
 
-            Assert.That(allocated, Is.EqualTo(0));
+            Assert.That(afterClick, Is.EqualTo(0), $"Click allocated {afterClick}");
+            Assert.That(afterTicks, Is.EqualTo(0), $"Ticks allocated {afterTicks}");
         }
     }
 }

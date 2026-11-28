@@ -154,7 +154,7 @@ namespace Murim.Core.Exploration.Placeholder
                 return EmitMarker(MarkerKind.Reachable, hit.Point);
             }
 
-            return HandleBlockedOnFootClick(rayOrigin, rayDir, hit, curCx, curCz, curComp);
+            return HandleBlockedOnFootClick(rayOrigin, rayDir, hit, curCx, curCz);
         }
 
         private DestinationMarker HandleBlockedOnFootClick(
@@ -162,8 +162,7 @@ namespace Murim.Core.Exploration.Placeholder
             Vec3 rayDir,
             RayHit hit,
             int curCx,
-            int curCz,
-            int curComp)
+            int curCz)
         {
             float planeY = (State.LogicalBand - 1) * ValleyConstants.FloorHeight;
             bool hasQ = TryIntersectHorizontalPlane(rayOrigin, rayDir, planeY, out Vec3 q);
@@ -180,7 +179,9 @@ namespace Murim.Core.Exploration.Placeholder
                 return marker;
             }
 
-            FindBestFlatCandidate(q.XZ, curCx, curCz, curComp, State.LogicalBand, out int bestCx, out int bestCz);
+            int bestIdx = FindBestFlatCandidateIndex(q.XZ, curCx, curCz, State.LogicalBand);
+            int bestCx = bestIdx % _layout.Width;
+            int bestCz = bestIdx / _layout.Width;
             Vec2 clamped = ClampToCell(q.XZ, bestCx, bestCz);
             Vec2 target = InsetFromNonWalkableEdges(clamped, bestCx, bestCz);
 
@@ -239,19 +240,11 @@ namespace Murim.Core.Exploration.Placeholder
             return EmitMarker(MarkerKind.Reachable, hitPoint);
         }
 
-        private void FindBestFlatCandidate(
-            Vec2 q,
-            int curCx,
-            int curCz,
-            int curComp,
-            int band,
-            out int bestCx,
-            out int bestCz)
+        private int FindBestFlatCandidateIndex(Vec2 q, int curCx, int curCz, int band)
         {
-            bestCx = curCx;
-            bestCz = curCz;
-            float bestDistSq = CellCenterDistSq(curCx, curCz, q);
+            int curComp = _layout.ComponentOf(curCx, curCz);
             int bestIndex = _layout.CellIndex(curCx, curCz);
+            float bestDistSq = CellCenterDistSq(curCx, curCz, q);
 
             int width = _layout.Width;
             int depth = _layout.Depth;
@@ -272,11 +265,10 @@ namespace Murim.Core.Exploration.Placeholder
                     {
                         bestDistSq = distSq;
                         bestIndex = idx;
-                        bestCx = cx;
-                        bestCz = cz;
                     }
                 }
             }
+            return bestIndex;
         }
 
         private void SetGroundedPath(int startCx, int startCz, Vec2 target, int goalCx, int goalCz)
@@ -288,12 +280,8 @@ namespace Murim.Core.Exploration.Placeholder
             }
             int count = _pathfinder.FindPath(
                 _layout,
-                State.Position,
-                startCx,
-                startCz,
-                target,
-                goalCx,
-                goalCz,
+                new PathEndpoint(State.Position, startCx, startCz),
+                new PathEndpoint(target, goalCx, goalCz),
                 State.WaypointBuffer);
             State.WaypointIndex = 0;
             State.WaypointCount = count;
@@ -323,7 +311,7 @@ namespace Murim.Core.Exploration.Placeholder
 
             Vec2 dir = (end - start) / totalLen;
             float boundsExit = ComputeAirBoundsExitDistance(start, dir);
-            float cellBlock = FindFirstBlockedCellDistance(start, dir, cx, cz, totalLen);
+            float cellBlock = FindFirstBlockedCellDistance(start, dir, totalLen);
 
             float hitDist = MathF.Min(boundsExit, cellBlock);
             bool endOutside = !_layout.AirBounds.Contains(end.X, end.Y);
@@ -343,8 +331,10 @@ namespace Murim.Core.Exploration.Placeholder
             return MathF.Min(tExitX, tExitZ);
         }
 
-        private float FindFirstBlockedCellDistance(Vec2 start, Vec2 dir, int cx, int cz, float totalLen)
+        private float FindFirstBlockedCellDistance(Vec2 start, Vec2 dir, float totalLen)
         {
+            int cx = (int)MathF.Floor(start.X);
+            int cz = (int)MathF.Floor(start.Y);
             int stepX = dir.X > 0f ? 1 : (dir.X < 0f ? -1 : 0);
             int stepZ = dir.Y > 0f ? 1 : (dir.Y < 0f ? -1 : 0);
             float tDeltaX = stepX != 0 ? MathF.Abs(1f / dir.X) : float.PositiveInfinity;
@@ -360,40 +350,46 @@ namespace Murim.Core.Exploration.Placeholder
                 {
                     break;
                 }
-
-                if (MathF.Abs(tMaxX - tMaxZ) < Eps)
+                if (StepAirborneDda(ref cx, ref cz, stepX, stepZ, ref tMaxX, ref tMaxZ, tDeltaX, tDeltaZ))
                 {
-                    if (!_layout.IsAirClear(cx + stepX, cz, State.AirLayer)
-                        || !_layout.IsAirClear(cx, cz + stepZ, State.AirLayer)
-                        || !_layout.IsAirClear(cx + stepX, cz + stepZ, State.AirLayer))
-                    {
-                        return nextS;
-                    }
-                    cx += stepX;
-                    cz += stepZ;
-                    tMaxX += tDeltaX;
-                    tMaxZ += tDeltaZ;
-                }
-                else if (tMaxX < tMaxZ)
-                {
-                    cx += stepX;
-                    if (!_layout.IsAirClear(cx, cz, State.AirLayer))
-                    {
-                        return nextS;
-                    }
-                    tMaxX += tDeltaX;
-                }
-                else
-                {
-                    cz += stepZ;
-                    if (!_layout.IsAirClear(cx, cz, State.AirLayer))
-                    {
-                        return nextS;
-                    }
-                    tMaxZ += tDeltaZ;
+                    return nextS;
                 }
             }
             return float.PositiveInfinity;
+        }
+
+        private bool StepAirborneDda(
+            ref int cx,
+            ref int cz,
+            int stepX,
+            int stepZ,
+            ref float tMaxX,
+            ref float tMaxZ,
+            float tDeltaX,
+            float tDeltaZ)
+        {
+            if (MathF.Abs(tMaxX - tMaxZ) < Eps)
+            {
+                bool cornerBlocked = !_layout.IsAirClear(cx + stepX, cz, State.AirLayer)
+                    || !_layout.IsAirClear(cx, cz + stepZ, State.AirLayer)
+                    || !_layout.IsAirClear(cx + stepX, cz + stepZ, State.AirLayer);
+                cx += stepX;
+                cz += stepZ;
+                tMaxX += tDeltaX;
+                tMaxZ += tDeltaZ;
+                return cornerBlocked;
+            }
+            if (tMaxX < tMaxZ)
+            {
+                cx += stepX;
+                tMaxX += tDeltaX;
+            }
+            else
+            {
+                cz += stepZ;
+                tMaxZ += tDeltaZ;
+            }
+            return !_layout.IsAirClear(cx, cz, State.AirLayer);
         }
 
         private void TickVertical()
