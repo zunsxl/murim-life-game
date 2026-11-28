@@ -83,7 +83,8 @@ To waive a specific blocking deterministic gate finding, record an entry here co
     content rather than a tunable, so it is identical on every launch and needs no fallback copy. See
     [Valley layout data](specs/v0.1.0-technical.md#31-valley-layout-data-f-01-f-02-f-03-f-04).
   - Terrain is a heightfield mesh and every prop is a painted 2D sprite on an upright quad; no 3D model files.
-    Reason: matches the approved painted direction and 2D art sourcing under a fixed 45° camera. See
+    Floor slicing fades inside the world shaders. Reason: matches the approved painted direction and 2D art
+    sourcing under a fixed 45° camera, and nothing ghosts when the view moves. See
     [Art delivery contracts](specs/v0.1.0-technical.md#4-art-delivery-contracts).
   - Four ground floors 3 m apart and three air layers at 5, 11 and 17 m. Reason: the fewest layers that clear
     each cliff tier and sit clearly above the 13 m ridge and 15 m bamboo. See
@@ -91,8 +92,9 @@ To waive a specific blocking deterministic gate finding, record an entry here co
   - Starting speeds: walk 5 m/s, fly 8 m/s, layer change 8 m/s; default view 40 m wide in a 160 m valley. Reason:
     unhurried exploration with a valley 4 default screens across. See
     [Tunables](specs/v0.1.0-technical.md#39-tunables).
-  - `R`/`F` cancel the current destination, and opening the menu or losing focus completes any layer change in
-    progress. Reason: nothing is left pending, so nothing resumes without fresh input. See
+  - `R`/`F` cancel the current destination. Opening the menu or losing focus cancels the destination, holds a
+    layer change in mid-air, and finishes it after the menu closes or focus returns. Owner decision on
+    2026-11-28, exact quote: `"Freeze, then finish"`. Reason: the capsule must not jump under the menu. See
     [Altitude layers and airborne movement](specs/v0.1.0-technical.md#33-altitude-layers-and-airborne-movement-f-03-f-06-ce-9-ce-10-ec-6-ec-7-ec-8-ec-14).
-  - Lighting follows neutral daylight (art option 2B), which supersedes the "golden-hour" wording in `F-08` and
+  - Lighting is neutral daylight (art option 2B, `ART-013`), which satisfies the "daytime" wording of `F-08` and
     release check 10. See [World rendering and atmosphere](specs/v0.1.0-technical.md#37-world-rendering-and-atmosphere-f-02-f-08).
