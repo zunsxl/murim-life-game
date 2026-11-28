@@ -16,11 +16,10 @@ training grounds, rival schools, mountain valleys, and cultivation.
 *(To be confirmed and expanded by the owner.)*
 
 1. **Readable, atmospheric martial world** at the game's working camera angle and zoom.
-2. **Deterministic, reproducible simulation** so seeds and mechanics behave predictably.
-3. **Clear player feedback** for every action, state, and outcome.
+2. **Clear player feedback** for every action, state, and outcome.
 
 ## Roadmap
 
 | Milestone | Version | Status | Summary |
 |---|---|---|---|
-| Initial playable slice | `v0.1.0` | Planned | Core map/world foundation and camera/interaction baseline (to be specified in `docs/specs/v0.1.0.md`). |
+| Initial playable slice | `v0.1.0` | Planned | 1:1 reference map recreation of the natural mountain valley with clamped pan, zoom, and exact-framing reset (specified in `docs/specs/v0.1.0.md`). |
