@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using UnityEngine;
 
 namespace Murim.View
@@ -48,12 +46,19 @@ namespace Murim.View
             }
 
             string normalized = fileName.Replace('\\', '/').Trim();
-            if (Path.IsPathRooted(normalized) || normalized.Contains(":"))
+            int lastSlash = normalized.LastIndexOf('/');
+            if (lastSlash >= 0)
             {
-                normalized = Path.GetFileName(normalized);
+                normalized = normalized.Substring(lastSlash + 1);
             }
 
-            return StripSensitiveIds(normalized);
+            int lastColon = normalized.LastIndexOf(':');
+            if (lastColon >= 0)
+            {
+                normalized = normalized.Substring(lastColon + 1);
+            }
+
+            return string.IsNullOrWhiteSpace(normalized) ? "unknown" : normalized;
         }
 
         private static string SanitizeToken(string token)
@@ -63,25 +68,8 @@ namespace Murim.View
                 return "unknown";
             }
 
-            string trimmed = token.Trim().Replace('\\', '_').Replace(':', '_');
-            return StripSensitiveIds(trimmed);
-        }
-
-        private static string StripSensitiveIds(string value)
-        {
-            string user = Environment.UserName;
-            if (!string.IsNullOrEmpty(user))
-            {
-                value = value.Replace(user, "<redacted>", StringComparison.OrdinalIgnoreCase);
-            }
-
-            string machine = Environment.MachineName;
-            if (!string.IsNullOrEmpty(machine))
-            {
-                value = value.Replace(machine, "<redacted>", StringComparison.OrdinalIgnoreCase);
-            }
-
-            return string.IsNullOrEmpty(value) ? "unknown" : value;
+            string sanitized = token.Trim().Replace('\\', '_').Replace('/', '_').Replace(':', '_');
+            return string.IsNullOrEmpty(sanitized) ? "unknown" : sanitized;
         }
     }
 }

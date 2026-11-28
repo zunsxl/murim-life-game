@@ -410,7 +410,7 @@ namespace Murim.Tests.Engine.World
             Assert.That(catalog.WorldSpriteCount, Is.EqualTo(19));
 
             LogAssert.Expect(LogType.Warning, new Regex(@"^\[Murim\] TestWarn: file\.png \(cutFadeSeconds\)$"));
-            GameLog.LogWarning("TestWarn", @"C:\Users\fake\file.png", "cutFadeSeconds");
+            GameLog.LogWarning("TestWarn", @"C:\Users\<user>\file.png", "cutFadeSeconds");
 
             List<string> warnings = new List<string>();
             PresentationTuningData badData = new PresentationTuningData
