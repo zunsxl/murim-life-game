@@ -29,3 +29,9 @@ ART-001, ART-013, ART-016 and ART-021 are implementation-only families with no n
 The exact prompts and raw source hashes are in [generation-prompts.json](../../docs/art-deliveries/v0.1.0/generation-prompts.json); final PNG hashes are in [manifest.json](../../docs/art-deliveries/v0.1.0/manifest.json). All delivered PNGs are original production outputs, separate from the earlier illustrative option boards. The preparation script and raw generated masters are retained in the separately delivered local art package and master archive.
 
 Automated checks validate the file contract. They do not constitute owner visual approval or a Unity playtest. In-engine atlas packing, camera-scale readability, vegetation sway, waterfall motion and 9-slice behaviour still need integration validation.
+
+## Bundled font
+
+| Asset | Files | Source / licence record |
+|---|---|---|
+| `LiberationSans SDF` | [LiberationSans.ttf](../TextMesh%20Pro/Fonts/LiberationSans.ttf), [LiberationSans - OFL.txt](../TextMesh%20Pro/Fonts/LiberationSans%20-%20OFL.txt) | Bundled with Unity TextMesh Pro Essential Resources (Digitized data copyright (c) 2010 Google Corporation; copyright (c) 2012 Red Hat, Inc.). Licensed under the SIL Open Font License, Version 1.1. |
