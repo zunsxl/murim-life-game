@@ -1,0 +1,10 @@
+PASS: blend_damp_river is greyscale
+PASS: blend_earth_granite is greyscale
+PASS: blend_meadow_earth is greyscale
+PASS: blend_meadow_granite is greyscale
+PASS: Shoreline bottom row is opaque; top row is transparent
+PASS: Waterfall horizontal boundary is fully transparent
+PASS: Waterfall vertical scroll seam continuity (edge 1.700; adjacent-row mean 1.810)
+PASS: Label backing alpha is in 0.85-0.92 interval
+PASS: Panel centre is opaque slate
+PASS: 45 final PNG hashes match manifest

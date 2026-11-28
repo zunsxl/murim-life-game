@@ -1,0 +1,497 @@
+[
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/ground_meadow.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "d8a2708381878d26a7f5c927fe80e972686f0ba60bc37cf06d363460a2034bda",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/ground_earth.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "ba7990e4942a118cdce327957b1ebc9ec794df34ae1a4cb609f6b81b12ff0c72",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/ground_granite.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "f351df0abfdc3bd2a7627e905948510704581d6f7ba64f8ba48a09d04d66857a",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/ground_damp.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "f61288fc022cefb6f350c8cbf6a093adb53122398523cbcbb2ffe2421cb3b6a9",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/blend_meadow_earth.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGB",
+    "sha256": "dfe6eaed7394cf7e2e84a7886ae5cda86229c49a6697112a05579b009c907843",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/blend_earth_granite.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGB",
+    "sha256": "78941a4cf81004608a9c26f623062f87b9bf3b1bd8461632f7cbb8fbe7d5d039",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/blend_meadow_granite.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGB",
+    "sha256": "b290d8a7e81c8c19a1ae795362f91d258cfd361bc078e2d66c9bf811d8d3f2df",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-002",
+    "path": "Assets/Resources/Art/Terrain/blend_damp_river.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGB",
+    "sha256": "4f4dc5d619f3542d07218716403cff4c512a0a7536ca9ede7035b547c5f08111",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-003",
+    "path": "Assets/Resources/Art/Terrain/cliff_face.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "7c67ce2014ba123100f8fbbf3ab1e8fb1b2cdaec42876f15684e05fc7ce217c4",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-003",
+    "path": "Assets/Resources/Art/Props/Cliffs/cliff_crest.png",
+    "size": [
+      512,
+      384
+    ],
+    "mode": "RGBA",
+    "sha256": "13dbaad7bd5c93b945ddfe1378e7b76dfe0c23616c0c65d2ac8c12f364fe84db",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-003",
+    "path": "Assets/Resources/Art/Props/Cliffs/cliff_toe.png",
+    "size": [
+      512,
+      256
+    ],
+    "mode": "RGBA",
+    "sha256": "d2ca89f989f22c5528eece607f3b8cc08b99af86b806aa568ade70bea7499b82",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-004",
+    "path": "Assets/Resources/Art/Terrain/slope_earth.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "7bd48be078ef6b0ade2ce423260584e4113032441118ea7578a9d4b7e198075e",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-004",
+    "path": "Assets/Resources/Art/Terrain/slope_rock.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "75f8fb30615a2185f1c05a3c03e4649c29f34b3070d4df0f32665651dd817f06",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-005",
+    "path": "Assets/Resources/Art/Props/Boulders/boulder_upright.png",
+    "size": [
+      320,
+      320
+    ],
+    "mode": "RGBA",
+    "sha256": "be7bfc9f47b58f279c4169328d7c527af8c7b942c7a1637b989e2b6fb2b81073",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-005",
+    "path": "Assets/Resources/Art/Props/Boulders/boulder_squat.png",
+    "size": [
+      448,
+      320
+    ],
+    "mode": "RGBA",
+    "sha256": "fd3a76d5e35f526d680bd471a25653b3b1f23114a0fdf76d47f592e8f8a1be3d",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-005",
+    "path": "Assets/Resources/Art/Props/Boulders/boulder_low.png",
+    "size": [
+      320,
+      224
+    ],
+    "mode": "RGBA",
+    "sha256": "522438b90be8644b189803d15cbdca660c4a3cf8074aeaf03c87f51075071f90",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-006",
+    "path": "Assets/Resources/Art/Props/Pines/pine_upright.png",
+    "size": [
+      768,
+      1024
+    ],
+    "mode": "RGBA",
+    "sha256": "530f4b6a74fdb85d544c4c5a45ab4bbdbc2980faf1f88bae8a49aca5484d3639",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-006",
+    "path": "Assets/Resources/Art/Props/Pines/pine_leaning.png",
+    "size": [
+      896,
+      960
+    ],
+    "mode": "RGBA",
+    "sha256": "5b38504472bfa47fc3099cecf88de8958207ea27b23cbfc815f4c2631b03f889",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-006",
+    "path": "Assets/Resources/Art/Props/Pines/pine_spreading.png",
+    "size": [
+      1024,
+      896
+    ],
+    "mode": "RGBA",
+    "sha256": "6bb158dd6865d3d51ebbae9d73fccfc5eef84a5e0a1af5f286f9a9bf0a042f8e",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-007",
+    "path": "Assets/Resources/Art/Props/Bamboo/bamboo_upright.png",
+    "size": [
+      384,
+      768
+    ],
+    "mode": "RGBA",
+    "sha256": "e4d4be2fc7e29ce8b0e3570ec93e4327ac612c4fc696816ccbb5e6d5b8f111d9",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-007",
+    "path": "Assets/Resources/Art/Props/Bamboo/bamboo_leaning.png",
+    "size": [
+      512,
+      768
+    ],
+    "mode": "RGBA",
+    "sha256": "f29b2941d735cde3317f3ec3eaa428ba9296cb751e249d6f9868893858d82e52",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-007",
+    "path": "Assets/Resources/Art/Props/Bamboo/bamboo_edge.png",
+    "size": [
+      384,
+      512
+    ],
+    "mode": "RGBA",
+    "sha256": "8322bd46a5946931880f376b2891edaefed106965f01e1f9c7bf0920359c8bdc",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-008",
+    "path": "Assets/Resources/Art/Props/Shrubs/shrub_round.png",
+    "size": [
+      192,
+      192
+    ],
+    "mode": "RGBA",
+    "sha256": "fd2e6617def044ade37ddbd02c3c72d13e3531bf384e12eb0f51a1fe6b103dff",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-008",
+    "path": "Assets/Resources/Art/Props/Shrubs/shrub_spreading.png",
+    "size": [
+      256,
+      160
+    ],
+    "mode": "RGBA",
+    "sha256": "009c4d4fac7dd6d1be03baa85e5359b2650b96c1c96d5a9a1a40150b8517a610",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-009",
+    "path": "Assets/Resources/Art/Props/Grass/grass_short.png",
+    "size": [
+      128,
+      64
+    ],
+    "mode": "RGBA",
+    "sha256": "9d7f00645c0d3e20367660c909ba794f1839745e255f56bdb342c44ad5b559e0",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-009",
+    "path": "Assets/Resources/Art/Props/Grass/grass_tall.png",
+    "size": [
+      128,
+      128
+    ],
+    "mode": "RGBA",
+    "sha256": "aee91b70a1a729171bc63525ffbf3cdec1d5e10ff41d51c27fd19a35b863f84c",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-009",
+    "path": "Assets/Resources/Art/Props/Grass/grass_sparse.png",
+    "size": [
+      128,
+      96
+    ],
+    "mode": "RGBA",
+    "sha256": "febfc4112bb1f16d50049ee7df242decb523e69917349742bfe5e58f7977acd9",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-010",
+    "path": "Assets/Resources/Art/Props/Flowers/flowers_white.png",
+    "size": [
+      128,
+      96
+    ],
+    "mode": "RGBA",
+    "sha256": "ea7c3471cfad24305b521cbe178485b70d5e210eb2e43c80291e16cbe54f534f",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-010",
+    "path": "Assets/Resources/Art/Props/Flowers/flowers_yellow.png",
+    "size": [
+      128,
+      96
+    ],
+    "mode": "RGBA",
+    "sha256": "b37cf95604b6fd611269032115c2e8e8dbc45618457df8c167d0673988f3d626",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-011",
+    "path": "Assets/Resources/Art/Water/river_flow.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "e9c8f1bcdb4f0f7fff4145f35fde0176bf00db2164b195ad5a47e956c34ef279",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-011",
+    "path": "Assets/Resources/Art/Water/river_riffle.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "sha256": "2905105f485726dd815a443e6197cce6f0510cd5c42c14a66a0b99e8e69dee50",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-011",
+    "path": "Assets/Resources/Art/Water/river_shore.png",
+    "size": [
+      1024,
+      128
+    ],
+    "mode": "RGBA",
+    "sha256": "f510972ea38625d1d2739731704d844c6d5e3c0a0b7406b28af4f9366524a508",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-011",
+    "path": "Assets/Resources/Art/Water/river_rocks.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGBA",
+    "sha256": "0fe0e2f7e82d2ecfbfe37497d82d258cda64c1a77309fc6e39b2d2f18e7394b4",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-012",
+    "path": "Assets/Resources/Art/Water/fall_ribbon.png",
+    "size": [
+      256,
+      1024
+    ],
+    "mode": "RGBA",
+    "sha256": "fb279d4968ff3849e91ff39d872302acab5b843ac89b3f290ee3d027367f72b9",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-012",
+    "path": "Assets/Resources/Art/Water/fall_foam.png",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGBA",
+    "sha256": "6272db80b7e27c7e836c0b5e671a96438f3c0af079afe3a93ee5040d93ac0da0",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-012",
+    "path": "Assets/Resources/Art/Water/wet_rock.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "sha256": "35d2c987aa3db5da97aa6364fd9e584cb8563ef3b97a958bbbf66102a14d23f7",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-014",
+    "path": "Assets/Resources/Art/Props/Placeholder/placeholder_capsule.png",
+    "size": [
+      128,
+      256
+    ],
+    "mode": "RGBA",
+    "sha256": "c79cff0f7366316635d38f3772ab048e47fa93d6b618c016ac91b1909f87fe01",
+    "source": "OpenAI built-in image generation + owner-authorized processing"
+  },
+  {
+    "art_id": "ART-015",
+    "path": "Assets/Resources/Art/Overlay/cue_ring.png",
+    "size": [
+      128,
+      128
+    ],
+    "mode": "RGBA",
+    "sha256": "e069bc327e04402cd89a582ccafb524a89751c9bc9d57b46a11d9877dc64b305",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-017",
+    "path": "Assets/Resources/Art/Overlay/marker_reachable.png",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "sha256": "5f4010662883df60a8dbd4d66b30735c760f02ace027ce236fe24c72d09639c7",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-017",
+    "path": "Assets/Resources/Art/Overlay/marker_unreachable.png",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "sha256": "31cf9b3c28eda726ea1b60a2fa44f3f86c68c705bc8c5a56bc0b8d7927317a31",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-018",
+    "path": "Assets/Resources/Art/UI/ui_label.png",
+    "size": [
+      96,
+      48
+    ],
+    "mode": "RGBA",
+    "sha256": "313b584c5bdaf6b09f0e5bd2865c4b9919916bf29c71d048f2770f8a5f15a332",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-019",
+    "path": "Assets/Resources/Art/UI/ui_panel.png",
+    "size": [
+      128,
+      128
+    ],
+    "mode": "RGBA",
+    "sha256": "a064a348a5cef93e4c9aca7a2d3a8965ec9a0e9dd7e3af58645500527444623c",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-020",
+    "path": "Assets/Resources/Art/UI/ui_button_normal.png",
+    "size": [
+      96,
+      48
+    ],
+    "mode": "RGBA",
+    "sha256": "f3569731386cb51fb69f0fc9ec04f178a2392c4863f5475ed3bb9a09ec7f96c5",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-020",
+    "path": "Assets/Resources/Art/UI/ui_button_hover.png",
+    "size": [
+      96,
+      48
+    ],
+    "mode": "RGBA",
+    "sha256": "e2192e5354fdd4a27c07dc17e92e2e4cc67168886e668fa2dfb804ae681fc485",
+    "source": "Original scripted artwork"
+  },
+  {
+    "art_id": "ART-020",
+    "path": "Assets/Resources/Art/UI/ui_button_pressed.png",
+    "size": [
+      96,
+      48
+    ],
+    "mode": "RGBA",
+    "sha256": "b2f181f5604a49eb968077bd554864c758bbdb9513b72a6be5e021883e151b9a",
+    "source": "Original scripted artwork"
+  }
+]

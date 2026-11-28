@@ -1,0 +1,16 @@
+## Gate: Art Quality
+- **Target:** `C:\Users\andyb\Documents\Codex\2026-11-27\pro-3\work\gate-checkout\docs\specs\v0.1.0-technical.md`
+- **Decision:** **PASS** (exit code `0`)
+- **Findings:** Critical=0, High=0, Medium=0, Low=0
+
+### Checks
+| ID | Status | Check | Evidence |
+|---|---|---|---|
+| AQ-1 | PASS | Art delivery contract parsed | 45 contracted deliverable(s) (4 non-file item(s) skipped) |
+| AQ-2 | PASS | Supplied file presence, naming, and path containment | 45 present, 0 issue(s) |
+| AQ-3 | PASS | PNG validity, dimensions, bit depth, and channels | Checked 45 PNG(s); 0 error(s) |
+| AQ-4 | PASS | Pixel, alpha, sprite, and seamless texture contract rules | Checked 45 PNG(s); 0 error(s), 0 warning(s) |
+| AQ-5 | PASS | No 3D model files (strictly 2D art contract) | 0 model file(s) found |
+| AQ-6 | SKIP | Font validity, static requirement, Unicode range, and license sidecar | No supplied fonts to check |
+| AQ-7 | PASS | Unity .meta import settings match contract | Checked 45 .meta file(s); 0 mismatch(es) |
+| AQ-8 | PASS | Sourcing hygiene and ART_README credit coverage | 0 critical sourcing issue(s), 0 credit warning(s) |
