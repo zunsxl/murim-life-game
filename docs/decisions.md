@@ -78,7 +78,7 @@ To waive a specific blocking deterministic gate finding, record an entry here co
 - **Art option selections (v0.1.0):** The owner chose 1A, 2B, 3A, 4A, 5B, 6A, 7A, 8A, 9A and 10C in chat. The initial selection was followed by the clarification `"8A, 10C."`. Reason: these selections establish the natural valley treatment, readable test feedback and restrained interface for v0.1.0. See [Art requirements](specs/v0.1.0.md#art-requirements) and [Art direction](art-direction.md#v010-visual-direction).
 - **Art inventory approval and publication (v0.1.0):** The owner approved Art Draft 1, covering ART-001 through ART-021, the exact variant counts, defaults and version-scoped art direction, and authorized publication to the existing PR #6. Exact approval quote: `"Approved. Push it to the PR."` No additional art deferrals. Reason: complete the approved valley specification with the selected visual direction and a complete art inventory. See [Art requirements](specs/v0.1.0.md#art-requirements) and [Art direction](art-direction.md#v010-visual-direction).
 
-- **Technical and balance decisions (v0.1.0, draft, pending owner approval of the technical spec):**
+- **Technical and balance decisions (v0.1.0):**
   - The valley layout is hand-authored constant data in `Murim.Core`, not a JSON file. Reason: it is fixed
     content rather than a tunable, so it is identical on every launch and needs no fallback copy. See
     [Valley layout data](specs/v0.1.0-technical.md#31-valley-layout-data-f-01-f-02-f-03-f-04).
@@ -98,3 +98,7 @@ To waive a specific blocking deterministic gate finding, record an entry here co
     [Altitude layers and airborne movement](specs/v0.1.0-technical.md#33-altitude-layers-and-airborne-movement-f-03-f-06-ce-9-ce-10-ec-6-ec-7-ec-8-ec-14).
   - Lighting is neutral daylight (art option 2B, `ART-013`), which satisfies the "daytime" wording of `F-08` and
     release check 10. See [World rendering and atmosphere](specs/v0.1.0-technical.md#37-world-rendering-and-atmosphere-f-02-f-08).
+- **Technical spec approval (`v0.1.0`):** Approved by the owner on 2026-11-28 covering
+  [docs/specs/v0.1.0-technical.md](specs/v0.1.0-technical.md) at commit `08ecb17`, after the
+  requirements-architecture and security-privacy gates passed with zero findings and an independent review's
+  findings were fixed. Exact owner approval quote: `"Approved, push it"`.
